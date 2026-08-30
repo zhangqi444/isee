@@ -1,44 +1,90 @@
+/**
+ * Sheila ISEE Mock Exams — apply reviewed fixes.
+ * Source of truth: github.com/zhangqi444/isee @ mock-workbook/manifest_slim.json
+ *
+ * SRC_MODE 'github' is preferred once the branch is pushed (single source of truth).
+ * SRC_MODE 'drive'  reads the same JSON uploaded beside the workbook (works today).
+ *
+ * Idempotent: re-running writes nothing that already matches.
+ */
+var SRC_MODE = 'drive';
+var DRIVE_FILE_ID = '1hfQS6ru6MuHuCEIebdtPy77Jl4KHeT4_';
+var GITHUB_RAW = 'https://raw.githubusercontent.com/zhangqi444/isee/fix/mock-review-2026-08-30/mock-workbook/manifest_slim.json';
+
+var FORMS = ['DIAGNOSTIC', 'MOCK 1', 'MOCK 2', 'MOCK 3'];
+
+function loadManifest_() {
+  var txt = (SRC_MODE === 'github')
+    ? UrlFetchApp.fetch(GITHUB_RAW).getContentText()
+    : DriveApp.getFileById(DRIVE_FILE_ID).getBlob().getDataAsString('UTF-8');
+  return JSON.parse(txt);
+}
+
 function applyFixes() {
-  var SS = SpreadsheetApp.getActive();
-  var log = [], writes = 0, skips = 0;
-  var DATA = JSON.parse(DATA_S);
-  for (var i=0;i<DATA.length;i++){
-    var e=DATA[i];
-    var sh=SS.getSheetByName(e.s);
-    if(!sh){log.push('NO SHEET '+e.s);continue;}
-    var rng=sh.getRange(e.a);
-    if(e.f===1){ if(rng.getFormula()===e.n){skips++;continue;} rng.setFormula(e.n); }
-    else { if(String(rng.getValue())===String(e.n)){skips++;continue;} rng.setValue(e.n); }
+  var ss = SpreadsheetApp.getActive();
+  var data = loadManifest_();
+  var writes = 0, skips = 0, problems = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var e = data[i];
+    var sh = ss.getSheetByName(e.s);
+    if (!sh) { problems.push('NO SHEET ' + e.s); continue; }
+    var rng = sh.getRange(e.a);
+    if (e.f === 1) {
+      if (rng.getFormula() === e.n) { skips++; continue; }
+      rng.setFormula(e.n);
+    } else {
+      if (String(rng.getValue()) === String(e.n)) { skips++; continue; }
+      rng.setValue(e.n);
+    }
     writes++;
   }
-  // hide backend columns on the four forms: S,T,U (19-21) and W-Z (23-26)
-  ['DIAGNOSTIC','MOCK 1','MOCK 2','MOCK 3'].forEach(function(n){
-    var sh=SS.getSheetByName(n);
-    sh.hideColumns(19,3); sh.hideColumns(23,4);
+
+  // Backend columns: S,T,U (19-21) and W,X,Y,Z (23-26)
+  FORMS.forEach(function (n) {
+    var sh = ss.getSheetByName(n);
+    sh.hideColumns(19, 3);
+    sh.hideColumns(23, 4);
   });
-  // warning-only protections
-  function protectSheetWarn(name){
-    var sh=SS.getSheetByName(name);
-    var has=sh.getProtections(SpreadsheetApp.ProtectionType.SHEET).length>0;
-    if(!has){ sh.protect().setDescription('Backend — do not edit').setWarningOnly(true); }
+
+  // Warning-level protection (deterrent, not a lock — keeps editing possible)
+  function protectSheetWarn(name) {
+    var sh = ss.getSheetByName(name);
+    if (sh.getProtections(SpreadsheetApp.ProtectionType.SHEET).length === 0) {
+      sh.protect().setDescription('Backend — do not edit').setWarningOnly(true);
+    }
   }
-  protectSheetWarn('ANSWER KEY'); protectSheetWarn('SYSTEM SUMMARY');
-  ['DIAGNOSTIC','MOCK 1','MOCK 2','MOCK 3'].forEach(function(n){
-    var sh=SS.getSheetByName(n);
-    var existing=sh.getProtections(SpreadsheetApp.ProtectionType.RANGE).map(function(p){return p.getRange().getA1Notation();});
-    [['A18:I160','Questions — do not edit'],['N18:Z160','Scoring — do not edit']].forEach(function(pair){
-      if(existing.indexOf(pair[0])<0){ sh.getRange(pair[0]).protect().setDescription(pair[1]).setWarningOnly(true); }
+  protectSheetWarn('ANSWER KEY');
+  protectSheetWarn('SYSTEM SUMMARY');
+
+  FORMS.forEach(function (n) {
+    var sh = ss.getSheetByName(n);
+    var have = sh.getProtections(SpreadsheetApp.ProtectionType.RANGE).map(function (p) {
+      return p.getRange().getA1Notation();
+    });
+    [['A18:I160', 'Questions — do not edit'], ['N18:Z160', 'Scoring — do not edit']].forEach(function (pair) {
+      if (have.indexOf(pair[0]) < 0) {
+        sh.getRange(pair[0]).protect().setDescription(pair[1]).setWarningOnly(true);
+      }
     });
   });
-  // rebuild HOME OPEN links with verified gids
-  var id=SS.getId();
-  var links=[['F7','DIAGNOSTIC','OPEN DIAGNOSTIC'],['F8','MOCK 1','OPEN MOCK 1'],['F9','MOCK 2','OPEN MOCK 2'],['F10','MOCK 3','OPEN MOCK 3']];
-  links.forEach(function(L){
-    var gid=SS.getSheetByName(L[1]).getSheetId();
-    var f='=HYPERLINK("https://docs.google.com/spreadsheets/d/'+id+'/edit#gid='+gid+'","'+L[2]+'")';
-    SS.getSheetByName('HOME').getRange(L[0]).setFormula(f);
+
+  // HOME OPEN links rebuilt from real sheet gids
+  var id = ss.getId();
+  [['F7', 'DIAGNOSTIC', 'OPEN DIAGNOSTIC'],
+   ['F8', 'MOCK 1', 'OPEN MOCK 1'],
+   ['F9', 'MOCK 2', 'OPEN MOCK 2'],
+   ['F10', 'MOCK 3', 'OPEN MOCK 3']].forEach(function (L) {
+    var gid = ss.getSheetByName(L[1]).getSheetId();
+    ss.getSheetByName('HOME').getRange(L[0]).setFormula(
+      '=HYPERLINK("https://docs.google.com/spreadsheets/d/' + id + '/edit#gid=' + gid + '","' + L[2] + '")'
+    );
   });
-  var msg='DONE writes='+writes+' skips='+skips+' problems='+log.length+(log.length?' | '+log.join(' ; '):'');
+
+  var msg = 'entries=' + data.length + ' writes=' + writes + ' skips=' + skips +
+            ' problems=' + problems.length + (problems.length ? ' | ' + problems.join(' ; ') : '');
   Logger.log(msg);
-  SS.getSheetByName('SYSTEM SUMMARY').getRange('A15').setValue('applyFixes: '+msg+' @ '+new Date().toISOString());
+  ss.getSheetByName('SYSTEM SUMMARY').getRange('A15')
+    .setValue('applyFixes: ' + msg + ' @ ' + new Date().toISOString());
+  return msg;
 }
