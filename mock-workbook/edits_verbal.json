@@ -1,0 +1,350 @@
+{
+ "edits": [
+  {
+   "item": "M01-VR-002",
+   "field": "B",
+   "old": "chilly",
+   "new": "damp"
+  },
+  {
+   "item": "M01-VR-002",
+   "field": "rationale",
+   "old": "Brisk can mean quick and energetic, as in a brisk walk; chilly is another sense but does not fit the general synonym target as closely.",
+   "new": "Brisk means quick and energetic, as in a brisk walk; uneven, damp, and noisy describe other qualities, not speed."
+  },
+  {
+   "item": "M01-VR-012",
+   "field": "D",
+   "old": "forget",
+   "new": "misplace"
+  },
+  {
+   "item": "M01-VR-012",
+   "field": "rationale",
+   "old": "To neglect is to fail to give proper care or attention, closest to ignore; damage may result but is not the action itself.",
+   "new": "To neglect is to fail to give proper care or attention, closest to ignore; damage may result but is not the action itself, and misplace concerns losing objects, not withholding attention."
+  },
+  {
+   "item": "M03-VR-028",
+   "field": "q",
+   "old": "Because the two witnesses described the event differently, the reporter sought an ____ source.",
+   "new": "The small nation wanted to write its own laws rather than follow another country's, so it declared itself ____."
+  },
+  {
+   "item": "M03-VR-028",
+   "field": "rationale",
+   "old": "An independent source can help resolve conflicting reports; official status alone does not guarantee independence.",
+   "new": "Wanting to make its own laws leads a nation to declare itself independent; official, distant, and cheerful do not follow from that goal."
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "q",
+   "old": "A strong conclusion should follow from the evidence rather than ____ it.",
+   "new": "The ____ cook turned yesterday's rice and a few leftover vegetables into a delicious soup."
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "A",
+   "old": "exceed",
+   "new": "gentle"
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "B",
+   "old": "repeat",
+   "new": "forgetful"
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "C",
+   "old": "contradict",
+   "new": "resourceful"
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "D",
+   "old": "describe",
+   "new": "athletic"
+  },
+  {
+   "item": "M02-VR-031",
+   "field": "rationale",
+   "old": "A conclusion must not contradict its evidence; exceeding, repeating, or describing evidence does not name the central logical failure.",
+   "new": "Turning leftovers into a good meal shows a resourceful cook; gentle, forgetful, and athletic do not explain making much from little."
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "q",
+   "old": "HUMBLE most nearly means:",
+   "new": "COURAGEOUS most nearly means:"
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "A",
+   "old": "unassuming",
+   "new": "fearless"
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "B",
+   "old": "embarrassed",
+   "new": "strong"
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "C",
+   "old": "powerless",
+   "new": "wild"
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "D",
+   "old": "silent",
+   "new": "foolish"
+  },
+  {
+   "item": "M01-VR-008",
+   "field": "rationale",
+   "old": "Humble means modest or unassuming, not claiming excessive importance; embarrassment and power are separate ideas.",
+   "new": "Courageous means brave or fearless, willing to face danger; strength is physical, and wild and foolish describe poor judgment rather than courage."
+  },
+  {
+   "item": "M01-VR-029",
+   "field": "q",
+   "old": "Rather than boast about the award, Ellis gave a ____ response and thanked the entire team.",
+   "new": "Although the coach pointed out every mistake, Ellis gave a ____ reply and thanked her for the advice."
+  },
+  {
+   "item": "M01-VR-029",
+   "field": "A",
+   "old": "doubtful",
+   "new": "boastful"
+  },
+  {
+   "item": "M01-VR-029",
+   "field": "B",
+   "old": "modest",
+   "new": "mature"
+  },
+  {
+   "item": "M01-VR-029",
+   "field": "rationale",
+   "old": "Avoiding boasts and sharing credit show a modest response.",
+   "new": "Accepting correction and thanking the coach shows a mature reply; boastful and stern clash with the thanks, and careless does not describe a considered response."
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "q",
+   "old": "STURDY most nearly means:",
+   "new": "SLENDER most nearly means:"
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "A",
+   "old": "strong",
+   "new": "thin"
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "B",
+   "old": "polished",
+   "new": "tall"
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "C",
+   "old": "thick",
+   "new": "elegant"
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "D",
+   "old": "permanent",
+   "new": "pale"
+  },
+  {
+   "item": "M01-VR-016",
+   "field": "rationale",
+   "old": "Sturdy means strongly built and unlikely to break; thickness and permanence are not required.",
+   "new": "Slender means thin or slim in build; tall, elegant, and pale describe other qualities a slender thing need not have."
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "q",
+   "old": "When the curtain rose, the restless crowd became ____.",
+   "new": "After the long morning hike, the campers were so ____ that they ate every sandwich in the basket."
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "A",
+   "old": "larger",
+   "new": "muddy"
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "B",
+   "old": "impatient",
+   "new": "lost"
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "C",
+   "old": "cheerful",
+   "new": "thirsty"
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "D",
+   "old": "attentive",
+   "new": "hungry"
+  },
+  {
+   "item": "M01-VR-027",
+   "field": "rationale",
+   "old": "The start of the performance would shift a restless crowd into attentive watching; the other choices lack this cause-effect fit.",
+   "new": "A long hike explains why the campers were hungry enough to eat every sandwich; muddy, lost, and thirsty do not explain the eating."
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "q",
+   "old": "Unlike a guess, Mara's prediction was ____ by several days of careful observation.",
+   "new": "Helmets are required at the bike park, but knee pads are ____; each rider chooses whether to wear them."
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "A",
+   "old": "replaced",
+   "new": "costly"
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "B",
+   "old": "supported",
+   "new": "optional"
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "C",
+   "old": "delayed",
+   "new": "modern"
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "D",
+   "old": "repeated",
+   "new": "popular"
+  },
+  {
+   "item": "M03-VR-030",
+   "field": "rationale",
+   "old": "Evidence from observation supports a prediction; the other verbs do not create the contrast with a guess.",
+   "new": "Since each rider chooses, the knee pads are optional, in contrast with required helmets; costly, modern, and popular do not describe something left to choice."
+  },
+  {
+   "item": "DGN-VR-018",
+   "field": "B",
+   "old": "carefully",
+   "new": "slowly"
+  },
+  {
+   "item": "DGN-VR-018",
+   "field": "C",
+   "old": "lazily",
+   "new": "gracefully"
+  },
+  {
+   "item": "DGN-VR-018",
+   "field": "rationale",
+   "old": "Ice creates a slipping risk, so carefully completes the cause-and-contrast relationship; the other adverbs do not address safety.",
+   "new": "Ice creates a slipping risk, so walking slowly instead of rushing is the safe response; proudly, gracefully, and blindly do not address the danger."
+  },
+  {
+   "item": "DGN-VR-032",
+   "field": "A",
+   "old": "ordinary",
+   "new": "final"
+  },
+  {
+   "item": "DGN-VR-032",
+   "field": "rationale",
+   "old": "Before confirmation, a surprising result should be considered uncertain; confirmation later may establish accuracy.",
+   "new": "Before confirmation, a surprising result should be considered uncertain; calling it final or accurate would skip the needed second test."
+  },
+  {
+   "item": "DGN-VR-030",
+   "field": "C",
+   "old": "cautious",
+   "new": "shy"
+  },
+  {
+   "item": "DGN-VR-030",
+   "field": "rationale",
+   "old": "Returning money that is not his demonstrates honesty; the other traits do not explain the ethical choice.",
+   "new": "Returning money that is not his demonstrates honesty; curiosity, shyness, and cleverness do not explain the ethical choice."
+  },
+  {
+   "item": "M03-VR-021",
+   "field": "q",
+   "old": "The gardener spread straw over the soil to ____ moisture during the hot week.",
+   "new": "Grandpa keeps his childhood drawings in a sealed box to ____ them for the family."
+  },
+  {
+   "item": "M03-VR-021",
+   "field": "rationale",
+   "old": "Covering soil helps preserve, or retain, moisture; measuring, releasing, or coloring it does not explain the action.",
+   "new": "A sealed box helps preserve, or protect, the drawings for the future; measuring, releasing, or coloring them does not explain keeping them safe."
+  },
+  {
+   "item": "M03-VR-018",
+   "field": "q",
+   "old": "Though the first instructions seemed ____, the diagram made the process easy to understand.",
+   "new": "The mystery's first chapter was ____, but the ending explained everything."
+  },
+  {
+   "item": "M03-VR-018",
+   "field": "rationale",
+   "old": "Though signals contrast with “easy to understand,” so confusing fits; the other choices do not create that contrast.",
+   "new": "But signals contrast with an ending that explained everything, so confusing fits; brief, complete, and familiar do not create that contrast."
+  },
+  {
+   "item": "M03-VR-020",
+   "field": "q",
+   "old": "The twins' plans were identical; there was no ____ between them.",
+   "new": "The two recipes called for exactly the same ingredients and steps; there was no ____ between them."
+  },
+  {
+   "item": "M03-VR-020",
+   "field": "rationale",
+   "old": "Identical directly means having no difference; the other nouns are not defined by the clue.",
+   "new": "Calling for exactly the same ingredients and steps means no difference; promise, distance, and purpose are not defined by the clue."
+  },
+  {
+   "item": "M03-VR-019",
+   "field": "q",
+   "old": "The sidewalk was still wet, so Nia stepped ____ around the puddles.",
+   "new": "The sidewalk was still wet, so Milo stepped ____ around the puddles."
+  },
+  {
+   "item": "M03-VR-012",
+   "field": "D",
+   "old": "scant",
+   "new": "small"
+  },
+  {
+   "item": "M03-VR-012",
+   "field": "rationale",
+   "old": "Meager means too small in amount, closest to scant; the other adjectives do not indicate insufficiency.",
+   "new": "Meager means too small in amount, so small is closest; balanced, fresh, and useful do not indicate a lack."
+  }
+ ],
+ "notes": [
+  "No 'correct'/key letters, no 'diff' tags, no 'skill' tags, and no 'half' values changed; every keyed option letter carries the new keyed word listed in the summary.",
+  "All new target words, keyed words, replacement distractors, and the character name Milo were collision-checked with check_word.py against the full 508-item bank; every new TARGET/KEYED word has zero hits as a key or stem target anywhere (fearless, thin, hungry, mature, resourceful, optional, small, slowly, courageous, slender, misplace, damp, etc.).",
+  "M03-VR-019: only the character name changed (Nia -> Milo); the rationale names no character and remains accurate, so it is left untouched.",
+  "Accepted low-risk echoes (unrewarded slots only): 'hungry' is a distractor in DGN-VR-019, 'small' appears inside DGN-VR-005's distractor 'unusually small', and shy/pale/elegant/foolish/muddy/gentle/costly/modern/popular repeat as cross-form distractors elsewhere - none is a key or stem target anywhere after these edits.",
+  "M03-VR-012 keyed 'small' sits in the same form as M03-VR-023's key 'tiny' (size-adjacent, distinct lexemes); the outgoing key 'scant' had the same adjacency, and no easier meager-synonym avoids the size family.",
+  "Rejected via check_word.py during drafting: brave (M01-VR-010 distractor, same form), quiet/silent (QUIET is M01-VR-015 target), gracious (GRACIOUS is M02-VR-007 target), verified/confirmed (VERIFY is M02-VR-017 target; M03-VR-032 keys 'confirm'), temporary (stem target of M01-RC-010), efficient (inside M03-RC-001 key), improved (inside M02-RC-005 key), thorough (M01-VR-022 key), reluctant (M02-VR-015 keys 'unwilling'), abundant (DGN-VR-001 target), museum/photograph scenario (existing DGN/M02/M03 texture).",
+  "Pre-existing issues noticed but outside this fix list: 'confirm' is keyed in both M02-VR-017 and M03-VR-032 (adjacent-form key dupe, same class as support/supported), and 'detailed' is keyed in both M01-VR-026 and M02-VR-005; flagging for a follow-up batch.",
+  "Frame checks: the new M02-VR-031 avoids the 'showing/proving she was ___' trait frame already used by M02-VR-023 and M03-VR-022; the new M03-VR-030 avoids the 'looked X, yet felt Y' frame of M03-VR-027 and the 'rough first draft/final' frame of M02-VR-033."
+ ]
+}

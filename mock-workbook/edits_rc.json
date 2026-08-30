@@ -1,0 +1,408 @@
+{
+ "passages": [
+  {
+   "id": "M01-RC-P02",
+   "title_old": "M01-RC-P02 — The Blue Thread",
+   "title_new": "M01-RC-P02 — Two Kites",
+   "text_old_prefix": "At the costume workshop, Tessa found a blue thread running through a supposedly ",
+   "text_new": "Theo spent two days gluing foil stars and ribbons onto his kite. It rose, wobbled, and dove into the grass. His cousin Ada's plain paper kite climbed steadily. The wind was the same for both, so Theo stopped blaming it and watched. Ada's kite carried nothing extra except a long, light tail that kept its nose up. Theo pulled off the stars and ribbons and tied on a tail of folded paper bows. His kite lifted and flew. He kept one small ribbon on the handle, where its weight meant nothing to the sky, and decided to test his next kite before decorating it."
+  },
+  {
+   "id": "M01-RC-P05",
+   "title_old": "M01-RC-P05 — The Missing Pause",
+   "title_new": "M01-RC-P05 — Water and Stone",
+   "text_old_prefix": "When the debate team practiced, Amir answered every question immediately. His fa",
+   "text_new": "A limestone cave is not carved by one storm or earthquake. Most begin with rain. Rainwater sinking through soil collects a little carbon dioxide, making it slightly acidic. This water seeps into cracks in limestone and dissolves tiny bits of rock; over thousands of years, the cracks widen into tunnels and rooms. Even then, the water keeps working. Each drop falling from the ceiling leaves a speck of mineral, and the specks slowly build stone icicles called stalactites. Visitors see rock that looks finished, yet every tunnel is the sum of tiny changes."
+  },
+  {
+   "id": "M03-RC-P01",
+   "title_old": "M03-RC-P01 — Messages Across the River",
+   "title_new": "M03-RC-P01 — Messages Across the River",
+   "text_old_prefix": "[S1] Before the first permanent bridge crossed Bellwater River, ferries carried ",
+   "text_new": "[S1] Before the first permanent bridge crossed Silverbend River, ferries carried people, animals, and supplies between the two banks. [S2] Because the river bent sharply, a boat waiting at one landing could not see whether passengers had gathered at the other. [S3] In 1872, the ferry keeper and a shop owner created a simple signal: a red square raised on a pole meant that passengers were waiting, while a white square meant that freight needed space. [S4] The flags did not tell the ferryman exactly how many people or crates were present, but they helped him decide which boat to send. [S5] During fog, the system failed because neither bank could see the opposite pole, so workers rang a bell in agreed patterns instead. [S6] Old account books show fewer unnecessary crossings after the signals began. [S7] When a bridge finally opened, the flags disappeared, yet the idea behind them remained familiar: send only the information needed for the next decision."
+  }
+ ],
+ "edits": [
+  {
+   "item": "M01-RC-006",
+   "field": "q",
+   "old": "How does Tessa change?",
+   "new": "How does Theo change?"
+  },
+  {
+   "item": "M01-RC-006",
+   "field": "A",
+   "old": "She stops sewing.",
+   "new": "He gives up kite flying for good."
+  },
+  {
+   "item": "M01-RC-006",
+   "field": "B",
+   "old": "She hides errors.",
+   "new": "He decides the wind ruins every flight."
+  },
+  {
+   "item": "M01-RC-006",
+   "field": "C",
+   "old": "She rejects Mr. Vale's advice.",
+   "new": "He starts copying Ada's kites exactly."
+  },
+  {
+   "item": "M01-RC-006",
+   "field": "D",
+   "old": "She learns to use a temporary guide intentionally.",
+   "new": "He begins judging a kite by how it flies, not how it looks."
+  },
+  {
+   "item": "M01-RC-006",
+   "field": "rationale",
+   "old": "She later adds the same useful thread herself.",
+   "new": "Theo stops blaming the wind and plans to test before decorating; A, B, and C contradict his actions."
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "q",
+   "old": "What will the blue thread guide?",
+   "new": "What did Theo tie onto his kite?"
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "A",
+   "old": "Placement of silver buttons",
+   "new": "A tail of folded paper bows"
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "B",
+   "old": "Cutting the sleeve shorter",
+   "new": "A second spool of string"
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "C",
+   "old": "Choice of fabric",
+   "new": "A heavier wooden frame"
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "D",
+   "old": "Repair of a tear",
+   "new": "A row of foil stars"
+  },
+  {
+   "item": "M01-RC-007",
+   "field": "rationale",
+   "old": "The passage states its purpose directly.",
+   "new": "The passage states he tied on a tail of folded paper bows; the foil stars were removed, not added."
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "q",
+   "old": "Why are Tessa's later stitches loose?",
+   "new": "Why did Theo keep one small ribbon on the handle?"
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "A",
+   "old": "She is careless.",
+   "new": "He forgot it was there."
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "B",
+   "old": "The guide must be easy to remove.",
+   "new": "Its weight there could not affect the flight."
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "C",
+   "old": "The thread is too short.",
+   "new": "Ada asked him to keep it."
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "D",
+   "old": "The sleeve is unfinished.",
+   "new": "It helped steer the kite upward."
+  },
+  {
+   "item": "M01-RC-008",
+   "field": "rationale",
+   "old": "Loose stitches support the stated removable purpose.",
+   "new": "On the handle the ribbon's weight “meant nothing to the sky”; the other choices invent forgetfulness, a request, or steering."
+  },
+  {
+   "item": "M01-RC-009",
+   "field": "A",
+   "old": "Every unusual detail is a mistake.",
+   "new": "Decorations always ruin a project."
+  },
+  {
+   "item": "M01-RC-009",
+   "field": "B",
+   "old": "Finished work should show all guides.",
+   "new": "Wind matters more than a kite's design."
+  },
+  {
+   "item": "M01-RC-009",
+   "field": "C",
+   "old": "Understanding a feature's purpose can change one's judgment of it.",
+   "new": "How well something works can matter more than how it looks."
+  },
+  {
+   "item": "M01-RC-009",
+   "field": "D",
+   "old": "Experienced workers never explain methods.",
+   "new": "Watching another flier is a waste of practice time."
+  },
+  {
+   "item": "M01-RC-009",
+   "field": "rationale",
+   "old": "Tessa changes from seeing a flaw to using a purposeful tool.",
+   "new": "The plain kite outflies the decorated one in the same wind; A is too absolute, and B and D are contradicted."
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "q",
+   "old": "“Temporary” most nearly means:",
+   "new": "“Steadily” most nearly means:"
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "A",
+   "old": "colorful",
+   "new": "loudly"
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "B",
+   "old": "hidden",
+   "new": "suddenly"
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "C",
+   "old": "lasting a short time",
+   "new": "in a smooth, even way"
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "D",
+   "old": "exact",
+   "new": "fearfully"
+  },
+  {
+   "item": "M01-RC-010",
+   "field": "rationale",
+   "old": "The thread is removed after it serves its short-term purpose.",
+   "new": "Ada's kite climbs in an even, controlled way; the other words do not describe its motion."
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "q",
+   "old": "What central lesson does Amir's practice illustrate?",
+   "new": "Which statement best expresses the central idea of the passage?"
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "A",
+   "old": "Debate rewards the longest answer.",
+   "new": "Earthquakes dig most limestone caves."
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "B",
+   "old": "A deliberate pause helped Amir organize clearer responses.",
+   "new": "Slightly acidic water slowly dissolves limestone and builds cave formations."
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "C",
+   "old": "Amir lacked facts.",
+   "new": "Caves stop changing once their tunnels are complete."
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "D",
+   "old": "Silence always signals doubt.",
+   "new": "Stalactites are icicles made of frozen water."
+  },
+  {
+   "item": "M01-RC-021",
+   "field": "rationale",
+   "old": "The pause improved focus and listener understanding.",
+   "new": "The passage traces acidic rainwater from dissolving cracks to building stalactites; A, C, and D contradict or misread details."
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "q",
+   "old": "How long was Amir required to pause?",
+   "new": "According to the passage, what makes rainwater slightly acidic?"
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "A",
+   "old": "one second",
+   "new": "Specks of mineral"
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "B",
+   "old": "two seconds",
+   "new": "Cracks in limestone"
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "C",
+   "old": "three seconds",
+   "new": "Carbon dioxide it collects"
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "D",
+   "old": "ten seconds",
+   "new": "A single storm"
+  },
+  {
+   "item": "M01-RC-022",
+   "field": "rationale",
+   "old": "The passage states a three-second pause.",
+   "new": "The passage states that rainwater collects carbon dioxide, which makes it slightly acidic."
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "q",
+   "old": "Why did listeners prefer the shorter answers?",
+   "new": "Based on the passage, why does a stalactite seem unchanging to a visitor?"
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "A",
+   "old": "They contained no evidence.",
+   "new": "Stalactites stop growing when a cave is finished."
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "B",
+   "old": "The debate ended earlier.",
+   "new": "Water never reaches a cave's ceiling."
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "C",
+   "old": "Amir spoke louder.",
+   "new": "Visitors are not allowed to look up."
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "D",
+   "old": "The answers were easier to follow.",
+   "new": "Each falling drop adds only a tiny speck of mineral."
+  },
+  {
+   "item": "M01-RC-023",
+   "field": "rationale",
+   "old": "Organization, not length alone, improved comprehension.",
+   "new": "Growth by single specks over thousands of years is too slow to see; A and B contradict the passage, and C is invented."
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "q",
+   "old": "Which distinction does Amir learn?",
+   "new": "Which contrast is most important to the passage?"
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "A",
+   "old": "Thinking quickly differs from speaking instantly.",
+   "new": "Sudden, powerful events versus slow, repeated changes"
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "B",
+   "old": "Facts differ from opinions.",
+   "new": "Tunnels versus rooms"
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "C",
+   "old": "Questions differ from answers.",
+   "new": "Soil versus stone"
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "D",
+   "old": "Coaches differ from listeners.",
+   "new": "Storms versus earthquakes"
+  },
+  {
+   "item": "M01-RC-024",
+   "field": "rationale",
+   "old": "The final sentence states this contrast directly.",
+   "new": "The opening rejects sudden carving and the rest shows slow, drop-by-drop work; the other pairs are details that are not opposed."
+  },
+  {
+   "item": "M01-RC-025",
+   "field": "A",
+   "old": "Hesitation always weakens speech.",
+   "new": "Only violent forces can reshape stone."
+  },
+  {
+   "item": "M01-RC-025",
+   "field": "B",
+   "old": "Taking a moment to plan can improve communication.",
+   "new": "Tiny changes, repeated over time, can produce great results."
+  },
+  {
+   "item": "M01-RC-025",
+   "field": "C",
+   "old": "Evidence should be removed.",
+   "new": "Water always destroys whatever it touches."
+  },
+  {
+   "item": "M01-RC-025",
+   "field": "D",
+   "old": "Practice makes answers longer.",
+   "new": "A place that looks finished cannot change again."
+  },
+  {
+   "item": "M01-RC-025",
+   "field": "rationale",
+   "old": "A short planning pause produces clearer, evidence-based answers.",
+   "new": "Specks of mineral and slow widening build whole caves; A, C, and D use absolutes the passage contradicts."
+  },
+  {
+   "item": "M03-RC-001",
+   "field": "q",
+   "old": "Which summary best captures how the Bellwater ferry signals worked?",
+   "new": "Which summary best captures the ferry-signal passage?"
+  },
+  {
+   "item": "M03-RC-005",
+   "field": "q",
+   "old": "Which sequence best describes the author's organization of the Bellwater passage?",
+   "new": "Which sequence best describes the author's organization of the Silverbend passage?"
+  },
+  {
+   "item": "M03-RC-008",
+   "field": "C",
+   "old": "Moving fog must reach and pass through the mesh effectively.",
+   "new": "To make sure moving fog reaches and passes through the mesh"
+  },
+  {
+   "item": "M03-RC-008",
+   "field": "D",
+   "old": "Wind changes salt water into fresh water.",
+   "new": "To change salt water into fresh water"
+  }
+ ],
+ "notes": [
+  "M01-RC-P02 'Two Kites' (narrative, 557 chars, replaces 'The Blue Thread'): a boy's decorated kite fails while his cousin's plain kite flies; he observes on his own, strips the heavy decorations, adds a light tail, and succeeds. Lesson: how well something works can matter more than how it looks. No workshop/mentor-intervention arc, no craft-guide device, no pause/silence; setting, arc, and moral appear in none of the 20 existing passages.",
+  "M01-RC-P05 'Water and Stone' (expository, 557 chars, replaces 'The Missing Pause'): limestone-cave formation by slightly acidic rainwater, contrasting sudden events with slow accumulation. Earth-science/geology is a topic family absent from the rest of the bank, and the closing abstraction (tiny repeated changes add up to something large) duplicates no existing closer.",
+  "M03-RC-P01: 'Bellwater' -> 'Silverbend' (1 occurrence, in [S1]; the title cell has no river name, so title_new equals title_old). Grep confirmed the only bank fields naming the river are the stems of M03-RC-001 and M03-RC-005: 005's stem now says 'Silverbend'; 001's rewritten stem drops the name entirely. 'Silverbend' shares no root with M02's 'Bellweather' and echoes the sharp river bend in [S2].",
+  "M03-RC-001: stem now asks for the best summary, matching the outcome-style key A ('Simple signals made ferry trips more efficient.'); options and rationale untouched and still accurate.",
+  "M03-RC-008: all four options are now infinitive phrases without terminal periods (A and B unchanged); C keeps its meaning as 'To make sure moving fog reaches and passes through the mesh', and D converts to an infinitive with the same invented-effect wrongness. Key stays C; the existing rationale still applies.",
+  "All skills, difficulty tags, PASSAGE IDs, halves, and correct letters are unchanged; no 'key'/'correct' field is touched. Stems of M01-RC-009 ('Which lesson is best supported?') and M01-RC-025 ('Which lesson is supported?') are kept because they fit the new passages as written, so those items carry option/rationale edits only.",
+  "All 'old' values are byte-exact copies from bank.json, and passage title_old/text_old_prefix are byte-exact from the live cells of mock.xlsx (MOCK 1 A104/E104, A122/E122; MOCK 3 A98/E98); both were verified programmatically before writing this file."
+ ]
+}
