@@ -8,16 +8,21 @@
  * Idempotent: re-running writes nothing that already matches.
  */
 var SRC_MODE = 'drive';
-var DRIVE_FILE_ID = '1hfQS6ru6MuHuCEIebdtPy77Jl4KHeT4_';
+var DRIVE_FILE_IDS = ['<PART_A_ID>', '<PART_B_ID>'];
 var GITHUB_RAW = 'https://raw.githubusercontent.com/zhangqi444/isee/fix/mock-review-2026-08-30/mock-workbook/manifest_slim.json';
 
 var FORMS = ['DIAGNOSTIC', 'MOCK 1', 'MOCK 2', 'MOCK 3'];
 
 function loadManifest_() {
-  var txt = (SRC_MODE === 'github')
-    ? UrlFetchApp.fetch(GITHUB_RAW).getContentText()
-    : DriveApp.getFileById(DRIVE_FILE_ID).getBlob().getDataAsString('UTF-8');
-  return JSON.parse(txt);
+  if (SRC_MODE === 'github') {
+    return JSON.parse(UrlFetchApp.fetch(GITHUB_RAW).getContentText());
+  }
+  var all = [];
+  for (var i = 0; i < DRIVE_FILE_IDS.length; i++) {
+    var t = DriveApp.getFileById(DRIVE_FILE_IDS[i]).getBlob().getDataAsString('UTF-8');
+    all = all.concat(JSON.parse(t));
+  }
+  return all;
 }
 
 function applyFixes() {
@@ -81,6 +86,7 @@ function applyFixes() {
     );
   });
 
+  if (data.length !== 1211) { problems.push('EXPECTED 1211 ENTRIES, GOT ' + data.length); }
   var msg = 'entries=' + data.length + ' writes=' + writes + ' skips=' + skips +
             ' problems=' + problems.length + (problems.length ? ' | ' + problems.join(' ; ') : '');
   Logger.log(msg);
