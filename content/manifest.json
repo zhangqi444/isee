@@ -1,0 +1,14 @@
+{
+ "schema_version": "1.0",
+ "content_version": "2026.08.31",
+ "generated_at": "2026-08-31T04:45:33.342541+00:00",
+ "generator": "extract_content.py",
+ "note": "Shadow of the Google Sheets workbooks with reviewed fixes applied. Sheets remain the authoring surface until the PWA takes over.",
+ "banks": {
+  "ma-september": 96,
+  "mock": 508,
+  "qr-september": 108,
+  "rc-september": 48,
+  "vr-september": 182
+ }
+}

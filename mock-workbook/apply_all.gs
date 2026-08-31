@@ -27,7 +27,7 @@ var BUNDLE_FILE_IDS = ['<BUNDLE_1_ID>', '<BUNDLE_2_ID>', '<BUNDLE_3_ID>'];
 
 var MOCK_ID  = '1LDQEe_NeQUTk_1gMaVXzhDcJgQLb3mPvm7vO8Kseg00';
 var MOCK_FORMS = ['DIAGNOSTIC', 'MOCK 1', 'MOCK 2', 'MOCK 3'];
-var EXPECTED = {mock: 1211, ma: 621, qr: 479, vr: 846};
+var EXPECTED = {mock: 1466, ma: 621, qr: 479, vr: 846};
 
 function loadBundle_() {
   var merged = {}, n = (SRC_MODE === 'github') ? BUNDLE_FILES.length : BUNDLE_FILE_IDS.length;
