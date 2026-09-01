@@ -1,7 +1,7 @@
 {
  "bank": "mock",
  "schema_version": "1.0",
- "content_version": "2026.08.31",
+ "content_version": "2026.09.01",
  "items": [
   {
    "id": "DGN-VR-001",
@@ -1524,10 +1524,10 @@
    "difficulty": "M",
    "prompt": "What is the passage mainly about?",
    "choices": {
-    "A": "Household glue is made from sea animals.",
-    "B": "Barnacles cause expensive damage to every ship.",
-    "C": "Studying barnacle cement helped engineers design an adhesive for wet surfaces.",
-    "D": "Doctors have stopped using stitches."
+    "A": "Household glue sold in stores is made from barnacle cement.",
+    "B": "Barnacles damage every ship hull they fasten themselves to.",
+    "C": "Barnacle cement inspired a new adhesive for wet surfaces.",
+    "D": "Doctors now close most wounds without using any stitches."
    },
    "correct": "C",
    "explanation": "The passage centers on observing how barnacles bond underwater and adapting that principle into a new adhesive; the other choices exaggerate or contradict details.",
@@ -1535,7 +1535,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P01",
    "form": "DGN",
-   "content_hash": "27c3f19738cb89b9"
+   "content_hash": "6b198a49f082c9be"
   },
   {
    "id": "DGN-RC-002",
@@ -1547,9 +1547,9 @@
    "prompt": "What did researchers notice about some proteins in barnacle cement?",
    "choices": {
     "A": "They could move water away before a bond formed.",
-    "B": "They were identical to household glue.",
+    "B": "They were identical to ordinary glue sold in stores.",
     "C": "They changed salt water into fresh water.",
-    "D": "They became hard only in sunlight."
+    "D": "They became hard only in bright afternoon sunlight."
    },
    "correct": "A",
    "explanation": "The passage explicitly says some proteins push water away from a surface before bonding.",
@@ -1557,7 +1557,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P01",
    "form": "DGN",
-   "content_hash": "b1bf807bb9a0a19a"
+   "content_hash": "26ea566dde198cc5"
   },
   {
    "id": "DGN-RC-003",
@@ -1568,10 +1568,10 @@
    "difficulty": "M",
    "prompt": "Why would an adhesive that works on wet surfaces interest doctors?",
    "choices": {
-    "A": "It would make medical rooms look cleaner.",
+    "A": "It would make hospital rooms look cleaner and neater.",
     "B": "It might hold moist body tissue together.",
-    "C": "It would turn wounds into dry surfaces.",
-    "D": "It would prevent all injuries."
+    "C": "It would dry a wound completely before sealing it.",
+    "D": "It would prevent injuries from happening at all."
    },
    "correct": "B",
    "explanation": "The wound example and wet-surface focus support the inference that the adhesive could bond moist tissue.",
@@ -1579,7 +1579,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P01",
    "form": "DGN",
-   "content_hash": "22551d7ffc84dfe4"
+   "content_hash": "87fb469dccfdcd70"
   },
   {
    "id": "DGN-RC-004",
@@ -1612,10 +1612,10 @@
    "difficulty": "M",
    "prompt": "How is the passage mainly organized?",
    "choices": {
-    "A": "It presents a natural challenge, a studied feature, and a possible application.",
-    "B": "It lists several sea animals from smallest to largest.",
-    "C": "It argues that nature is always better than technology.",
-    "D": "It gives step-by-step directions for making glue."
+    "A": "It presents a problem, a natural feature, and a possible use.",
+    "B": "It lists many kinds of sea animals from smallest to largest.",
+    "C": "It argues that nature is always wiser than human technology.",
+    "D": "It gives step-by-step directions for making glue at home."
    },
    "correct": "A",
    "explanation": "The author moves from underwater bonding, to the barnacle feature, to engineered and medical applications.",
@@ -1623,7 +1623,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P01",
    "form": "DGN",
-   "content_hash": "0e0cee2aa497384e"
+   "content_hash": "236a4d31f4eca3ed"
   },
   {
    "id": "DGN-RC-006",
@@ -1634,10 +1634,10 @@
    "difficulty": "M",
    "prompt": "Why does Nia almost stay silent?",
    "choices": {
-    "A": "She thinks her helper role may not permit her to speak up.",
-    "B": "She is afraid of the customer.",
-    "C": "She wants the clock to remain broken.",
-    "D": "She does not see anything unusual."
+    "A": "She thinks a helper is not supposed to speak up.",
+    "B": "She is afraid the customer will scold her.",
+    "C": "She wants the clock to stay broken a while longer.",
+    "D": "She does not notice anything unusual in the case."
    },
    "correct": "A",
    "explanation": "The sentence “after all, she was only the helper” reveals her doubt about speaking beyond her assigned role.",
@@ -1645,7 +1645,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P02",
    "form": "DGN",
-   "content_hash": "c2e388730c1bbc78"
+   "content_hash": "282ec0cd34e538e9"
   },
   {
    "id": "DGN-RC-007",
@@ -1656,10 +1656,10 @@
    "difficulty": "E",
    "prompt": "What clue does Nia point out?",
    "choices": {
-    "A": "A cracked clock face",
+    "A": "A crack across the clock face",
     "B": "A bright scratch on a lever",
-    "C": "A loose bell inside the case",
-    "D": "A missing screw on the floor"
+    "C": "A loose bell inside the wooden case",
+    "D": "A missing screw under the table"
    },
    "correct": "B",
    "explanation": "The passage explicitly identifies a bright scratch where the lever brushed the wheel.",
@@ -1667,7 +1667,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P02",
    "form": "DGN",
-   "content_hash": "51b1cccb5bb5490f"
+   "content_hash": "0adfa610bdd10f2d"
   },
   {
    "id": "DGN-RC-008",
@@ -1678,9 +1678,9 @@
    "difficulty": "M",
    "prompt": "Which trait most helps Nia solve the problem?",
    "choices": {
-    "A": "strength",
+    "A": "physical strength",
     "B": "attentiveness",
-    "C": "boldness",
+    "C": "hasty guessing",
     "D": "impatience"
    },
    "correct": "B",
@@ -1689,7 +1689,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P02",
    "form": "DGN",
-   "content_hash": "20e9128a47c2a5be"
+   "content_hash": "5cca18715d313cde"
   },
   {
    "id": "DGN-RC-009",
@@ -1700,10 +1700,10 @@
    "difficulty": "H",
    "prompt": "Which statement best expresses a theme of the passage?",
    "choices": {
-    "A": "Adults should repair objects without help.",
+    "A": "Adults should repair broken objects without any help.",
     "B": "Difficult work should be completed as quickly as possible.",
-    "C": "A job is worthwhile only when it is exciting.",
-    "D": "Careful observation can lead to greater trust and responsibility."
+    "C": "A job is worth doing only when it is exciting and new.",
+    "D": "Careful observation can earn trust and responsibility."
    },
    "correct": "D",
    "explanation": "Nia's observation solves the problem and earns a more demanding learning task; the ending warns against quick guessing.",
@@ -1711,7 +1711,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P02",
    "form": "DGN",
-   "content_hash": "0203eec0b8f6705a"
+   "content_hash": "c7cc2b7f972044ea"
   },
   {
    "id": "DGN-RC-010",
@@ -1722,10 +1722,10 @@
    "difficulty": "M",
    "prompt": "Why does the author mention that “guessing quickly would not keep” the new task?",
    "choices": {
-    "A": "To explain why the alarm clock is broken",
-    "B": "To emphasize that continued trust depends on thoughtful work",
-    "C": "To suggest that her uncle dislikes questions",
-    "D": "To show that Nia plans to leave the shop"
+    "A": "To explain why the alarm clock on the bench is broken",
+    "B": "To show that keeping trust depends on thoughtful work",
+    "C": "To suggest that her uncle dislikes being asked questions",
+    "D": "To show that Nia plans to leave the repair shop soon"
    },
    "correct": "B",
    "explanation": "The final contrast shows Nia knows she must continue observing and reasoning carefully to keep earning responsibility.",
@@ -1733,7 +1733,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P02",
    "form": "DGN",
-   "content_hash": "94c0099bb979030c"
+   "content_hash": "1db3f6a65a33aaf6"
   },
   {
    "id": "DGN-RC-011",
@@ -1744,10 +1744,10 @@
    "difficulty": "M",
    "prompt": "What is the passage mainly explaining?",
    "choices": {
-    "A": "Why copying books by hand always introduced errors",
-    "B": "How to repair stains in valuable books",
-    "C": "How notes and marks in old books can reveal readers' responses",
-    "D": "Why modern readers should write in every book"
+    "A": "Why copying a book by hand always introduced errors",
+    "B": "How to repair stains in valuable old books",
+    "C": "How marks in old books reveal readers' responses",
+    "D": "Why readers today should write notes in every book"
    },
    "correct": "C",
    "explanation": "The passage describes several kinds of marginal evidence and explains their value and limits for historians.",
@@ -1755,7 +1755,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P03",
    "form": "DGN",
-   "content_hash": "725dbdd8da297d27"
+   "content_hash": "0b6a8b11e53aa4fb"
   },
   {
    "id": "DGN-RC-012",
@@ -1766,10 +1766,10 @@
    "difficulty": "E",
    "prompt": "According to the passage, what might a reader write in a margin?",
    "choices": {
-    "A": "The price of every book in a library",
-    "B": "Instructions for making paper",
+    "A": "The price of every book in the library",
+    "B": "Instructions for making paper by hand",
     "C": "A definition of an unfamiliar word",
-    "D": "A list of books not yet written"
+    "D": "A list of books that were never written"
    },
    "correct": "C",
    "explanation": "Defining unfamiliar words is one of the explicit examples given.",
@@ -1777,7 +1777,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P03",
    "form": "DGN",
-   "content_hash": "3ded23bedede8d0b"
+   "content_hash": "1a7375edce471e89"
   },
   {
    "id": "DGN-RC-013",
@@ -1788,9 +1788,9 @@
    "difficulty": "M",
    "prompt": "As used in the passage, “encounters” most nearly means:",
    "choices": {
-    "A": "arguments",
-    "B": "discoveries",
-    "C": "accidents",
+    "A": "heated arguments",
+    "B": "sudden discoveries",
+    "C": "unlucky accidents",
     "D": "experiences"
    },
    "correct": "D",
@@ -1799,7 +1799,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P03",
    "form": "DGN",
-   "content_hash": "3e9ba509f92937b9"
+   "content_hash": "24d11eb720a85e7d"
   },
   {
    "id": "DGN-RC-014",
@@ -1810,10 +1810,10 @@
    "difficulty": "M",
    "prompt": "Why does the author say the evidence must be interpreted cautiously?",
    "choices": {
-    "A": "Margins were always added by the original author.",
-    "B": "Historians are not permitted to touch old books.",
+    "A": "Margin notes were always added by the book's author.",
+    "B": "Historians are rarely permitted to handle old books.",
     "C": "All old books contain false information.",
-    "D": "The writer and meaning of a mark may be uncertain."
+    "D": "A mark's writer and meaning may be uncertain."
    },
    "correct": "D",
    "explanation": "The passage directly notes that writers may be unknown and marks may have multiple explanations.",
@@ -1821,7 +1821,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P03",
    "form": "DGN",
-   "content_hash": "b29f3fb8a7c9da7a"
+   "content_hash": "3247a7412fb70d67"
   },
   {
    "id": "DGN-RC-015",
@@ -1832,10 +1832,10 @@
    "difficulty": "H",
    "prompt": "The phrase “a slow conversation across years” refers to:",
    "choices": {
-    "A": "later readers responding to earlier readers' notes",
-    "B": "scribes discussing how to copy a page",
-    "C": "historians reading books aloud",
-    "D": "authors meeting readers in person"
+    "A": "later readers replying to earlier readers' notes",
+    "B": "scribes talking about how to copy a page",
+    "C": "historians reading old books aloud to one another",
+    "D": "authors meeting their readers in person years later"
    },
    "correct": "A",
    "explanation": "The surrounding sentences describe readers leaving notes and later readers replying, which resembles a delayed conversation.",
@@ -1843,7 +1843,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P03",
    "form": "DGN",
-   "content_hash": "6bd767a42d2973e0"
+   "content_hash": "13090425e38b4faa"
   },
   {
    "id": "DGN-RC-016",
@@ -1854,10 +1854,10 @@
    "difficulty": "E",
    "prompt": "Why can a dark roof become especially hot?",
    "choices": {
-    "A": "It produces electricity during the afternoon.",
-    "B": "It blocks all moving air.",
+    "A": "It produces electricity during the hot afternoon.",
+    "B": "It blocks all of the moving air above the street.",
     "C": "It absorbs much of the sunlight that hits it.",
-    "D": "It is always made from pavement."
+    "D": "It is always built from dark heat-absorbing pavement."
    },
    "correct": "C",
    "explanation": "The first two sentences state that dark roofs absorb sunlight and release the energy as heat.",
@@ -1865,7 +1865,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P04",
    "form": "DGN",
-   "content_hash": "66fb2c9c1dbea6d1"
+   "content_hash": "b8f4a1a46015a06b"
   },
   {
    "id": "DGN-RC-017",
@@ -1876,10 +1876,10 @@
    "difficulty": "E",
    "prompt": "What happened in the trial of coated buildings?",
    "choices": {
-    "A": "Their roofs required no maintenance.",
-    "B": "They became warmer than nearby buildings.",
-    "C": "Their winter heating needs disappeared.",
-    "D": "They used less air-conditioning during the hottest hours."
+    "A": "Their roofs never required maintenance afterward.",
+    "B": "They became warmer than the buildings around them.",
+    "C": "Their winter heating needs disappeared completely.",
+    "D": "They used less air-conditioning in the hottest hours."
    },
    "correct": "D",
    "explanation": "The passage explicitly reports reduced air-conditioning use during hot hours.",
@@ -1887,7 +1887,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P04",
    "form": "DGN",
-   "content_hash": "1927d7f406524491"
+   "content_hash": "0644c2c174715f21"
   },
   {
    "id": "DGN-RC-018",
@@ -1898,10 +1898,10 @@
    "difficulty": "M",
    "prompt": "Which statement best describes the author's view of cool roofs?",
    "choices": {
-    "A": "They are useless in every climate.",
-    "B": "They solve urban heat by themselves.",
-    "C": "They can help, but they should be evaluated locally and combined with other methods.",
-    "D": "They should replace trees and parks."
+    "A": "They are useless in every climate and on every roof.",
+    "B": "They solve the urban heat island problem by themselves.",
+    "C": "They can help, but only as part of a local, mixed plan.",
+    "D": "They should replace shade trees and neighborhood parks."
    },
    "correct": "C",
    "explanation": "The author presents a benefit, several limitations, and a combined local approach.",
@@ -1909,7 +1909,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P04",
    "form": "DGN",
-   "content_hash": "183b3b55d571c379"
+   "content_hash": "df672e980af89a81"
   },
   {
    "id": "DGN-RC-019",
@@ -1920,10 +1920,10 @@
    "difficulty": "M",
    "prompt": "In the last sentence, “universal” most nearly means:",
    "choices": {
-    "A": "inexpensive",
-    "B": "scientific",
+    "A": "cheap to apply",
+    "B": "based on science",
     "C": "suitable everywhere",
-    "D": "temporary"
+    "D": "lasting a short time"
    },
    "correct": "C",
    "explanation": "A universal answer would apply everywhere; the passage argues that local conditions matter.",
@@ -1931,7 +1931,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P04",
    "form": "DGN",
-   "content_hash": "5aa5eaa4352928d7"
+   "content_hash": "66a6389eae6d47f0"
   },
   {
    "id": "DGN-RC-020",
@@ -1942,10 +1942,10 @@
    "difficulty": "H",
    "prompt": "How does the author develop the discussion?",
    "choices": {
-    "A": "By explaining a problem, describing one response, and then qualifying that response",
-    "B": "By giving instructions for painting a roof",
-    "C": "By listing roof colors in order of popularity",
-    "D": "By comparing two cities and declaring a winner"
+    "A": "By presenting a problem, one response, and then its limits",
+    "B": "By giving step-by-step instructions for painting a roof",
+    "C": "By listing roof colors in order of their popularity",
+    "D": "By comparing two cities and declaring one the winner"
    },
    "correct": "A",
    "explanation": "The sequence is heat-island cause, cool-roof evidence, then limits and complementary methods.",
@@ -1953,7 +1953,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P04",
    "form": "DGN",
-   "content_hash": "e125becdaa7584b0"
+   "content_hash": "9671563956ddac7f"
   },
   {
    "id": "DGN-RC-021",
@@ -1964,10 +1964,10 @@
    "difficulty": "M",
    "prompt": "What is the main idea of the passage?",
    "choices": {
-    "A": "Audiences prefer music without rests.",
-    "B": "Conductors should tap during every performance.",
-    "C": "Loud music is more difficult than quiet music.",
-    "D": "Musicians must count and practice silence as part of a piece."
+    "A": "Audiences prefer music that contains no rests at all.",
+    "B": "Conductors should tap the beat during every performance.",
+    "C": "Loud passages are always harder to play than quiet ones.",
+    "D": "Musicians must count and practice silence in a piece."
    },
    "correct": "D",
    "explanation": "The rehearsal problem and solution both show that measured silence requires active, shared counting.",
@@ -1975,7 +1975,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P05",
    "form": "DGN",
-   "content_hash": "942eaedbc34faab1"
+   "content_hash": "8dfba778992869be"
   },
   {
    "id": "DGN-RC-022",
@@ -1987,9 +1987,9 @@
    "prompt": "What caused the players to enter at different times?",
    "choices": {
     "A": "Some players stopped counting during the rest.",
-    "B": "The melody was too high.",
-    "C": "The conductor changed the speed.",
-    "D": "The audience began tapping."
+    "B": "The melody was written too high for the players.",
+    "C": "The conductor changed the speed of the music.",
+    "D": "The audience began tapping along with the beat."
    },
    "correct": "A",
    "explanation": "The passage directly states that several players treated the rest as a chance to stop counting.",
@@ -1997,7 +1997,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P05",
    "form": "DGN",
-   "content_hash": "90f8f236f237c01d"
+   "content_hash": "366a09bc7193ccdf"
   },
   {
    "id": "DGN-RC-023",
@@ -2008,10 +2008,10 @@
    "difficulty": "M",
    "prompt": "Why will the audience not hear the students tapping?",
    "choices": {
-    "A": "The tapping is too soft to hear.",
+    "A": "The tapping is far too soft for anyone to hear.",
     "B": "The orchestra will remove the silent measure.",
-    "C": "The audience will arrive after that section.",
-    "D": "Tapping is a rehearsal method, not part of the performance."
+    "C": "The audience will arrive after that section ends.",
+    "D": "Tapping is a rehearsal method, not a performance step."
    },
    "correct": "D",
    "explanation": "The conductor uses tapping to teach internal counting; the final lines say listeners hear its result, not the tapping itself.",
@@ -2019,7 +2019,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P05",
    "form": "DGN",
-   "content_hash": "30073a2c6797f3d2"
+   "content_hash": "150c0a93e6d46f6f"
   },
   {
    "id": "DGN-RC-024",
@@ -2030,10 +2030,10 @@
    "difficulty": "M",
    "prompt": "What does “give a melody room to breathe” suggest?",
    "choices": {
-    "A": "A melody is a living creature.",
-    "B": "A rest can create space that makes musical ideas clearer.",
+    "A": "A melody is a living creature that must breathe air.",
+    "B": "A rest creates space that makes musical ideas clearer.",
     "C": "Musicians should breathe only during silent measures.",
-    "D": "The concert room needs more air."
+    "D": "The concert hall needs more fresh air for the players."
    },
    "correct": "B",
    "explanation": "The phrase figuratively describes how a pause separates or highlights musical ideas.",
@@ -2041,7 +2041,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P05",
    "form": "DGN",
-   "content_hash": "0b7a0da2872730a4"
+   "content_hash": "2498e6310c00c3b9"
   },
   {
    "id": "DGN-RC-025",
@@ -2052,10 +2052,10 @@
    "difficulty": "H",
    "prompt": "Which broader lesson is best supported by the passage?",
    "choices": {
-    "A": "An unnoticed part of a process may require careful work.",
-    "B": "Groups learn best without guidance.",
-    "C": "Speed matters more than accuracy.",
-    "D": "Only visible actions contribute to success."
+    "A": "An unnoticed part of a process may need careful work.",
+    "B": "Large groups learn best when no one is guiding them.",
+    "C": "Speed matters far more than accuracy in group work.",
+    "D": "Only actions that can be seen contribute to success."
    },
    "correct": "A",
    "explanation": "The silent, unheard counting work is essential to the successful entrance, supporting the broader lesson.",
@@ -2063,7 +2063,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "DGN-RC-P05",
    "form": "DGN",
-   "content_hash": "9fecf4423cf5f0df"
+   "content_hash": "090a2aac18373f0c"
   },
   {
    "id": "DGN-MA-001",
@@ -4216,10 +4216,10 @@
    "difficulty": "M",
    "prompt": "Which statement best expresses the central idea of “A Seed Bank on Ice”?",
    "choices": {
-    "A": "How farmers choose mountain fields",
+    "A": "How farmers choose which mountain fields to sow",
     "B": "How a seed vault preserves backup crop diversity",
-    "C": "Why all seeds grow best in ice",
-    "D": "Why regional collections are unnecessary"
+    "C": "Why crop seeds sprout best when frozen in ice",
+    "D": "Why regional collections are no longer needed"
    },
    "correct": "B",
    "explanation": "The passage explains duplicate storage, testing, renewal, and future recovery.",
@@ -4227,7 +4227,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P01",
    "form": "M01",
-   "content_hash": "9676513f6af66ca3"
+   "content_hash": "87526879ee57013b"
   },
   {
    "id": "M01-RC-002",
@@ -4238,10 +4238,10 @@
    "difficulty": "E",
    "prompt": "Why are seeds periodically tested?",
    "choices": {
-    "A": "To sell them",
+    "A": "To sell the oldest packets to farmers",
     "B": "To see whether they can still sprout",
-    "C": "To change their color",
-    "D": "To warm the vault"
+    "C": "To sort the packets by color and size",
+    "D": "To keep the vault warm through winter"
    },
    "correct": "B",
    "explanation": "Germination tests directly check whether seeds remain viable.",
@@ -4249,7 +4249,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P01",
    "form": "M01",
-   "content_hash": "04c65cf9cb2e78fa"
+   "content_hash": "200b804ba44b3b73"
   },
   {
    "id": "M01-RC-003",
@@ -4261,9 +4261,9 @@
    "prompt": "Why store duplicates?",
    "choices": {
     "A": "A surviving copy can replace a destroyed collection.",
-    "B": "Two seeds always grow faster than one.",
-    "C": "Farms cannot keep seeds.",
-    "D": "The vault needs decoration."
+    "B": "Two seeds of the same crop always sprout faster than one.",
+    "C": "Farms are no longer able to store their own seeds.",
+    "D": "The mountain vault must look full to its visitors."
    },
    "correct": "A",
    "explanation": "A backup is useful when the original regional collection is lost.",
@@ -4271,7 +4271,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P01",
    "form": "M01",
-   "content_hash": "7fb805bbf16945fc"
+   "content_hash": "8f6a836a34d22063"
   },
   {
    "id": "M01-RC-004",
@@ -4282,10 +4282,10 @@
    "difficulty": "M",
    "prompt": "Why compare the vault to a library?",
    "choices": {
-    "A": "Both contain only paper records.",
+    "A": "Both hold only paper records and printed books.",
     "B": "Both preserve collections for future use.",
-    "C": "Both are always underground.",
-    "D": "Both lend books daily."
+    "C": "Both are always built deep underground in rock.",
+    "D": "Both lend out their items to daily visitors."
    },
    "correct": "B",
    "explanation": "The analogy emphasizes organized preservation and later access.",
@@ -4293,7 +4293,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P01",
    "form": "M01",
-   "content_hash": "c215496837bdab97"
+   "content_hash": "6d464d735f07f239"
   },
   {
    "id": "M01-RC-005",
@@ -4326,9 +4326,9 @@
    "difficulty": "M",
    "prompt": "How does Theo change?",
    "choices": {
-    "A": "He starts copying Ada's kites exactly.",
-    "B": "He gives up kite flying for good.",
-    "C": "He decides the wind ruins every flight.",
+    "A": "He copies Ada's plain kite exactly and never decorates again.",
+    "B": "He gives up kite flying and takes up another hobby instead.",
+    "C": "He decides the weak wind ruined both of the day's flights.",
     "D": "He begins judging a kite by how it flies, not how it looks."
    },
    "correct": "D",
@@ -4337,7 +4337,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P02",
    "form": "M01",
-   "content_hash": "5d317d4b11e4b891"
+   "content_hash": "28567d0231079783"
   },
   {
    "id": "M01-RC-007",
@@ -4349,9 +4349,9 @@
    "prompt": "What did Theo tie onto his kite?",
    "choices": {
     "A": "A tail of folded paper bows",
-    "B": "A heavier wooden frame",
-    "C": "A second spool of string",
-    "D": "A row of foil stars"
+    "B": "A heavier frame made of thin wood",
+    "C": "A second spool of heavy string",
+    "D": "A new row of shiny foil stars"
    },
    "correct": "A",
    "explanation": "The passage states he tied on a tail of folded paper bows; the foil stars were removed, not added.",
@@ -4359,7 +4359,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P02",
    "form": "M01",
-   "content_hash": "d1fde7139c3e00af"
+   "content_hash": "22dc8bccce381c7b"
   },
   {
    "id": "M01-RC-008",
@@ -4371,9 +4371,9 @@
    "prompt": "Why did Theo keep one small ribbon on the handle?",
    "choices": {
     "A": "Its weight there could not affect the flight.",
-    "B": "It helped steer the kite upward.",
-    "C": "Ada asked him to keep it.",
-    "D": "He forgot it was there."
+    "B": "It helped him steer the kite's nose upward.",
+    "C": "Ada asked him to keep one ribbon for luck.",
+    "D": "He forgot the ribbon was still tied there."
    },
    "correct": "A",
    "explanation": "On the handle the ribbon's weight “meant nothing to the sky”; the other choices invent forgetfulness, a request, or steering.",
@@ -4381,7 +4381,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P02",
    "form": "M01",
-   "content_hash": "a95684886000d9de"
+   "content_hash": "f80cc8a235a344e7"
   },
   {
    "id": "M01-RC-009",
@@ -4392,10 +4392,10 @@
    "difficulty": "H",
    "prompt": "Which lesson is best supported?",
    "choices": {
-    "A": "Wind matters more than a kite's design.",
-    "B": "Watching another flier is a waste of practice time.",
-    "C": "How well something works can matter more than how it looks.",
-    "D": "Decorations always ruin a project."
+    "A": "The wind matters far more than a kite's own design.",
+    "B": "Watching another flier is a waste of good practice time.",
+    "C": "How well something works can matter more than looks.",
+    "D": "Decorations always ruin a project, so avoid them."
    },
    "correct": "C",
    "explanation": "The plain kite outflies the decorated one in the same wind; A is too absolute, and B and D are contradicted.",
@@ -4403,7 +4403,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P02",
    "form": "M01",
-   "content_hash": "306b428d2fa9a8ab"
+   "content_hash": "a1fed56934b9bfb8"
   },
   {
    "id": "M01-RC-010",
@@ -4415,9 +4415,9 @@
    "prompt": "“Steadily” most nearly means:",
    "choices": {
     "A": "in a smooth, even way",
-    "B": "fearfully",
-    "C": "loudly",
-    "D": "suddenly"
+    "B": "in a nervous, shaky way",
+    "C": "in a sharp, noisy way",
+    "D": "in a quick, sudden way"
    },
    "correct": "A",
    "explanation": "Ada's kite climbs in an even, controlled way; the other words do not describe its motion.",
@@ -4425,7 +4425,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P02",
    "form": "M01",
-   "content_hash": "06bbcc2d5c3b6e55"
+   "content_hash": "3cc0920a0373fe25"
   },
   {
    "id": "M01-RC-011",
@@ -4436,10 +4436,10 @@
    "difficulty": "M",
    "prompt": "Which summary best captures “A Bridge for Animals”?",
    "choices": {
-    "A": "How cameras photograph forests",
+    "A": "How cameras are used to photograph forest wildlife",
     "B": "How a habitat-like overpass helped animals cross safely",
-    "C": "How deer choose food",
-    "D": "Why towns should ban highways"
+    "C": "How deer decide which forest plants they will eat",
+    "D": "Why towns should ban highways that cross forests"
    },
    "correct": "B",
    "explanation": "Design, placement, and increasing animal use form the central idea.",
@@ -4447,7 +4447,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P03",
    "form": "M01",
-   "content_hash": "c7fca213afc5a622"
+   "content_hash": "1af9dafdabab275a"
   },
   {
    "id": "M01-RC-012",
@@ -4458,10 +4458,10 @@
    "difficulty": "E",
    "prompt": "What helped choose the bridge location?",
    "choices": {
-    "A": "Weather forecasts",
+    "A": "Recent weather forecasts",
     "B": "Tracks and camera images",
-    "C": "Town voting records",
-    "D": "Road color"
+    "C": "Town council voting records",
+    "D": "The color of the road"
    },
    "correct": "B",
    "explanation": "Biologists studied existing animal routes using those clues.",
@@ -4469,7 +4469,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P03",
    "form": "M01",
-   "content_hash": "112b31b16ada29c0"
+   "content_hash": "aaf026ff95c6b4ac"
   },
   {
    "id": "M01-RC-013",
@@ -4481,9 +4481,9 @@
    "prompt": "Why did use likely increase after plants matured?",
    "choices": {
     "A": "The crossing seemed more like natural habitat.",
-    "B": "The bridge became shorter.",
-    "C": "Animals learned to read fences.",
-    "D": "The highway closed."
+    "B": "The overpass became shorter and easier to cross.",
+    "C": "Animals were fed on the bridge to draw them there.",
+    "D": "The highway was closed to traffic at night."
    },
    "correct": "A",
    "explanation": "Mature plants and faded scent made the overpass more natural and inviting.",
@@ -4491,7 +4491,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P03",
    "form": "M01",
-   "content_hash": "896fabcf8e68a97f"
+   "content_hash": "6216672be6a37d7c"
   },
   {
    "id": "M01-RC-014",
@@ -4504,8 +4504,8 @@
    "choices": {
     "A": "To show success developed over time",
     "B": "To prove cameras frightened animals",
-    "C": "To compare deer sizes",
-    "D": "To criticize the builders"
+    "C": "To compare the sizes of different deer",
+    "D": "To criticize the engineers who built it"
    },
    "correct": "A",
    "explanation": "Few early crossings contrast with later increased use.",
@@ -4513,7 +4513,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P03",
    "form": "M01",
-   "content_hash": "a655d08a7b898ea6"
+   "content_hash": "a817759d6f405ada"
   },
   {
    "id": "M01-RC-015",
@@ -4590,10 +4590,10 @@
    "difficulty": "M",
    "prompt": "What does the passage explain?",
    "choices": {
-    "A": "How shadow proportions can estimate height",
-    "B": "Why sunlight bends sticks",
-    "C": "How to build a tower",
-    "D": "Why shadows are always inaccurate"
+    "A": "How shadow proportions estimate height",
+    "B": "Why sunlight makes tall sticks lean over",
+    "C": "How to build a tower of a given height",
+    "D": "Why shadow methods are always inaccurate"
    },
    "correct": "A",
    "explanation": "It gives the principle, example, and accuracy conditions.",
@@ -4601,7 +4601,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P04",
    "form": "M01",
-   "content_hash": "a84c0e5791734d8a"
+   "content_hash": "fb93d58292fd7178"
   },
   {
    "id": "M01-RC-019",
@@ -4612,9 +4612,9 @@
    "difficulty": "M",
    "prompt": "What could spoil the comparison?",
    "choices": {
-    "A": "A nearby building",
-    "B": "A wooden stick",
-    "C": "A short tower",
+    "A": "A building standing nearby",
+    "B": "A stick made of light wood",
+    "C": "A tower of only ten meters",
     "D": "A leaning measuring stick"
    },
    "correct": "D",
@@ -4623,7 +4623,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P04",
    "form": "M01",
-   "content_hash": "1f4300612fe1f48c"
+   "content_hash": "e2e26b3c19573d51"
   },
   {
    "id": "M01-RC-020",
@@ -4634,10 +4634,10 @@
    "difficulty": "H",
    "prompt": "How is the passage organized?",
    "choices": {
-    "A": "Problem, debate, then vote",
+    "A": "Problem, then debate, then a public vote",
     "B": "Method, reason it works, then limitations",
-    "C": "Biography, then quotation",
-    "D": "Claim followed only by opinion"
+    "C": "Biography of an observer, then a quotation",
+    "D": "A claim followed only by the author's opinion"
    },
    "correct": "B",
    "explanation": "The author explains procedure, geometry, and conditions.",
@@ -4645,7 +4645,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P04",
    "form": "M01",
-   "content_hash": "e109702386d37ea0"
+   "content_hash": "4eb9e4ec7256d8b0"
   },
   {
    "id": "M01-RC-021",
@@ -4656,18 +4656,18 @@
    "difficulty": "M",
    "prompt": "Which statement best expresses the central idea of the passage?",
    "choices": {
-    "A": "Caves stop changing once their tunnels are complete.",
-    "B": "Earthquakes dig most limestone caves.",
-    "C": "Stalactites are icicles made of frozen water.",
-    "D": "Slightly acidic water slowly dissolves limestone and builds cave formations."
+    "A": "A cave stops changing once its tunnels and rooms are cut.",
+    "B": "Earthquakes and heavy storms dig out most limestone caves.",
+    "C": "Stalactites are icicles of frozen water hanging from the ceiling.",
+    "D": "Acidic water slowly dissolves limestone and builds formations."
    },
    "correct": "D",
-   "explanation": "The passage traces acidic rainwater from dissolving cracks to building stalactites; A, C, and D contradict or misread details.",
+   "explanation": "The passage traces acidic rainwater from dissolving cracks to building stalactites; A, B, and C contradict or misread details.",
    "misconceptions": "accepts Amir's initial fear; focuses on facts",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P05",
    "form": "M01",
-   "content_hash": "a113ef26a9fe1c50"
+   "content_hash": "3710be64f9cbc9a7"
   },
   {
    "id": "M01-RC-022",
@@ -4678,10 +4678,10 @@
    "difficulty": "E",
    "prompt": "According to the passage, what makes rainwater slightly acidic?",
    "choices": {
-    "A": "Specks of mineral",
-    "B": "A single storm",
+    "A": "Specks of mineral it leaves",
+    "B": "A single heavy rainstorm",
     "C": "Carbon dioxide it collects",
-    "D": "Cracks in limestone"
+    "D": "Cracks in the limestone rock"
    },
    "correct": "C",
    "explanation": "The passage states that rainwater collects carbon dioxide, which makes it slightly acidic.",
@@ -4689,7 +4689,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P05",
    "form": "M01",
-   "content_hash": "36bd03e6ead62535"
+   "content_hash": "a5331b9688001be6"
   },
   {
    "id": "M01-RC-023",
@@ -4700,18 +4700,18 @@
    "difficulty": "M",
    "prompt": "Based on the passage, why does a stalactite seem unchanging to a visitor?",
    "choices": {
-    "A": "Stalactites stop growing when a cave is finished.",
-    "B": "Visitors are not allowed to look up.",
-    "C": "Water never reaches a cave's ceiling.",
-    "D": "Each falling drop adds only a tiny speck of mineral."
+    "A": "Stalactites stop growing once a cave is finished.",
+    "B": "Cave lights are too dim to show any change.",
+    "C": "Water no longer reaches the cave's high ceiling.",
+    "D": "Each drop adds only a tiny speck of mineral."
    },
    "correct": "D",
-   "explanation": "Growth by single specks over thousands of years is too slow to see; A and B contradict the passage, and C is invented.",
+   "explanation": "Growth by single specks over thousands of years is too slow to see; A and C contradict the passage, and B is invented.",
    "misconceptions": "equates short with empty; invents volume",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P05",
    "form": "M01",
-   "content_hash": "1f7ec39836aeed44"
+   "content_hash": "f99c740fb0e4d965"
   },
   {
    "id": "M01-RC-024",
@@ -4722,10 +4722,10 @@
    "difficulty": "H",
    "prompt": "Which contrast is most important to the passage?",
    "choices": {
-    "A": "Tunnels versus rooms",
-    "B": "Storms versus earthquakes",
-    "C": "Soil versus stone",
-    "D": "Sudden, powerful events versus slow, repeated changes"
+    "A": "Narrow tunnels versus wide, open rooms",
+    "B": "Violent storms versus sudden earthquakes",
+    "C": "Soft surface soil versus hard limestone",
+    "D": "Sudden events versus slow, repeated changes"
    },
    "correct": "D",
    "explanation": "The opening rejects sudden carving and the rest shows slow, drop-by-drop work; the other pairs are details that are not opposed.",
@@ -4733,7 +4733,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P05",
    "form": "M01",
-   "content_hash": "55ccdc07fda90858"
+   "content_hash": "bc87d2f314fb3f3b"
   },
   {
    "id": "M01-RC-025",
@@ -4744,18 +4744,18 @@
    "difficulty": "M",
    "prompt": "Which lesson is supported?",
    "choices": {
-    "A": "A place that looks finished cannot change again.",
-    "B": "Water always destroys whatever it touches.",
+    "A": "A place that looks finished has stopped changing for good.",
+    "B": "Water always destroys any stone that it touches over time.",
     "C": "Tiny changes, repeated over time, can produce great results.",
-    "D": "Only violent forces can reshape stone."
+    "D": "Only sudden and violent forces can reshape solid stone."
    },
    "correct": "C",
-   "explanation": "Specks of mineral and slow widening build whole caves; A, C, and D use absolutes the passage contradicts.",
+   "explanation": "Specks of mineral and slow widening build whole caves; A, B, and D use absolutes the passage contradicts.",
    "misconceptions": "reverses outcome; focuses on length",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M01-RC-P05",
    "form": "M01",
-   "content_hash": "e1cbfc8a7d5150d6"
+   "content_hash": "992452aeb47e0567"
   },
   {
    "id": "M01-MA-001",
@@ -6908,10 +6908,10 @@
    "difficulty": "M",
    "prompt": "Which statement best explains what the students learned from the moth survey?",
    "choices": {
-    "A": "Pond insects are always harder to photograph than meadow insects.",
-    "B": "Students should avoid collecting data at night.",
-    "C": "Bright lights are the only reliable way to count moths.",
-    "D": "Discovering an unfair condition helped students improve a wildlife survey."
+    "A": "Pond insects are always harder to photograph than meadow moths.",
+    "B": "Students should collect wildlife data in daylight, not at night.",
+    "C": "The brightest lamp is the most reliable way to count moths.",
+    "D": "Discovering an unfair condition helped students improve a survey."
    },
    "correct": "D",
    "explanation": "D captures the problem, revision, and lesson in [¶2–¶4]. A overgeneralizes one detail, B contradicts the successful night survey, and C repeats the condition that made the first comparison unfair.",
@@ -6919,7 +6919,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P01",
    "form": "M02",
-   "content_hash": "07cf79815052d1f0"
+   "content_hash": "4dcbd4eee623726d"
   },
   {
    "id": "M02-RC-002",
@@ -6930,18 +6930,18 @@
    "difficulty": "E",
    "prompt": "Why were the students unable to compare the first station counts fairly?",
    "choices": {
-    "A": "Some teams forgot their notebooks.",
+    "A": "Some teams forgot their notebooks and lost their counts.",
     "B": "The teams used lamps of different brightness.",
-    "C": "The moths were released too quickly.",
-    "D": "The pond station began later."
+    "C": "The moths were released before anyone recorded the time.",
+    "D": "The pond station began counting an hour after the others."
    },
    "correct": "B",
-   "explanation": "[¶2] explicitly says Lena's brighter lamp could attract moths from farther away. A, C, and D are not stated.",
+   "explanation": "[¶2] explicitly says Lena's brighter lamp could attract moths from farther away. A and D are never stated, and C contradicts [¶1], where the students recorded the time before releasing each moth.",
    "misconceptions": "invents missing information; confuses procedure with flaw",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P01",
    "form": "M02",
-   "content_hash": "6ec534b3d1e0c756"
+   "content_hash": "c5cd8f68ac145df9"
   },
   {
    "id": "M02-RC-003",
@@ -6952,10 +6952,10 @@
    "difficulty": "M",
    "prompt": "What can be inferred about the identical lights used in the second count?",
    "choices": {
-    "A": "They made station location, rather than lamp brightness, a more meaningful difference.",
-    "B": "They guaranteed that every moth in the meadow was counted.",
-    "C": "They caused all stations to attract exactly the same species.",
-    "D": "They made photographs unnecessary."
+    "A": "They made location, rather than brightness, the meaningful difference.",
+    "B": "They guaranteed that every moth in the whole meadow was seen and counted.",
+    "C": "They caused every station to attract exactly the same kinds of moths.",
+    "D": "They made it unnecessary to photograph any of the visiting moths."
    },
    "correct": "A",
    "explanation": "Controlling brightness lets location be compared more fairly, as [¶3–¶4] imply. B and C claim guarantees the passage does not support, and D is contradicted by the survey method.",
@@ -6963,7 +6963,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P01",
    "form": "M02",
-   "content_hash": "d105c29282ec791a"
+   "content_hash": "d75b45b1324f7562"
   },
   {
    "id": "M02-RC-004",
@@ -6974,8 +6974,8 @@
    "difficulty": "M",
    "prompt": "In [¶3], “settled” most nearly means:",
    "choices": {
-    "A": "paid",
-    "B": "decided",
+    "A": "paid a debt",
+    "B": "made a choice",
     "C": "landed",
     "D": "became calm"
    },
@@ -6985,7 +6985,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P01",
    "form": "M02",
-   "content_hash": "379faeb4ea756ba7"
+   "content_hash": "a603cf0e0e45d03e"
   },
   {
    "id": "M02-RC-005",
@@ -6996,10 +6996,10 @@
    "difficulty": "M",
    "prompt": "Which sequence best describes the development of the passage?",
    "choices": {
-    "A": "A list of moth species is followed by descriptions.",
-    "B": "An investigation is described, a flaw is noticed, and the method is improved.",
-    "C": "Two students argue before a teacher solves the problem.",
-    "D": "A meadow is compared with a pond in every season."
+    "A": "A list of moth species is followed by a description of each kind.",
+    "B": "An investigation is described, a flaw noticed, the method improved.",
+    "C": "Two students argue about the count until a teacher settles it.",
+    "D": "A meadow and a pond are compared in each of the four seasons."
    },
    "correct": "B",
    "explanation": "[¶1] begins the investigation, [¶2] identifies the flaw, and [¶3–¶4] describe the revision and lesson. The other structures are not present.",
@@ -7007,7 +7007,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P01",
    "form": "M02",
-   "content_hash": "1627444a412d00bf"
+   "content_hash": "562b68108e837466"
   },
   {
    "id": "M02-RC-006",
@@ -7018,18 +7018,18 @@
    "difficulty": "M",
    "prompt": "Which choice best summarizes the discovery beneath Bellweather's steps?",
    "choices": {
-    "A": "Why nineteenth-century buildings had weak foundations",
-    "B": "How surveyors searched for treasure beneath town halls",
+    "A": "Why nineteenth-century buildings often had weak stone foundations",
+    "B": "How surveyors searched for buried treasure beneath old town halls",
     "C": "How a town identified and preserved an old survey marker",
-    "D": "Why Bellweather replaced its town hall with a museum"
+    "D": "Why Bellweather replaced its town hall with a history museum"
    },
    "correct": "C",
-   "explanation": "C reflects the identification in [¶1–¶2] and preservation in [¶3–¶4]. A is unsupported, B confuses surveying with treasure hunting, and D never occurs.",
+   "explanation": "C reflects the identification in [¶1–¶2] and preservation in [¶3–¶4]. A is unsupported, B is denied by [¶4], which says the stone revealed no buried treasure, and D never occurs.",
    "misconceptions": "focuses on setting; invents dramatic purpose",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P02",
    "form": "M02",
-   "content_hash": "4850303d448ac0db"
+   "content_hash": "26ec626073e7f43c"
   },
   {
    "id": "M02-RC-007",
@@ -7042,16 +7042,16 @@
    "choices": {
     "A": "To give later mapmakers fixed starting points",
     "B": "To mark where public buildings should be constructed",
-    "C": "To decorate open spaces",
-    "D": "To warn people about underground tunnels"
+    "C": "To decorate the open spaces around the town",
+    "D": "To warn people about tunnels running under the town"
    },
    "correct": "A",
-   "explanation": "[¶2] directly states that later mapmakers could begin from fixed points. B, C, and D are not given purposes.",
+   "explanation": "[¶2] directly states that later mapmakers could begin from fixed points. B and D are not given purposes—and [¶4] denies any tunnel—while C repeats the residents' mistaken assumption in [¶1].",
    "misconceptions": "confuses later building with original purpose; uses decorative assumption",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P02",
    "form": "M02",
-   "content_hash": "cfa13b768e05a9fb"
+   "content_hash": "a430dcc9fa62bd1b"
   },
   {
    "id": "M02-RC-008",
@@ -7062,10 +7062,10 @@
    "difficulty": "M",
    "prompt": "Why would moving the stone reduce its value as a survey record?",
    "choices": {
-    "A": "Its carved date would become harder to read.",
-    "B": "The glass panel would no longer fit.",
-    "C": "The town hall would lose its front entrance.",
-    "D": "Its exact position was part of the information it preserved."
+    "A": "Its carved 1882 date would become harder to read.",
+    "B": "The new glass panel would no longer fit the landing.",
+    "C": "The town hall would lose its front entrance and steps.",
+    "D": "Its exact position was the information it preserved."
    },
    "correct": "D",
    "explanation": "[¶2–¶3] show that the marker's carefully measured location made it useful; moving it would destroy that evidence. A, B, and C concern appearance or construction, not surveying.",
@@ -7073,7 +7073,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P02",
    "form": "M02",
-   "content_hash": "3d273a1b498e414d"
+   "content_hash": "4439bc36cadc941b"
   },
   {
    "id": "M02-RC-009",
@@ -7084,7 +7084,7 @@
    "difficulty": "M",
    "prompt": "In [¶4], “quieter” suggests that the stone's importance was:",
    "choices": {
-    "A": "secret from all residents",
+    "A": "secret from all of the town's residents",
     "B": "meaningful without being dramatic",
     "C": "related to the silence of the building",
     "D": "less useful than the workers believed"
@@ -7095,7 +7095,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P02",
    "form": "M02",
-   "content_hash": "a7781f993ccda98b"
+   "content_hash": "8d40337207ba5678"
   },
   {
    "id": "M02-RC-010",
@@ -7128,10 +7128,10 @@
    "difficulty": "M",
    "prompt": "Which statement best expresses the main idea?",
    "choices": {
-    "A": "A brief conversation helps Mara see her nervousness in a new way and begin preparing to perform.",
-    "B": "Mara decides that drawing is easier than writing stories.",
-    "C": "A train delay prevents Mara from reaching a festival on time.",
-    "D": "A stranger persuades Mara to give away her story."
+    "A": "A brief conversation helps Mara see her nervousness and begin preparing.",
+    "B": "Mara decides that drawing pictures is easier than writing stories.",
+    "C": "A long train delay keeps Mara from reaching the festival on time.",
+    "D": "A stranger on the train persuades Mara to give away her story."
    },
    "correct": "A",
    "explanation": "[¶2–¶4] shows the sketcher's comment helping Mara shift from avoidance to rehearsal. B, C, and D do not happen.",
@@ -7139,7 +7139,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P03",
    "form": "M02",
-   "content_hash": "8586486eb501f90b"
+   "content_hash": "1b6bc7340fd1566d"
   },
   {
    "id": "M02-RC-012",
@@ -7150,10 +7150,10 @@
    "difficulty": "E",
    "prompt": "Which action most clearly shows Mara avoiding practice at the beginning?",
    "choices": {
-    "A": "She chose a window seat.",
-    "B": "She watched the sketcher's pencil.",
+    "A": "She chose a window seat before the train left.",
+    "B": "She watched the sketcher's pencil move quickly.",
     "C": "She reorganized her pencils instead of reading.",
-    "D": "She kept her story in an envelope."
+    "D": "She kept her story inside an envelope in her pocket."
    },
    "correct": "C",
    "explanation": "[¶1] lists pencil organizing among distractions from the view and story. A, B, and D may occur while nervous but do not as clearly replace practice.",
@@ -7161,7 +7161,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P03",
    "form": "M02",
-   "content_hash": "ed2e0fedb967497d"
+   "content_hash": "a6010198c906c62d"
   },
   {
    "id": "M02-RC-013",
@@ -7172,10 +7172,10 @@
    "difficulty": "M",
    "prompt": "What does Mara learn from watching the scenery in [¶4]?",
    "choices": {
-    "A": "The festival town is mostly farmland.",
-    "B": "Separate, imperfect moments can still form a complete experience.",
-    "C": "Train travel is too fast for careful observation.",
-    "D": "Reading aloud is easier outdoors."
+    "A": "The festival town is surrounded mostly by open farmland.",
+    "B": "Separate moments can still form a complete experience.",
+    "C": "Train travel moves too fast for careful observation.",
+    "D": "Reading aloud is easier outdoors than on a train."
    },
    "correct": "B",
    "explanation": "The changing views “held together,” paralleling how selected moments can make a drawing or story. A is incidental, and C and D are unsupported.",
@@ -7183,7 +7183,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P03",
    "form": "M02",
-   "content_hash": "619cdea74872cc31"
+   "content_hash": "13b44ac26da07bbf"
   },
   {
    "id": "M02-RC-014",
@@ -7197,7 +7197,7 @@
     "A": "loosely",
     "B": "carelessly",
     "C": "secretly",
-    "D": "very tightly"
+    "D": "tightly"
    },
    "correct": "D",
    "explanation": "If the envelope looked as though it might escape, Mara must have been gripping it tightly. A and B are opposite, while C concerns visibility rather than grip.",
@@ -7205,7 +7205,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P03",
    "form": "M02",
-   "content_hash": "cb7905a5e23a5b15"
+   "content_hash": "f268ea2f80c11230"
   },
   {
    "id": "M02-RC-015",
@@ -7216,8 +7216,8 @@
    "difficulty": "M",
    "prompt": "The mood at the end of the passage is best described as:",
    "choices": {
-    "A": "gloomy",
-    "B": "mysterious",
+    "A": "deeply gloomy",
+    "B": "strange and mysterious",
     "C": "quietly hopeful",
     "D": "wildly excited"
    },
@@ -7227,7 +7227,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P03",
    "form": "M02",
-   "content_hash": "59f4dab3bb68e704"
+   "content_hash": "1dfc7c26b3533348"
   },
   {
    "id": "M02-RC-016",
@@ -7238,10 +7238,10 @@
    "difficulty": "M",
    "prompt": "Which statement best summarizes Suri's solution and its result?",
    "choices": {
-    "A": "Outdoor courts are better than halls for every kind of dance rehearsal.",
+    "A": "Outdoor courts are better than halls for every dance rehearsal.",
     "B": "A chalk diagram helped a choreographer plan movement before rehearsal.",
-    "C": "Rain forced a dance group to cancel its performance.",
-    "D": "Dancers created a new game using colored arrows."
+    "C": "Rain forced the dance group to cancel its Saturday performance.",
+    "D": "The dancers invented a new game using colored chalk arrows."
    },
    "correct": "B",
    "explanation": "B covers Suri's planning method and result in [¶1–¶4]. A overstates the method, and C and D contradict the events.",
@@ -7249,7 +7249,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P04",
    "form": "M02",
-   "content_hash": "870866634112affe"
+   "content_hash": "d6bca48564f9a34e"
   },
   {
    "id": "M02-RC-017",
@@ -7260,9 +7260,9 @@
    "difficulty": "E",
    "prompt": "Which question could the chalk plan NOT answer?",
    "choices": {
-    "A": "Where should each dancer begin?",
+    "A": "Where should each dancer begin the piece?",
     "B": "Do two paths cross on the same count?",
-    "C": "Which route moves backward?",
+    "C": "Which routes show dancers moving backward?",
     "D": "Does a lift feel safe to the dancers?"
    },
    "correct": "D",
@@ -7271,7 +7271,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P04",
    "form": "M02",
-   "content_hash": "29367f2744198a4b"
+   "content_hash": "69d35b58e67509ea"
   },
   {
    "id": "M02-RC-018",
@@ -7283,17 +7283,17 @@
    "prompt": "Why was saving hall time especially important?",
    "choices": {
     "A": "The hall was available only once a week.",
-    "B": "The chalk was expensive.",
-    "C": "The dancers disliked practicing indoors.",
-    "D": "The performance had already begun."
+    "B": "The box of sidewalk chalk was expensive.",
+    "C": "The dancers disliked rehearsing in the hall.",
+    "D": "The final performance had already taken place."
    },
    "correct": "A",
-   "explanation": "[¶1] says the hall was available only on Saturdays, so solving spatial problems beforehand protected limited rehearsal time. B–D are not supported.",
+   "explanation": "[¶1] says the hall was available only on Saturdays, so solving spatial problems beforehand protected limited rehearsal time. B–D are not supported; the performance is still ahead of the dancers.",
    "misconceptions": "invents preference; misses scheduling constraint",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P04",
    "form": "M02",
-   "content_hash": "bb8015c9bc7ac554"
+   "content_hash": "d9a0a61c5b5ee43e"
   },
   {
    "id": "M02-RC-019",
@@ -7306,7 +7306,7 @@
    "choices": {
     "A": "allowed dancers to move without being seen",
     "B": "glowed when the hall lights were turned off",
-    "C": "represented planned motion with marks on the ground",
+    "C": "represented planned motion on the ground",
     "D": "recorded a finished performance"
    },
    "correct": "C",
@@ -7315,7 +7315,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P04",
    "form": "M02",
-   "content_hash": "7308ec6583e52336"
+   "content_hash": "e7b335e634d83959"
   },
   {
    "id": "M02-RC-020",
@@ -7326,10 +7326,10 @@
    "difficulty": "M",
    "prompt": "How does the author organize the middle of the passage?",
    "choices": {
-    "A": "By comparing four different choreographers",
-    "B": "By describing the plan, the problem it exposed, and Suri's revision",
-    "C": "By listing rules for using a basketball court",
-    "D": "By arguing that dancers should rehearse alone"
+    "A": "By comparing four different choreographers and their styles",
+    "B": "By describing the plan, the problem, and Suri's revision",
+    "C": "By listing the rules for using a public basketball court",
+    "D": "By arguing that dancers should always rehearse alone"
    },
    "correct": "B",
    "explanation": "[¶2–¶3] moves from drawing the map to discovering a collision and revising a path. The other structures are absent.",
@@ -7337,7 +7337,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P04",
    "form": "M02",
-   "content_hash": "16ea12247f1ad843"
+   "content_hash": "da9813ac63c5f45c"
   },
   {
    "id": "M02-RC-021",
@@ -7348,18 +7348,18 @@
    "difficulty": "M",
    "prompt": "Which choice best connects the roof's function with the students' investigation?",
    "choices": {
-    "A": "Students discover that all bus shelters should be made of wood.",
-    "B": "A leaking roof creates a safety problem at a school.",
-    "C": "A planted roof manages rainwater and teaches students to consider starting conditions.",
-    "D": "The environmental club replaces a bus shelter after three storms."
+    "A": "Students discover that every school bus shelter should be built of wood.",
+    "B": "A leaking shelter roof creates a safety problem for waiting students.",
+    "C": "A planted roof manages rainwater and teaches students about starting conditions.",
+    "D": "The environmental club replaces the school's bus shelter after three storms."
    },
    "correct": "C",
-   "explanation": "C combines the roof's function [¶2] with the students' learning [¶3–¶4]. A and D are unsupported, and B mistakes delayed release for a leak.",
+   "explanation": "C combines the roof's function [¶2] with the students' learning [¶3–¶4]. A and D are unsupported—the club measured rather than rebuilt—and B mistakes delayed release for a leak.",
    "misconceptions": "accepts first assumption; focuses on one material",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P05",
    "form": "M02",
-   "content_hash": "c8504322d27ac687"
+   "content_hash": "544821053079b5a6"
   },
   {
    "id": "M02-RC-022",
@@ -7372,8 +7372,8 @@
    "choices": {
     "A": "Dry soil absorbed much of its rain.",
     "B": "Students emptied the barrel during the storm.",
-    "C": "The plants blocked every channel.",
-    "D": "Wind blew the barrel over."
+    "C": "The plants blocked every drainage channel.",
+    "D": "Strong wind blew the barrel onto its side."
    },
    "correct": "A",
    "explanation": "[¶3] states that dry conditions let the soil absorb much of the largest storm. B–D are not mentioned.",
@@ -7381,7 +7381,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P05",
    "form": "M02",
-   "content_hash": "4cc965bf2b0d5aa3"
+   "content_hash": "c3dcab259309257e"
   },
   {
    "id": "M02-RC-023",
@@ -7393,9 +7393,9 @@
    "prompt": "Why will the club compare two shelters in spring?",
    "choices": {
     "A": "To determine which shelter has more students waiting beneath it",
-    "B": "To find whether metal roofs can collect any rain",
-    "C": "To prove the planted shelter never becomes warm",
-    "D": "To isolate whether the planted roof is related to a temperature difference"
+    "B": "To find out whether a bare metal roof can collect any rain",
+    "C": "To prove that the planted shelter never becomes warm in spring",
+    "D": "To isolate whether the planted roof is related to temperature"
    },
    "correct": "D",
    "explanation": "Comparing planted and unplanted shelters provides a reference for the temperature question in [¶4]. A and B ask different questions; C claims proof before evidence.",
@@ -7403,7 +7403,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P05",
    "form": "M02",
-   "content_hash": "cc4ef457a533906f"
+   "content_hash": "fdfa3e19bbdc23f1"
   },
   {
    "id": "M02-RC-024",
@@ -7414,10 +7414,10 @@
    "difficulty": "M",
    "prompt": "In [¶3], “runoff” most nearly means:",
    "choices": {
-    "A": "soil carried away by wind",
+    "A": "soil carried away by strong wind",
     "B": "water that flows off a surface",
     "C": "plants spreading beyond a tray",
-    "D": "a test that ends early"
+    "D": "a test that ends too early"
    },
    "correct": "B",
    "explanation": "The passage discusses rain leaving the roof through channels, so runoff is water flowing from a surface. A, C, and D do not fit the water-management context.",
@@ -7425,7 +7425,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P05",
    "form": "M02",
-   "content_hash": "da5aeea0c7bf01bf"
+   "content_hash": "9f1548e3a3a1687a"
   },
   {
    "id": "M02-RC-025",
@@ -7436,10 +7436,10 @@
    "difficulty": "M",
    "prompt": "Why does the author include the students' future temperature study in [¶4]?",
    "choices": {
-    "A": "To show that the lesson about controlling and recording conditions can guide a new investigation",
-    "B": "To prove that the rain barrel was installed incorrectly",
-    "C": "To introduce a conflict between two student clubs",
-    "D": "To explain why spring has heavier storms"
+    "A": "To show that recording conditions can guide a new investigation",
+    "B": "To prove that the school's rain barrel was installed incorrectly",
+    "C": "To introduce a disagreement between two student science clubs",
+    "D": "To explain why spring storms are heavier than winter storms"
    },
    "correct": "A",
    "explanation": "[¶4] transfers the students' lesson about starting conditions to a new test. B–D are neither stated nor supported.",
@@ -7447,7 +7447,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M02-RC-P05",
    "form": "M02",
-   "content_hash": "1077ced00ec8126a"
+   "content_hash": "7fb3213ba7658391"
   },
   {
    "id": "M02-MA-001",
@@ -9601,9 +9601,9 @@
    "prompt": "Which summary best captures the ferry-signal passage?",
    "choices": {
     "A": "Simple signals made ferry trips more efficient.",
-    "B": "The river became impossible to cross.",
-    "C": "A shop owner built the first bridge.",
-    "D": "Freight became more important than passengers."
+    "B": "The bending river became impossible to cross.",
+    "C": "The shop owner built the first permanent bridge.",
+    "D": "Freight mattered more to the ferry than passengers."
    },
    "correct": "A",
    "explanation": "The problem, signal system, and reduced unnecessary crossings support A; the other choices exaggerate, invent construction, or make an unsupported comparison.",
@@ -9611,7 +9611,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P01",
    "form": "M03",
-   "content_hash": "62f4d4791db9cc9e"
+   "content_hash": "9556e65114300de8"
   },
   {
    "id": "M03-RC-002",
@@ -9622,9 +9622,9 @@
    "difficulty": "E",
    "prompt": "What did a white square signal?",
    "choices": {
-    "A": "The river was too foggy.",
-    "B": "The bridge was open.",
-    "C": "Passengers were waiting.",
+    "A": "The river was too foggy for boats.",
+    "B": "The new bridge was open at last.",
+    "C": "Passengers were waiting to board.",
     "D": "Freight needed space."
    },
    "correct": "D",
@@ -9633,7 +9633,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P01",
    "form": "M03",
-   "content_hash": "f703791b97bfa53a"
+   "content_hash": "df1cd0dff61996c2"
   },
   {
    "id": "M03-RC-003",
@@ -9644,10 +9644,10 @@
    "difficulty": "M",
    "prompt": "Why was a bell useful during fog?",
    "choices": {
-    "A": "It counted every crate.",
-    "B": "It frightened animals away.",
+    "A": "It counted every crate waiting on the landing.",
+    "B": "It frightened the animals waiting on the bank.",
     "C": "Sound could carry when the flags could not be seen.",
-    "D": "It announced that the bridge was complete."
+    "D": "It announced that the bridge was finally done."
    },
    "correct": "C",
    "explanation": "S5 contrasts invisible flags with bell patterns, supporting C; the distractors assign functions the passage never gives.",
@@ -9655,7 +9655,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P01",
    "form": "M03",
-   "content_hash": "167bf14816590de8"
+   "content_hash": "c3a23413ec48a030"
   },
   {
    "id": "M03-RC-004",
@@ -9688,10 +9688,10 @@
    "difficulty": "H",
    "prompt": "Which sequence best describes the author's organization of the Silverbend passage?",
    "choices": {
-    "A": "A debate followed by a vote",
-    "B": "Two ferrymen compared in detail",
-    "C": "A list of river rules",
-    "D": "A problem, a solution, a limitation, and a result"
+    "A": "A long debate followed by a final vote",
+    "B": "Two rival ferrymen compared in careful detail",
+    "C": "A numbered list of rules for crossing the river",
+    "D": "A problem, a solution, a limit, and a result"
    },
    "correct": "D",
    "explanation": "The bend creates a problem, flags solve it, fog limits them, and records show a result; the other structures do not match the sequence.",
@@ -9699,7 +9699,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P01",
    "form": "M03",
-   "content_hash": "4a7031cbcac22b7e"
+   "content_hash": "a05a04b8eff5b4c0"
   },
   {
    "id": "M03-RC-006",
@@ -9711,9 +9711,9 @@
    "prompt": "Which summary best captures the fog-collector passage?",
    "choices": {
     "A": "Fog collectors work everywhere without maintenance.",
-    "B": "Mesh panels can collect useful water from fog under suitable conditions.",
-    "C": "Covered tanks create fog along dry coasts.",
-    "D": "Strong winds always improve water collection."
+    "B": "Mesh panels can collect useful water in suitable places.",
+    "C": "Covered tanks create the fog that drifts over hills.",
+    "D": "Strong winds always improve the water collected."
    },
    "correct": "B",
    "explanation": "B includes both the method and its conditions; A and D ignore limitations, while C reverses the process.",
@@ -9721,7 +9721,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P02",
    "form": "M03",
-   "content_hash": "c2b29ff6eb97b99a"
+   "content_hash": "a501162ea564a496"
   },
   {
    "id": "M03-RC-007",
@@ -9733,9 +9733,9 @@
    "prompt": "What happens after droplets join into larger drops?",
    "choices": {
     "A": "They slide into a channel.",
-    "B": "They turn into dust.",
-    "C": "They rise through a pipe.",
-    "D": "They tear the mesh."
+    "B": "They turn into salt and dust.",
+    "C": "They rise upward through the pipe.",
+    "D": "They tear holes in the mesh."
    },
    "correct": "A",
    "explanation": "S3 states that larger drops slide into a channel; the other choices reverse motion or confuse problems with steps.",
@@ -9743,7 +9743,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P02",
    "form": "M03",
-   "content_hash": "26242bb1492de387"
+   "content_hash": "d31001c07f5cb8f1"
   },
   {
    "id": "M03-RC-008",
@@ -9754,10 +9754,10 @@
    "difficulty": "M",
    "prompt": "Why do designers study local wind direction?",
    "choices": {
-    "A": "To make the tank uncovered",
-    "B": "To prevent all dust from forming",
-    "C": "To make sure moving fog reaches and passes through the mesh",
-    "D": "To change salt water into fresh water"
+    "A": "To leave the water tank uncovered outdoors",
+    "B": "To stop salt and dust from ever forming",
+    "C": "To be sure moving fog blows through the mesh",
+    "D": "To change salty seawater into fresh drinking water"
    },
    "correct": "C",
    "explanation": "Collection depends on wind pushing fog through mesh, so site direction matters; the distractors invent unrelated effects.",
@@ -9765,7 +9765,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P02",
    "form": "M03",
-   "content_hash": "95c0b13927fcd1a8"
+   "content_hash": "1fbbf2fc8f770488"
   },
   {
    "id": "M03-RC-009",
@@ -9776,10 +9776,10 @@
    "difficulty": "M",
    "prompt": "Why does the author mention torn or blocked mesh?",
    "choices": {
-    "A": "To show practical limits that require maintenance and planning",
-    "B": "To argue that fog never contains water",
-    "C": "To explain how covered tanks are built",
-    "D": "To prove rain is more common than fog"
+    "A": "To show practical limits that require planning",
+    "B": "To argue that fog never contains any water",
+    "C": "To explain how the covered storage tanks are built",
+    "D": "To prove that rain falls more often than fog"
    },
    "correct": "A",
    "explanation": "Those examples qualify the method and motivate site study; the other choices contradict or leave the passage.",
@@ -9787,7 +9787,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P02",
    "form": "M03",
-   "content_hash": "044d57d22daf021f"
+   "content_hash": "791a6c94ff5f053e"
   },
   {
    "id": "M03-RC-010",
@@ -9798,7 +9798,7 @@
    "difficulty": "M",
    "prompt": "In S8, “suitable” most nearly means:",
    "choices": {
-    "A": "crowded",
+    "A": "overcrowded",
     "B": "distant",
     "C": "expensive",
     "D": "appropriate"
@@ -9809,7 +9809,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P02",
    "form": "M03",
-   "content_hash": "ae650e54eb76a7e9"
+   "content_hash": "43edc6b83e13e0a8"
   },
   {
    "id": "M03-RC-011",
@@ -9820,10 +9820,10 @@
    "difficulty": "M",
    "prompt": "What does Inez learn by the end?",
    "choices": {
-    "A": "Every garden should look perfectly orderly.",
-    "B": "Clubs should avoid making plans.",
-    "C": "A plan can guide people without creating rigid divisions.",
-    "D": "Bird food matters more than all other goals."
+    "A": "Every window box should look perfectly neat.",
+    "B": "Clubs work best when they avoid making plans.",
+    "C": "A plan can guide people without rigid divisions.",
+    "D": "Feeding birds matters more than any other goal."
    },
    "correct": "C",
    "explanation": "S9 states the flexible-plan insight; A, B, and D turn a balanced lesson into an extreme claim.",
@@ -9831,7 +9831,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P03",
    "form": "M03",
-   "content_hash": "e02d945105369b88"
+   "content_hash": "1ee1ade4d9599ea5"
   },
   {
    "id": "M03-RC-012",
@@ -9842,18 +9842,18 @@
    "difficulty": "E",
    "prompt": "What did Inez place in the empty box?",
    "choices": {
-    "A": "Three labels",
-    "B": "A berry plant",
-    "C": "Tiny chess pieces",
+    "A": "Three seed packets",
+    "B": "A flowering berry plant",
+    "C": "Tiny painted chess pieces",
     "D": "Three paper squares"
    },
    "correct": "D",
-   "explanation": "S5 directly names three paper squares; the distractors borrow nearby objects or later planting ideas.",
+   "explanation": "S5 directly names three paper squares; the distractors name planting-day objects the passage never places in the box or ideas that come later.",
    "misconceptions": "nearby-noun substitution; sequence confusion",
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P03",
    "form": "M03",
-   "content_hash": "3dc5fd80d20b5ecb"
+   "content_hash": "9654b4ba4c6455ad"
   },
   {
    "id": "M03-RC-013",
@@ -9864,10 +9864,10 @@
    "difficulty": "M",
    "prompt": "Why had the club's box remained empty?",
    "choices": {
-    "A": "Members were waiting for a plan that satisfied competing goals.",
-    "B": "The festival had been canceled.",
-    "C": "Inez had lost all the seeds.",
-    "D": "The center forbade berries and flowers."
+    "A": "Members waited for a plan that satisfied competing goals.",
+    "B": "The spring festival had been canceled before planting day.",
+    "C": "Inez had lost all of the club's flower seeds.",
+    "D": "The community center forbade berries and blossoms."
    },
    "correct": "A",
    "explanation": "The disagreement and desire for a complete plan delayed action; the distractors invent events or rules.",
@@ -9875,7 +9875,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P03",
    "form": "M03",
-   "content_hash": "efecff67d44a1fd8"
+   "content_hash": "6d01d3c288bd0f66"
   },
   {
    "id": "M03-RC-014",
@@ -9886,10 +9886,10 @@
    "difficulty": "H",
    "prompt": "What lesson does the window-box episode best support?",
    "choices": {
-    "A": "The neatest solution is always the most useful.",
-    "B": "Combining purposes can help a group move beyond disagreement.",
-    "C": "Successful groups must choose only one goal.",
-    "D": "Nature projects should never use labels."
+    "A": "The neatest window box is always the most useful.",
+    "B": "Combining purposes helps a group move past disagreement.",
+    "C": "A successful group must agree on one single goal.",
+    "D": "A nature project should never use written labels."
    },
    "correct": "B",
    "explanation": "The group succeeds by combining food, color, and habitat; the other choices reverse or overstate the lesson.",
@@ -9897,7 +9897,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P03",
    "form": "M03",
-   "content_hash": "f1fb21ca4c343338"
+   "content_hash": "328b0351e40f312b"
   },
   {
    "id": "M03-RC-015",
@@ -9908,9 +9908,9 @@
    "difficulty": "M",
    "prompt": "What does “sharp borders” in S7 suggest?",
    "choices": {
-    "A": "Dangerous wooden edges",
-    "B": "Brightly painted lines",
-    "C": "Fences around the center",
+    "A": "Dangerous edges on the wooden box",
+    "B": "Brightly painted lines on the soil",
+    "C": "Small fences around the whole center",
     "D": "Strict separations between purposes"
    },
    "correct": "D",
@@ -9919,7 +9919,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P03",
    "form": "M03",
-   "content_hash": "003c7e8a4cdd5a9b"
+   "content_hash": "54506447f61b2cc5"
   },
   {
    "id": "M03-RC-016",
@@ -9930,10 +9930,10 @@
    "difficulty": "M",
    "prompt": "What central idea does the passage develop?",
    "choices": {
-    "A": "Old murals should always be completely repainted.",
-    "B": "Careful restoration balances visibility with honesty about uncertain details.",
-    "C": "Infrared light permanently changes pigments.",
-    "D": "New paint is weaker than old plaster."
+    "A": "Every faded mural should be completely repainted in bright color.",
+    "B": "Careful restoration balances clarity with honesty about gaps.",
+    "C": "Infrared light permanently changes the mural's pigments.",
+    "D": "The new paint is weaker than the wall's old plaster."
    },
    "correct": "B",
    "explanation": "The team's limited, distinguishable repairs support B; the other choices contradict or focus on an unsupported technical claim.",
@@ -9941,7 +9941,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P04",
    "form": "M03",
-   "content_hash": "f027193629821727"
+   "content_hash": "ab92cc88d76fdd0f"
   },
   {
    "id": "M03-RC-017",
@@ -9952,10 +9952,10 @@
    "difficulty": "E",
    "prompt": "What did the team do before adding repairs?",
    "choices": {
-    "A": "Covered the mural with plaster",
-    "B": "Asked viewers to guess the scene",
+    "A": "Covered the whole mural with fresh plaster",
+    "B": "Asked viewers to guess the missing scene",
     "C": "Photographed the wall and cleaned a test area",
-    "D": "Repainted every missing shape"
+    "D": "Repainted every missing shape in new color"
    },
    "correct": "C",
    "explanation": "S3-S5 give photography and test cleaning before repair; A and D reverse the work, while B is never done.",
@@ -9963,7 +9963,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P04",
    "form": "M03",
-   "content_hash": "7b9aa79c88db746a"
+   "content_hash": "f2e1e555169d8779"
   },
   {
    "id": "M03-RC-018",
@@ -9974,10 +9974,10 @@
    "difficulty": "H",
    "prompt": "Why were the new marks kept visible when viewed up close?",
    "choices": {
-    "A": "So viewers could tell restoration from original evidence",
-    "B": "Because the workers ran out of matching paint",
-    "C": "So infrared cameras could find the mural",
-    "D": "Because close viewers could not see color"
+    "A": "So viewers could tell repairs from original paint",
+    "B": "Because the team ran out of matching paint",
+    "C": "So infrared cameras could find the buried mural",
+    "D": "Because people standing close cannot see faded color"
    },
    "correct": "A",
    "explanation": "Distinguishability avoids pretending uncertain repairs are original; the distractors invent material limits or misuse infrared.",
@@ -9985,7 +9985,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P04",
    "form": "M03",
-   "content_hash": "26d22ab7e499aec5"
+   "content_hash": "013fb1c673f6341c"
   },
   {
    "id": "M03-RC-019",
@@ -9996,7 +9996,7 @@
    "difficulty": "M",
    "prompt": "In S5, “supported” most nearly means:",
    "choices": {
-    "A": "physically held up",
+    "A": "physically propped up",
     "B": "backed by evidence",
     "C": "admired by visitors",
     "D": "protected by plaster"
@@ -10007,7 +10007,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P04",
    "form": "M03",
-   "content_hash": "5ea3c9b46acd69b1"
+   "content_hash": "36900297f09552cc"
   },
   {
    "id": "M03-RC-020",
@@ -10018,10 +10018,10 @@
    "difficulty": "H",
    "prompt": "Which statement would the author most likely agree with?",
    "choices": {
-    "A": "A beautiful guess is equal to historical evidence.",
-    "B": "Any missing detail should remain impossible to view.",
-    "C": "Restoration should help understanding without hiding what is uncertain.",
-    "D": "Modern tools make careful judgment unnecessary."
+    "A": "A beautiful guess is worth as much as real historical evidence.",
+    "B": "Every missing detail should be left impossible for anyone to see.",
+    "C": "Restoration should aid understanding without hiding uncertainty.",
+    "D": "Modern tools such as infrared make careful judgment unnecessary."
    },
    "correct": "C",
    "explanation": "The final choice combines understanding and honesty; the distractors reject evidence, usefulness, or expert judgment.",
@@ -10029,7 +10029,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P04",
    "form": "M03",
-   "content_hash": "12a61bf900b4f5a7"
+   "content_hash": "2cf9154cfdb5ecf0"
   },
   {
    "id": "M03-RC-021",
@@ -10040,10 +10040,10 @@
    "difficulty": "M",
    "prompt": "Which summary best captures the library's new lending project?",
    "choices": {
-    "A": "Libraries should stop lending books.",
-    "B": "Every household should own a drill.",
-    "C": "Shared objects never need repair.",
-    "D": "A library adapted its lending system so useful objects could be shared responsibly."
+    "A": "A library should stop lending books and recordings.",
+    "B": "Every household should buy its own drill and telescope.",
+    "C": "Shared objects never break and never need new parts.",
+    "D": "A library adapted its rules so objects could be shared safely."
    },
    "correct": "D",
    "explanation": "D captures the expansion and safeguards; the other choices contradict the passage or make absolute claims.",
@@ -10051,7 +10051,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P05",
    "form": "M03",
-   "content_hash": "4a2abc6aabb02540"
+   "content_hash": "fe36f840263564a1"
   },
   {
    "id": "M03-RC-022",
@@ -10062,10 +10062,10 @@
    "difficulty": "E",
    "prompt": "Why did staff photograph each kit before checkout?",
    "choices": {
-    "A": "To advertise the kits",
-    "B": "To teach photography",
-    "C": "To record the parts and condition of the kit",
-    "D": "To shorten the waiting list"
+    "A": "To advertise the new kits to residents",
+    "B": "To teach borrowers how to take photographs",
+    "C": "To record the kit's parts and condition",
+    "D": "To shorten the waiting list for popular kits"
    },
    "correct": "C",
    "explanation": "Photographs and labels support inspection and complete returns; the distractors give unrelated purposes.",
@@ -10073,7 +10073,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P05",
    "form": "M03",
-   "content_hash": "7e7c86eac3cc96ff"
+   "content_hash": "eb41fc56d3557eed"
   },
   {
    "id": "M03-RC-023",
@@ -10084,10 +10084,10 @@
    "difficulty": "M",
    "prompt": "What did the waiting list help the staff infer?",
    "choices": {
-    "A": "Which books should be removed",
+    "A": "Which library books should be removed",
     "B": "Which objects residents wanted most",
-    "C": "Which people owned tools already",
-    "D": "Which demonstrations were unsafe"
+    "C": "Which residents already owned their own tools",
+    "D": "Which short demonstrations were unsafe"
    },
    "correct": "B",
    "explanation": "A long wait signals demand and helps guide purchases; the distractors concern information the list does not contain.",
@@ -10095,7 +10095,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P05",
    "form": "M03",
-   "content_hash": "187fc6e1bff3c7aa"
+   "content_hash": "3b22b8815b47398d"
   },
   {
    "id": "M03-RC-024",
@@ -10106,10 +10106,10 @@
    "difficulty": "M",
    "prompt": "Why did the library allow extra time between object loans?",
    "choices": {
-    "A": "Objects were less popular than books.",
-    "B": "Borrowers needed time to buy replacements.",
-    "C": "Staff needed to inspect varied objects and their parts.",
-    "D": "The building closed between every loan."
+    "A": "The objects were less popular than the library's books.",
+    "B": "Borrowers needed extra time to buy replacements.",
+    "C": "Staff needed to inspect the objects and parts.",
+    "D": "The library building closed between every loan."
    },
    "correct": "C",
    "explanation": "Different objects and labeled parts required inspection; the distractors invent low demand, borrower duties, or closures.",
@@ -10117,7 +10117,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P05",
    "form": "M03",
-   "content_hash": "f516ee24c8f0a7f6"
+   "content_hash": "95ede8b4a60d4d55"
   },
   {
    "id": "M03-RC-025",
@@ -10128,10 +10128,10 @@
    "difficulty": "H",
    "prompt": "What lesson does the library-of-things project best support?",
    "choices": {
-    "A": "Sharing succeeds when a system matches the needs and risks of what is shared.",
-    "B": "Rules always prevent objects from breaking.",
-    "C": "People should borrow everything they use.",
-    "D": "Predictions about new projects are never useful."
+    "A": "Sharing succeeds when the rules match what is shared.",
+    "B": "Careful rules always prevent shared objects from breaking.",
+    "C": "People should borrow everything they use at home.",
+    "D": "Predictions about new library projects are never useful."
    },
    "correct": "A",
    "explanation": "The library adapts rules and succeeds with manageable repairs; the other choices use absolutes that the passage does not support.",
@@ -10139,7 +10139,7 @@
    "source": "Original content authored for Sheila ISEE",
    "passage_id": "M03-RC-P05",
    "form": "M03",
-   "content_hash": "9c8b3e151fc4a8d0"
+   "content_hash": "1e447eec2fd1ef8b"
   },
   {
    "id": "M03-MA-001",

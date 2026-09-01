@@ -1,7 +1,7 @@
 {
  "bank": "vr-september",
  "schema_version": "1.0",
- "content_version": "2026.08.31",
+ "content_version": "2026.09.01",
  "items": [
   {
    "id": "VR-SEP-W1-030",
@@ -853,8 +853,8 @@
    "prompt": "SUBJECTIVE most nearly means:",
    "choices": {
     "A": "based on personal opinion",
-    "B": "measurable",
-    "C": "certain",
+    "B": "able to be measured",
+    "C": "beyond all doubt",
     "D": "public"
    },
    "correct": "A",
@@ -862,7 +862,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "ffea418a53327395"
+   "content_hash": "66e25c8adf0efbe7"
   },
   {
    "id": "VR-SEP-W2-034",
@@ -873,8 +873,8 @@
    "difficulty": "M",
    "prompt": "RIGOROUS most nearly means:",
    "choices": {
-    "A": "flexible",
-    "B": "casual",
+    "A": "easily bent",
+    "B": "relaxed and informal",
     "C": "thorough and demanding",
     "D": "motionless"
    },
@@ -883,7 +883,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "0c12f972b93df9d7"
+   "content_hash": "9f19ed8742415f8d"
   },
   {
    "id": "VR-SEP-W2-035",
@@ -915,17 +915,17 @@
    "difficulty": "M",
    "prompt": "STATIONARY most nearly means:",
    "choices": {
-    "A": "unchanging",
+    "A": "easily moved",
     "B": "not moving",
-    "C": "temporary",
-    "D": "stable"
+    "C": "lasting a short time",
+    "D": "made of paper"
    },
    "correct": "B",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "25b0beb0d640f7de"
+   "content_hash": "bc0da0788cd2d39e"
   },
   {
    "id": "VR-SEP-W2-037",
@@ -1210,8 +1210,8 @@
    "prompt": "ADMONISH most nearly means:",
    "choices": {
     "A": "warn or scold",
-    "B": "ignore",
-    "C": "praise",
+    "B": "pay no attention to",
+    "C": "praise warmly",
     "D": "confuse"
    },
    "correct": "A",
@@ -1219,7 +1219,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "45b36f41e23274e4"
+   "content_hash": "3dc7c11e18d48be6"
   },
   {
    "id": "VR-SEP-W2-055",
@@ -1273,16 +1273,16 @@
    "prompt": "CONCISE most nearly means:",
    "choices": {
     "A": "brief and clear",
-    "B": "uncertain",
+    "B": "not at all sure",
     "C": "angry",
-    "D": "wordy"
+    "D": "using too many words"
    },
    "correct": "A",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "058210ddaf0e2027"
+   "content_hash": "63dd56544842bafe"
   },
   {
    "id": "VR-SEP-W2-058",
@@ -1335,9 +1335,9 @@
    "difficulty": "M",
    "prompt": "ELUDE most nearly means:",
    "choices": {
-    "A": "assist",
+    "A": "give help to",
     "B": "escape or avoid",
-    "C": "explain",
+    "C": "explain in detail",
     "D": "repair"
    },
    "correct": "B",
@@ -1345,7 +1345,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W2",
-   "content_hash": "f445cd5df7049299"
+   "content_hash": "4ccd8c8f136ae97b"
   },
   {
    "id": "VR-SEP-W2-061",
@@ -1566,8 +1566,8 @@
    "difficulty": "M",
    "prompt": "In “The company raised more capital,” CAPITAL means:",
    "choices": {
-    "A": "decoration",
-    "B": "city",
+    "A": "a carved decoration",
+    "B": "the main city",
     "C": "punishment",
     "D": "money or financial resources"
    },
@@ -1576,7 +1576,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "20bf362627b105a5"
+   "content_hash": "9f60dddbfb1dde97"
   },
   {
    "id": "VR-SEP-W3-031",
@@ -1609,8 +1609,8 @@
    "prompt": "In “The volume of water in the tank increased,” VOLUME means:",
    "choices": {
     "A": "amount or quantity",
-    "B": "loudness",
-    "C": "book",
+    "B": "level of loudness",
+    "C": "one book of a set",
     "D": "promise"
    },
    "correct": "A",
@@ -1618,7 +1618,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "9d21eb1244fae5a2"
+   "content_hash": "20ecbf3539032b3b"
   },
   {
    "id": "VR-SEP-W3-033",
@@ -1631,15 +1631,15 @@
    "choices": {
     "A": "painful or sensitive",
     "B": "quick",
-    "C": "formal",
-    "D": "generous"
+    "C": "very formal",
+    "D": "kind and generous"
    },
    "correct": "A",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "0d9375ea30199bec"
+   "content_hash": "feb68ef218ae6843"
   },
   {
    "id": "VR-SEP-W3-034",
@@ -1902,17 +1902,17 @@
    "difficulty": "M",
    "prompt": "In “domestic policy,” DOMESTIC most nearly means:",
    "choices": {
-    "A": "foreign",
+    "A": "from another country",
     "B": "ancient",
     "C": "internal to one's own country",
-    "D": "personal"
+    "D": "kept very private"
    },
    "correct": "C",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "5045bb6394b44515"
+   "content_hash": "43625f2496ebb045"
   },
   {
    "id": "VR-SEP-W3-047",
@@ -2007,8 +2007,8 @@
    "difficulty": "M",
    "prompt": "CORDIAL most nearly means:",
    "choices": {
-    "A": "secret",
-    "B": "careless",
+    "A": "kept secret",
+    "B": "careless and hasty",
     "C": "warm and friendly",
     "D": "severe"
    },
@@ -2017,7 +2017,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "9f8bd71207493825"
+   "content_hash": "3597e2c82c1812bd"
   },
   {
    "id": "VR-SEP-W3-056",
@@ -2050,8 +2050,8 @@
    "prompt": "EXPANSE most nearly means:",
    "choices": {
     "A": "wide stretch",
-    "B": "reward",
-    "C": "complaint",
+    "B": "a large reward",
+    "C": "a formal complaint",
     "D": "mistake"
    },
    "correct": "A",
@@ -2059,7 +2059,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "f0862ad18f7418a5"
+   "content_hash": "9178a0234a2815a3"
   },
   {
    "id": "VR-SEP-W3-058",
@@ -2114,15 +2114,15 @@
    "choices": {
     "A": "stable",
     "B": "hurried or rash",
-    "C": "careful",
-    "D": "ceremonial"
+    "C": "slow and careful",
+    "D": "used in ceremonies"
    },
    "correct": "B",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "e2c3fc354aa99863"
+   "content_hash": "848710ba5ec9deb3"
   },
   {
    "id": "VR-SEP-W3-061",
@@ -2154,9 +2154,9 @@
    "difficulty": "M",
    "prompt": "HONORABLE most nearly means:",
    "choices": {
-    "A": "remote",
+    "A": "far away",
     "B": "weak",
-    "C": "unruly",
+    "C": "hard to control",
     "D": "noble and upright"
    },
    "correct": "D",
@@ -2164,7 +2164,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "c96b9aa55bcc0e3c"
+   "content_hash": "4bdbdf85db6ba283"
   },
   {
    "id": "VR-SEP-W3-063",
@@ -2281,16 +2281,16 @@
    "prompt": "PALTRY most nearly means:",
    "choices": {
     "A": "careful",
-    "B": "energetic",
+    "B": "full of energy",
     "C": "meager or insignificant",
-    "D": "royal"
+    "D": "belonging to a king"
    },
    "correct": "C",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "91d3379a39ea7338"
+   "content_hash": "0f0db1177224d0ec"
   },
   {
    "id": "VR-SEP-W3-069",
@@ -2301,9 +2301,9 @@
    "difficulty": "M",
    "prompt": "REFUGE most nearly means:",
    "choices": {
-    "A": "failure",
+    "A": "a complete failure",
     "B": "law",
-    "C": "insult",
+    "C": "a sharp insult",
     "D": "shelter or haven"
    },
    "correct": "D",
@@ -2311,7 +2311,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W3",
-   "content_hash": "24d98c5ce78fa7ef"
+   "content_hash": "0b5a163bf41affa7"
   },
   {
    "id": "VR-SEP-W3-070",
@@ -3269,15 +3269,15 @@
    "choices": {
     "A": "motionless",
     "B": "following later",
-    "C": "uncertain",
-    "D": "earlier"
+    "C": "not yet decided",
+    "D": "happening before"
    },
    "correct": "B",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W4",
-   "content_hash": "056fcb73560eb6e4"
+   "content_hash": "c31525df6635a1ae"
   },
   {
    "id": "VR-SEP-W4-062",
@@ -3289,16 +3289,16 @@
    "prompt": "SUPERIOR most nearly means:",
    "choices": {
     "A": "better or higher-ranking",
-    "B": "temporary",
+    "B": "lasting only briefly",
     "C": "equal",
-    "D": "lower-ranking"
+    "D": "below others in rank"
    },
    "correct": "A",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W4",
-   "content_hash": "91effe972d75fa21"
+   "content_hash": "5fea567bba33bbff"
   },
   {
    "id": "VR-SEP-W4-063",
@@ -3310,16 +3310,16 @@
    "prompt": "SUPPLEMENT most nearly means:",
    "choices": {
     "A": "hide",
-    "B": "oppose",
+    "B": "argue against",
     "C": "add to or complete",
-    "D": "remove"
+    "D": "take away entirely"
    },
    "correct": "C",
    "explanation": "",
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W4",
-   "content_hash": "7fdac0dea25ab287"
+   "content_hash": "cdea82e51002e8d2"
   },
   {
    "id": "VR-SEP-W4-064",
@@ -3477,9 +3477,9 @@
    "difficulty": "M",
    "prompt": "SUBJECTIVE most nearly means:",
    "choices": {
-    "A": "measurable",
-    "B": "public",
-    "C": "certain",
+    "A": "based on hard evidence",
+    "B": "known to everyone",
+    "C": "beyond any question",
     "D": "based on personal opinion"
    },
    "correct": "D",
@@ -3487,7 +3487,7 @@
    "misconceptions": "",
    "source": "Original content authored for Sheila ISEE",
    "form": "W4",
-   "content_hash": "30db1908577ba91f"
+   "content_hash": "7901e3312936f31c"
   },
   {
    "id": "VR-SEP-W4-072",
