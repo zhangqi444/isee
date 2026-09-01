@@ -16,8 +16,19 @@ the first visit.
 
 ## Publishing on GitHub Pages
 
-Settings → Pages → deploy from branch, folder `/site`. Nothing else to configure.
-Everything resolves relatively, so a project subpath (`user.github.io/isee/`) is fine.
+Deployed by `.github/workflows/pages.yml` on every push to `main` that touches
+`site/`. The workflow regenerates `content/bundle.json` from the question banks
+and **fails if it differs from the committed one**, so the site can never ship a
+bundle that has drifted from the source of truth.
+
+Pages "deploy from a branch" only offers the repo root or `/docs`, which is why
+this uses the Actions source instead — it publishes `site/` directly and
+`actions/configure-pages` turns Pages on by itself the first time it runs.
+
+Every path in the app is relative, so it works under a project subpath
+(`user.github.io/isee/`) as well as at a domain root. `node site/test_subpath.js`
+proves that: it serves the folder under `/isee/` and checks the bundle, the
+service-worker scope and the manifest all resolve.
 
 ## Regenerating the question bank
 
@@ -46,7 +57,8 @@ answer-key concealment here is a UX convention, not a security boundary.
 ## Testing
 
     npm install playwright
-    node site/test.js
+    node site/test.js           # behaviour, at the domain root
+    node site/test_subpath.js   # the same site served under /isee/, as Pages does
 
 Checks that the bank loads, passages render, **no answer leaks before submit**,
 scoring and explanations are right, progress survives a reload, and both colour
