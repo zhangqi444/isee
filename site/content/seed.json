@@ -1,0 +1,92 @@
+{
+ "version": 1,
+ "migrated_at": "2026-08-31T12:00:00Z",
+ "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01.",
+ "results": {
+  "ma:W1:0": {
+   "n": 12,
+   "right": 6,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "MA-SEP-004",
+    "MA-SEP-006",
+    "MA-SEP-007",
+    "MA-SEP-008",
+    "MA-SEP-009",
+    "MA-SEP-011"
+   ]
+  },
+  "ma:W1:1": {
+   "n": 12,
+   "right": 7,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "MA-SEP-013",
+    "MA-SEP-015",
+    "MA-SEP-021",
+    "MA-SEP-023",
+    "MA-SEP-024"
+   ]
+  },
+  "vr:W1:0": {
+   "n": 12,
+   "right": 11,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "VR-SEP-W1-041"
+   ]
+  },
+  "vr:W1:1": {
+   "n": 12,
+   "right": 8,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "VR-SEP-W1-044",
+    "VR-SEP-W1-046",
+    "VR-SEP-W1-054",
+    "VR-SEP-W1-056"
+   ]
+  },
+  "vr:W1:2": {
+   "n": 12,
+   "right": 10,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "VR-SEP-W1-064",
+    "VR-SEP-W1-066"
+   ]
+  },
+  "vr:W1:3": {
+   "n": 1,
+   "right": 1,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": []
+  },
+  "qr:W1:0": {
+   "n": 12,
+   "right": 12,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": []
+  },
+  "qr:W1:1": {
+   "n": 12,
+   "right": 11,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
+    "QR-W1-S2-01"
+   ]
+  },
+  "qr:W1:2": {
+   "n": 3,
+   "right": 3,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": []
+  },
+  "rc:W1:0": {
+   "n": 12,
+   "right": 12,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": []
+  }
+ }
+}

@@ -528,8 +528,25 @@ header{
     if (e.key === 'Backspace') { step(-1); e.preventDefault(); }
   });
 
+  /* ---------- migrated Sheets work ----------
+     A one-time import of what she'd already completed in the Google Sheets
+     before the site existed. Applied per viewer, keyed exactly like her own
+     results, and only for sets she has not started on the site — so it seeds
+     an empty device but never overwrites work done here. */
+  function applySeed(seed) {
+    if (!seed || !seed.results) return;
+    if ((S.seedApplied || 0) >= seed.version) return;
+    var added = 0;
+    Object.keys(seed.results).forEach(function (k) {
+      if (!S.results[k]) { S.results[k] = seed.results[k]; added++; }
+    });
+    S.seedApplied = seed.version;
+    save(S);
+    return added;
+  }
+
   /* ---------- boot ---------- */
-  function boot() { home(); }
+  function boot() { if (D) applySeed(D.seed); home(); }
   if (D) boot();
   else {
     fetch('content/bundle.json').then(function (r) { return r.json(); })

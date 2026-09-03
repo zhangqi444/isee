@@ -27,6 +27,9 @@ out['starts']={'W1':'2026-08-31','W2':'2026-09-07','W3':'2026-09-14','W4':'2026-
 out['breaks']=[{'label':'Sep 21 – 27','what':'Split baseline mock'},
  {'label':'Oct 19 – 25','what':'Mock 1'},{'label':'Oct 26 – Nov 1','what':'Correction and retest'},
  {'label':'Nov 2 – 8','what':'Mock 2'}]
+import os as _os
+if _os.path.exists('site/content/seed.json'):
+    out['seed']=json.load(open('site/content/seed.json'))
 os.makedirs('site/content',exist_ok=True)
 json.dump(out,open('site/content/bundle.json','w'),ensure_ascii=False,separators=(',',':'))
 n=sum(len(v) for v in out['subjects'].values())
