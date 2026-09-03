@@ -1,0 +1,10 @@
+{
+  "name": "Sheila's ISEE Practice",
+  "short_name": "ISEE",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F4F7F6",
+  "theme_color": "#0F7A6B",
+  "description": "ISEE Lower Level practice — every question from the study workbooks.",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

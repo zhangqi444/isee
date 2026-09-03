@@ -1,5 +1,4 @@
-_vendor/
 node_modules/
-_transfer*.tar.gz
-_seed.tar.gz
-_t2.tar.gz
+dist/
+dist-artifact/
+shot-*.png

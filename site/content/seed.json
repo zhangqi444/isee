@@ -1,7 +1,7 @@
 {
- "version": 1,
+ "version": 2,
  "migrated_at": "2026-08-31T12:00:00Z",
- "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01.",
+ "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v2: balanced set sizes).",
  "results": {
   "ma:W1:0": {
    "n": 12,
@@ -29,56 +29,56 @@
    ]
   },
   "vr:W1:0": {
-   "n": 12,
-   "right": 11,
+   "n": 10,
+   "right": 10,
    "at": "2026-08-31T12:00:00Z",
-   "wrong": [
-    "VR-SEP-W1-041"
-   ]
+   "wrong": []
   },
   "vr:W1:1": {
-   "n": 12,
-   "right": 8,
+   "n": 9,
+   "right": 6,
    "at": "2026-08-31T12:00:00Z",
    "wrong": [
+    "VR-SEP-W1-041",
     "VR-SEP-W1-044",
-    "VR-SEP-W1-046",
+    "VR-SEP-W1-046"
+   ]
+  },
+  "vr:W1:2": {
+   "n": 9,
+   "right": 7,
+   "at": "2026-08-31T12:00:00Z",
+   "wrong": [
     "VR-SEP-W1-054",
     "VR-SEP-W1-056"
    ]
   },
-  "vr:W1:2": {
-   "n": 12,
-   "right": 10,
+  "vr:W1:3": {
+   "n": 9,
+   "right": 7,
    "at": "2026-08-31T12:00:00Z",
    "wrong": [
     "VR-SEP-W1-064",
     "VR-SEP-W1-066"
    ]
   },
-  "vr:W1:3": {
-   "n": 1,
-   "right": 1,
-   "at": "2026-08-31T12:00:00Z",
-   "wrong": []
-  },
   "qr:W1:0": {
-   "n": 12,
-   "right": 12,
+   "n": 9,
+   "right": 9,
    "at": "2026-08-31T12:00:00Z",
    "wrong": []
   },
   "qr:W1:1": {
-   "n": 12,
-   "right": 11,
+   "n": 9,
+   "right": 8,
    "at": "2026-08-31T12:00:00Z",
    "wrong": [
     "QR-W1-S2-01"
    ]
   },
   "qr:W1:2": {
-   "n": 3,
-   "right": 3,
+   "n": 9,
+   "right": 9,
    "at": "2026-08-31T12:00:00Z",
    "wrong": []
   },

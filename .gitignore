@@ -1,3 +1,7 @@
 _transfer.tar.gz
 xfer/
 __pycache__/
+artifact.html
+site/node_modules/
+site/dist/
+site/dist-artifact/
