@@ -1,5 +1,5 @@
 /* Cache the shell and the question bank so practice works with no signal. */
-var CACHE = 'isee-2026.09.01';
+var CACHE = 'isee-2026.09.03-react';
 var ASSETS = ['./', 'index.html', 'content/bundle.json', 'manifest.webmanifest'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function(){return self.skipWaiting();}));

@@ -1,0 +1,10 @@
+{
+  "client_id": "252309507778-12rrv8cobtkp81kv13vs1n1lhejg1ov9.apps.googleusercontent.com",
+  "project": "toktik-323505",
+  "scope": "https://www.googleapis.com/auth/drive.file",
+  "consent": "External / Testing",
+  "authorized_js_origins": ["https://qizhang.top", "https://zhangqi444.github.io"],
+  "test_user": "zhangqi444@gmail.com",
+  "folder_name": "Sheila ISEE Practice",
+  "note": "drive.file is non-sensitive; app can stay in Testing with owner as test user, no verification, no warning. Only sees files it creates."
+}
