@@ -1,5 +1,5 @@
 /* Question-bank helpers. `D` is the bundle (window.__ISEE__ or content/bundle.json). */
-import { Store } from "./store"
+import { Store, ts } from "./store"
 
 export const SUBJ = {
   vr: { name: "Verbal Reasoning", short: "Verbal", blurb: "Vocabulary and sentence completion", color: "var(--chart-1)" },
@@ -79,7 +79,7 @@ export function allWrong() {
 export function recentSets(limit = 8) {
   return Object.keys(Store.s.results)
     .map((k) => { const p = parseSetId(k); return { id: k, sub: p.sub, wk: p.wk, set: p.n, ...Store.s.results[k] } })
-    .sort((a, b) => (b.at || "").localeCompare(a.at || ""))
+    .sort((a, b) => ts(b.at) - ts(a.at))
     .slice(0, limit)
 }
 /** Accuracy per subject per week, for the dashboard chart. */
@@ -95,7 +95,7 @@ export function accuracyByWeek() {
   })
 }
 export function fmtDate(iso) {
-  if (!iso) return ""
-  const d = new Date(iso)
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+  const t = ts(iso)
+  if (!t) return ""
+  return new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }

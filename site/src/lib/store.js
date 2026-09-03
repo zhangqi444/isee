@@ -12,6 +12,9 @@ export const DRIVE_ENABLED = typeof window !== "undefined" && !!window.__ENABLE_
 function lsLoad() { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch { return {} } }
 function lsSave(s) { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode etc. */ } }
 
+/** Timestamp of an `at` value that may be an ISO string, a number, or missing. */
+export function ts(v) { if (typeof v === "number") return v; const n = Date.parse(v || ""); return isNaN(n) ? 0 : n }
+
 const listeners = new Set()
 let version = 0
 function emit() { version++; listeners.forEach((f) => f()) }
@@ -26,6 +29,14 @@ export const Store = {
   init() {
     this.s = lsLoad()
     this.s.results = this.s.results || {}
+    // The first (vanilla) site stored `at` as Date.now(); everything since uses ISO strings.
+    for (const k of Object.keys(this.s.results)) {
+      const r = this.s.results[k]
+      if (!r || typeof r !== "object") { delete this.s.results[k]; continue }
+      if (typeof r.at === "number") r.at = new Date(r.at).toISOString()
+      else if (r.at != null && typeof r.at !== "string") r.at = ""
+      if (!Array.isArray(r.wrong)) r.wrong = []
+    }
     // Resume a Drive session that is still inside its one-hour token window.
     const d = this.s.drive
     if (d && d.token && d.exp > Date.now()) { this.token = d.token; this.tokenExp = d.exp; this.email = d.email || null }
@@ -180,7 +191,10 @@ export const Store = {
     const local = this.s.results
     for (const k of Object.keys(remote.results)) {
       const rr = remote.results[k], lr = local[k]
-      if (!lr || (rr.at || "") >= (lr.at || "")) local[k] = rr   // last-write-wins by timestamp
+      if (!rr || typeof rr !== "object") continue
+      if (typeof rr.at === "number") rr.at = new Date(rr.at).toISOString()
+      if (!Array.isArray(rr.wrong)) rr.wrong = []
+      if (!lr || ts(rr.at) >= ts(lr.at)) local[k] = rr   // last-write-wins by timestamp
     }
     lsSave(this.s); emit()
   },

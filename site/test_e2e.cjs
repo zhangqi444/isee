@@ -29,14 +29,17 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     const errs = [];
     pg.on('pageerror', (e) => errs.push('PAGEERR ' + e.message));
     pg.on('console', (m) => { if (m.type() === 'error' && !/gsi|accounts\.google|fonts\.g|favicon|net::ERR_FAILED/.test(m.text())) errs.push('CONSOLE ' + m.text()); });
+    // A result saved by the very first site version (numeric `at`) must not break rendering.
+    await pg.addInitScript(() => { if (!localStorage.getItem('isee.v1')) localStorage.setItem('isee.v1', JSON.stringify({ results: { 'rc:W5:0': { n: 12, right: 3, at: 1788395637217, wrong: [] } } })); });
     await pg.goto('http://localhost:8140/isee/', { waitUntil: 'networkidle' });
 
-    // Dashboard renders from the migrated Week-1 seed
+    // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)
     await pg.waitForSelector('[data-slot=card]', { timeout: 10000 });
     const cards = await pg.$$eval('[data-slot=card-description]', (n) => n.map((x) => x.textContent.trim()));
     check('dashboard stat cards', cards.includes('Sets completed') && cards.includes('Accuracy') && cards.includes('To review'));
     const body = await pg.textContent('body');
-    check('seed applied (10 of 82 sets, 81% overall)', /10\s*of\s*82/.test(body) && /81%/.test(body), body.match(/\d+\s*of\s*82/)?.[0]);
+    check('seed applied + legacy set (11 of 82 sets)', /11\s*of\s*82/.test(body), body.match(/\d+\s*of\s*82/)?.[0]);
+    check('legacy numeric timestamp renders as a date', /Sep 2/.test(body));
     check('review count 19 on dashboard', /19/.test(body));
     check('recent-sets table present', (await pg.$$('[data-slot=table-row]')).length > 1);
     check('accuracy chart drawn', (await pg.$$('.recharts-bar-rectangle')).length > 0, (await pg.$$('.recharts-bar-rectangle')).length + ' bars');
@@ -112,7 +115,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     await pg.reload({ waitUntil: 'networkidle' });
     await pg.waitForSelector('text=Sets completed');
     check('theme persists after reload', (await pg.evaluate(() => document.documentElement.classList.contains('dark'))) === nowDark);
-    check('progress persists after reload', /11\s*of\s*82/.test(await pg.textContent('body')));
+    check('progress persists after reload', /12\s*of\s*82/.test(await pg.textContent('body')));
     await pg.click('button[aria-label="Toggle theme"]');   // back to light for the screenshot
 
     // Drive chip: offline here, so the click must not crash; status becomes "unavailable"

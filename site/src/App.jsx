@@ -50,6 +50,25 @@ function Screen({ route }) {
   return <Home />
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(p) { super(p); this.state = { err: null } }
+  static getDerivedStateFromError(err) { return { err } }
+  componentDidCatch(err) { console.error(err) }
+  render() {
+    if (!this.state.err) return this.props.children
+    return (
+      <div className="mx-auto mt-16 flex max-w-md flex-col gap-3 rounded-xl border bg-card p-6 text-center shadow-sm">
+        <h2 className="font-serif text-xl font-semibold">Something went wrong</h2>
+        <p className="text-muted-foreground text-sm">{String(this.state.err && this.state.err.message || this.state.err)}</p>
+        <div className="flex justify-center gap-2">
+          <button className="rounded-md border px-3 py-1.5 text-sm" onClick={() => location.reload()}>Reload</button>
+          <button className="rounded-md bg-destructive px-3 py-1.5 text-sm text-white" onClick={() => { if (confirm("Clear the progress saved in this browser? Anything already in Google Drive is kept.")) { localStorage.removeItem("isee.v1"); location.reload() } }}>Clear local data</button>
+        </div>
+      </div>
+    )
+  }
+}
+
 export default function App() {
   const route = useRoute()
   useStore()
@@ -61,7 +80,7 @@ export default function App() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-1 flex-col p-4 md:p-6">
-              <Screen route={route} />
+              <ErrorBoundary key={route.join("/")}><Screen route={route} /></ErrorBoundary>
             </div>
           </div>
         </div>
