@@ -19,14 +19,22 @@ function emit() { version++; listeners.forEach((f) => f()) }
 export const Store = {
   s: null,
   token: null, tokenExp: 0, folderId: null, fileId: null, pushTimer: null, tc: null,
-  status: "local",          // local | connecting | syncing | live | error | unavailable
+  status: "local",          // local | connecting | syncing | live | expired | error | unavailable
   email: null,
   lastSync: null,
 
   init() {
     this.s = lsLoad()
     this.s.results = this.s.results || {}
+    // Resume a Drive session that is still inside its one-hour token window.
+    const d = this.s.drive
+    if (d && d.token && d.exp > Date.now()) { this.token = d.token; this.tokenExp = d.exp; this.email = d.email || null }
+    else if (this.s.driveOptIn && DRIVE_ENABLED) this.status = "expired"
     return this.s
+  },
+  /** Called once at boot: silently reconnect if the stored token is still good. */
+  resume() {
+    if (this.valid()) this.afterAuth()
   },
   subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn) },
   snapshot() { return version },
@@ -71,6 +79,9 @@ export const Store = {
   setDriveOptIn(v) { this.s.driveOptIn = v; lsSave(this.s) },
 
   /* ---- Google Drive ---- */
+  /* Must be called from a click: Google opens a popup, and browsers block popups
+   * that no gesture started. The consent screen is shown only the first time;
+   * later reconnects use prompt:'' and the popup closes itself. */
   signIn() {
     this.setDriveOptIn(true)
     if (!DRIVE_ENABLED || !window.google || !google.accounts || !google.accounts.oauth2) {
@@ -84,22 +95,37 @@ export const Store = {
           if (resp && resp.access_token) {
             this.token = resp.access_token
             this.tokenExp = Date.now() + (resp.expires_in || 3600) * 1000 - 60000
+            this.s.driveGranted = true
+            this.saveSession()
             this.afterAuth()
-          } else { this.setStatus("local") }
+          } else {
+            this.lastError = resp && resp.error ? `Google said: ${resp.error_description || resp.error}` : "Sign-in was cancelled."
+            this.setStatus(resp && resp.error === "access_denied" ? "error" : "local")
+          }
         },
         error_callback: (err) => {
           console.warn("oauth", err)
-          this.lastError = err && (err.message || err.type)
-          this.setStatus("error")
+          this.lastError = err && err.type === "popup_failed_to_open"
+            ? "Your browser blocked the sign-in window. Allow pop-ups for this site and try again."
+            : err && err.type === "popup_closed" ? "The sign-in window was closed before finishing."
+            : (err && (err.message || err.type)) || "Sign-in failed."
+          this.setStatus(err && err.type === "popup_closed" ? (this.s.driveGranted ? "expired" : "local") : "error")
         },
       })
     }
     this.setStatus("connecting")
-    this.tc.requestAccessToken({ prompt: this.token ? "" : "consent" })
+    this.tc.requestAccessToken({ prompt: this.s.driveGranted ? "" : "consent" })
+  },
+  saveSession() {
+    this.s.drive = { token: this.token, exp: this.tokenExp, email: this.email }
+    lsSave(this.s)
   },
   signOut() {
-    this.token = null; this.tokenExp = 0; this.folderId = null; this.fileId = null
-    this.email = null; this.setDriveOptIn(false); this.setStatus("local")
+    const t = this.token
+    this.token = null; this.tokenExp = 0; this.folderId = null; this.fileId = null; this.email = null
+    delete this.s.drive; delete this.s.driveGranted
+    this.setDriveOptIn(false); this.setStatus("local")
+    if (t && window.google && google.accounts && google.accounts.oauth2) { try { google.accounts.oauth2.revoke(t) } catch { /* ignore */ } }
   },
   valid() { return this.token && Date.now() < this.tokenExp },
   api(url, opts = {}) {
@@ -112,11 +138,16 @@ export const Store = {
   afterAuth() {
     this.setStatus("syncing")
     this.api("https://www.googleapis.com/oauth2/v3/userinfo").then((r) => r.json())
-      .then((u) => { this.email = u && u.email }).catch(() => {})
+      .then((u) => { this.email = u && u.email; this.saveSession() }).catch(() => {})
       .then(() => this.ensureFolder())
       .then(() => this.pull())
       .then(() => { this.lastSync = new Date(); this.setStatus("live") })
-      .catch((e) => { console.warn("drive sync failed", e); this.lastError = String(e.message || e); this.setStatus("error") })
+      .catch((e) => {
+        console.warn("drive sync failed", e)
+        this.lastError = String(e.message || e)
+        if (/Drive 401/.test(this.lastError)) { this.token = null; this.tokenExp = 0; delete this.s.drive; lsSave(this.s); this.setStatus("expired") }
+        else this.setStatus("error")
+      })
   },
   ensureFolder() {
     const q = encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and name='${FOLDER}' and trashed=false`)
@@ -154,7 +185,8 @@ export const Store = {
     lsSave(this.s); emit()
   },
   schedulePush() {
-    if (!this.valid() || !this.folderId) return
+    if (!this.valid()) { if (this.s.driveOptIn && DRIVE_ENABLED && this.status !== "expired") this.setStatus("expired"); return }
+    if (!this.folderId) return
     clearTimeout(this.pushTimer)
     this.pushTimer = setTimeout(() => this.push().then(() => { this.lastSync = new Date(); this.setStatus("live") }).catch(() => this.setStatus("error")), 1200)
   },

@@ -1,0 +1,81 @@
+/* Drive session behaviour, with Google stubbed: sign-in once, survive a reload
+ * without a new prompt, reconnect after expiry with prompt:'' (no consent). */
+const { chromium } = require('playwright');
+const http = require('http'), fs = require('fs'), path = require('path');
+const DIST = path.join(__dirname, 'dist');
+const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
+const srv = http.createServer((req, res) => {
+  let p = decodeURIComponent(req.url.split('?')[0]); if (p === '/') p = '/index.html';
+  const f = path.join(DIST, p); if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
+  res.writeHead(200, { 'content-type': MIME[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
+});
+const exe = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined;
+let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : '  FAIL ') + n + (x ? '  ' + x : '')); if (!ok) failures++; };
+const FAKE_GIS = `
+  window.__gisCalls = JSON.parse(sessionStorage.getItem('gisCalls') || '[]');
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({ requestAccessToken: (o) => {
+      window.__gisCalls.push(o.prompt); sessionStorage.setItem('gisCalls', JSON.stringify(window.__gisCalls));
+      setTimeout(() => cfg.callback({ access_token: 'tok-' + Date.now(), expires_in: 3600 }), 50);
+    } }),
+    revoke: () => {}
+  } } };`;
+(async () => {
+  await new Promise((r) => srv.listen(8142, r));
+  const b = await chromium.launch({ executablePath: exe });
+  const ctx = await b.newContext({ viewport: { width: 1200, height: 800 } });
+  await ctx.route(/fonts\.g|accounts\.google\.com\/gsi/, (r) => r.abort());
+  const drive = { folder: null, file: null, body: null, calls: [] };
+  await ctx.route(/googleapis\.com/, (r) => {
+    const u = r.request().url(), m = r.request().method(); drive.calls.push(m + ' ' + u.replace(/\?.*/, ''));
+    const json = (o) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(o) });
+    if (/userinfo/.test(u)) return json({ email: 'qi@example.com' });
+    if (/drive\/v3\/files\?/.test(u) && m === 'GET') {
+      if (/google-apps\.folder/.test(decodeURIComponent(u))) return json({ files: drive.folder ? [{ id: drive.folder, name: 'Sheila ISEE Practice' }] : [] });
+      return json({ files: drive.file ? [{ id: drive.file, name: 'progress.json' }] : [] });
+    }
+    if (/drive\/v3\/files$/.test(u) && m === 'POST') { drive.folder = 'folder1'; return json({ id: 'folder1' }); }
+    if (/upload\/drive\/v3\/files\?/.test(u) && m === 'POST') { drive.file = 'file1'; drive.body = r.request().postData(); return json({ id: 'file1' }); }
+    if (/upload\/drive\/v3\/files\/file1/.test(u) && m === 'PATCH') { drive.body = r.request().postData(); return json({ id: 'file1' }); }
+    if (/drive\/v3\/files\/file1\?alt=media/.test(u)) return json(JSON.parse(drive.body.split('\r\n\r\n').pop().split('\r\n--')[0]));
+    return r.fulfill({ status: 404, body: '{}' });
+  });
+  await ctx.addInitScript(FAKE_GIS);
+  const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
+  await pg.goto('http://localhost:8142/', { waitUntil: 'networkidle' });
+  await pg.waitForSelector('text=Sets completed');
+  check('fresh visit shows Save to Drive, no popup on load', (await pg.$('button:has-text("Save to Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
+
+  await pg.click('button:has-text("Save to Drive")');
+  try { await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 }); }
+  catch (e) { console.log('DEBUG status button:', await pg.$eval('[data-slot=sidebar-footer]', (x) => x.textContent), '| calls:', JSON.stringify(drive.calls), '| gis:', JSON.stringify(await pg.evaluate(() => window.__gisCalls)), '| errs:', errs.join(' | ')); throw e; }
+  check('first sign-in asks for consent once', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent"]');
+  check('folder + progress.json created', drive.folder === 'folder1' && drive.file === 'file1' && /"results"/.test(drive.body));
+  check('email shown in sidebar', /qi@example\.com/.test(await pg.textContent('[data-slot=sidebar-footer]')));
+
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('text=Sets completed');
+  await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  check('reload: still Saved to Drive with NO new Google prompt', (await pg.evaluate(() => window.__gisCalls.length)) === 1);
+
+  // finish a set -> pushed to Drive
+  await pg.evaluate(() => { location.hash = '#/run/ma/W2/0'; }); await pg.waitForSelector('[data-testid=choice]');
+  for (let i = 0; i < 12; i++) { await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); if (i < 11) await pg.waitForSelector('[data-testid=choice]'); }
+  await pg.waitForSelector('[data-testid=score]'); await pg.waitForTimeout(1600);
+  check('finished set pushed to Drive', /"ma:W2:0"/.test(drive.body));
+
+  // expire the stored token -> reconnect chip, click -> prompt '' (no consent screen)
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('text=Sets completed');
+  check('expired token: shows Reconnect Drive, no popup on load', (await pg.$('button:has-text("Reconnect Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 1);
+  await pg.click('button:has-text("Reconnect Drive")');
+  await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  check('reconnect uses prompt:"" (silent), then live', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent",""]');
+
+  // disconnect clears everything
+  await pg.click('button:has-text("Saved to Drive")');
+  await pg.waitForSelector('button:has-text("Save to Drive")');
+  check('disconnect forgets the session', (await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return !s.drive && !s.driveGranted && !s.driveOptIn; })));
+  check('no page errors', !errs.length, errs.join(' | '));
+  await b.close(); srv.close();
+  console.log(failures ? `\n${failures} FAILURE(S)` : '\nall drive checks passed'); process.exit(failures ? 1 : 0);
+})();

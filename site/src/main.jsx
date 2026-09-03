@@ -32,8 +32,9 @@ function boot(bundle) {
       <App />
     </React.StrictMode>
   )
-  // Reconnect Drive silently if she opted in on an earlier visit.
-  if (DRIVE_ENABLED && Store.s.driveOptIn) setTimeout(() => Store.signIn(), 600)
+  // Resume the Drive session if the stored token is still good. Never open the
+  // Google popup on load: with no click behind it, browsers block it anyway.
+  if (DRIVE_ENABLED) Store.resume()
 }
 
 function fail(msg) {

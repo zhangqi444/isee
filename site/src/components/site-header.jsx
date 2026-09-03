@@ -95,9 +95,9 @@ export function SiteHeader({ route }) {
                   ) : status === "error" ? (
                     <CloudOff className="text-destructive" />
                   ) : (
-                    <Cloud className={cn(status === "live" && "text-success")} />
+                    <Cloud className={cn(status === "live" && "text-success", status === "expired" && "text-warning")} />
                   )}
-                  {status === "live" ? "Saved to Drive" : status === "connecting" ? "Connecting…" : status === "syncing" ? "Syncing…" : status === "error" ? "Retry Drive" : "Save to Drive"}
+                  {status === "live" ? "Saved to Drive" : status === "connecting" ? "Connecting…" : status === "syncing" ? "Syncing…" : status === "error" ? "Retry Drive" : status === "expired" ? "Reconnect Drive" : "Save to Drive"}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -105,7 +105,9 @@ export function SiteHeader({ route }) {
                   ? `Progress is mirrored to progress.json in your Google Drive${store.email ? " (" + store.email + ")" : ""}. Click to disconnect.`
                   : status === "error"
                     ? store.lastError || "Google Drive could not be reached."
-                    : "Authorize the site to keep progress.json in a folder it creates in your Google Drive."}
+                    : status === "expired"
+                      ? "Google sign-ins last an hour. Click to reconnect — no consent screen this time, progress on this device is safe meanwhile."
+                      : "Authorize the site to keep progress.json in a folder it creates in your Google Drive."}
               </TooltipContent>
             </Tooltip>
           )}
@@ -118,7 +120,7 @@ export function SiteHeader({ route }) {
               disabled={status === "connecting" || status === "syncing"}
               onClick={() => (status === "live" ? store.signOut() : store.signIn())}
             >
-              {status === "connecting" || status === "syncing" ? <Loader2 className="animate-spin" /> : status === "error" ? <CloudOff className="text-destructive" /> : <Cloud className={cn(status === "live" && "text-success")} />}
+              {status === "connecting" || status === "syncing" ? <Loader2 className="animate-spin" /> : status === "error" ? <CloudOff className="text-destructive" /> : <Cloud className={cn(status === "live" && "text-success", status === "expired" && "text-warning")} />}
             </Button>
           )}
           <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme} aria-label="Toggle theme">

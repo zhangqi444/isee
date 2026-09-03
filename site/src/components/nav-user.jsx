@@ -21,6 +21,7 @@ export const STATUS_LABEL = {
   connecting: "Connecting to Google…",
   syncing: "Syncing with Drive…",
   live: "Saved to Google Drive",
+  expired: "Drive session expired — reconnect",
   error: "Drive sync failed",
   unavailable: "Drive unavailable here",
 }
@@ -82,7 +83,7 @@ export function NavUser() {
                 ) : (
                   <DropdownMenuItem onSelect={() => store.signIn()} disabled={status === "connecting" || status === "syncing"}>
                     {status === "error" ? <CloudOff /> : <Cloud />}
-                    {status === "error" ? "Retry Google Drive" : "Save to Google Drive"}
+                    {status === "error" ? "Retry Google Drive" : status === "expired" ? "Reconnect Google Drive" : "Save to Google Drive"}
                   </DropdownMenuItem>
                 )
               ) : (
