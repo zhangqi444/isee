@@ -49,7 +49,7 @@ export function WeekCard({ sub, wk, highlight }) {
                   <span className="bg-muted text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold tabular-nums">{n + 1}</span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="font-medium">Set {n + 1}</span>
-                    <span className="text-muted-foreground text-xs">{set.length} questions{r ? ` · done ${r.at ? "on " + new Date(r.at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}` : ""}</span>
+                    <span className="text-muted-foreground text-xs">{set.length} questions{r ? ` · done${r.at ? " " + new Date(r.at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""} · tap to see your answers` : ""}</span>
                   </span>
                   <ScoreBadge r={r} />
                   <ChevronRight className="text-muted-foreground size-4" />

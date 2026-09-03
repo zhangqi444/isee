@@ -93,6 +93,21 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     check('set of ' + n + ' finished, no leak', n === expected && !leak, score.slice(0, 60));
     await pg.click('button:has-text("Back to sets")');
     await pg.waitForFunction(() => location.hash === '#/s/rc/W2');
+    // Reopening the finished set shows the answers she gave, not a blank runner
+    await pg.waitForSelector('text=tap to see your answers');
+    await pg.evaluate(() => { location.hash = '#/run/rc/W2/0'; });
+    await pg.waitForSelector('[data-testid=score]');
+    const yours = await pg.$$eval('[data-slot=card-content] >> text=/Your answer:/', (n) => n.map((x) => x.textContent));
+    check('reopened set shows her recorded answers', yours.length === expected && yours.every((t) => /Your answer: A\./.test(t)), yours[0]);
+    check('reopened set shows completed date + Try again', /completed/.test(await pg.textContent('[data-testid=score]')) && (await pg.$('[data-testid=retry]')) !== null, (await pg.textContent('[data-testid=score]')).replace(/\s+/g, ' ').slice(0, 120));
+    // Migrated Week-1 sets carry her letters from the Sheets
+    await pg.evaluate(() => { location.hash = '#/run/vr/W1/1'; });
+    await pg.waitForSelector('[data-testid=score]');
+    check('migrated W1 set shows Sheets answers (6/9)', /6\s*\/\s*9/.test((await pg.textContent('[data-testid=score]')).replace(/\s+/g, ' ')) && (await pg.$$eval('text=/Your answer: [A-D]\./', (n) => n.length)) === 9);
+    await pg.click('[data-testid=retry]');
+    await pg.waitForSelector('[data-testid=choice]');
+    check('Try again starts a clean attempt', (await pg.$$eval('[data-testid=choice][data-state=checked]', (n) => n.length)) === 0);
+    await pg.evaluate(() => { location.hash = '#/s/rc/W2'; });
     await pg.waitForSelector('text=Set 1');
     check('result badge on sets list', new RegExp('\\d+/' + expected).test(await pg.textContent('body')));
 

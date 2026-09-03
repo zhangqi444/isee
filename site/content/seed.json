@@ -1,7 +1,7 @@
 {
- "version": 2,
+ "version": 3,
  "migrated_at": "2026-08-31T12:00:00Z",
- "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v2: balanced set sizes).",
+ "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v3: balanced set sizes + her chosen letters).",
  "results": {
   "ma:W1:0": {
    "n": 12,
@@ -14,7 +14,21 @@
     "MA-SEP-008",
     "MA-SEP-009",
     "MA-SEP-011"
-   ]
+   ],
+   "picks": {
+    "MA-SEP-001": "C",
+    "MA-SEP-002": "B",
+    "MA-SEP-003": "D",
+    "MA-SEP-004": "C",
+    "MA-SEP-005": "C",
+    "MA-SEP-006": "B",
+    "MA-SEP-007": "A",
+    "MA-SEP-008": "C",
+    "MA-SEP-009": "C",
+    "MA-SEP-010": "A",
+    "MA-SEP-011": "B",
+    "MA-SEP-012": "D"
+   }
   },
   "ma:W1:1": {
    "n": 12,
@@ -26,13 +40,39 @@
     "MA-SEP-021",
     "MA-SEP-023",
     "MA-SEP-024"
-   ]
+   ],
+   "picks": {
+    "MA-SEP-013": "B",
+    "MA-SEP-014": "A",
+    "MA-SEP-015": "C",
+    "MA-SEP-016": "B",
+    "MA-SEP-017": "D",
+    "MA-SEP-018": "C",
+    "MA-SEP-019": "C",
+    "MA-SEP-020": "A",
+    "MA-SEP-021": "A",
+    "MA-SEP-022": "D",
+    "MA-SEP-023": "B",
+    "MA-SEP-024": "C"
+   }
   },
   "vr:W1:0": {
    "n": 10,
    "right": 10,
    "at": "2026-08-31T12:00:00Z",
-   "wrong": []
+   "wrong": [],
+   "picks": {
+    "VR-SEP-W1-030": "A",
+    "VR-SEP-W1-031": "C",
+    "VR-SEP-W1-032": "D",
+    "VR-SEP-W1-033": "C",
+    "VR-SEP-W1-034": "C",
+    "VR-SEP-W1-035": "B",
+    "VR-SEP-W1-036": "B",
+    "VR-SEP-W1-037": "D",
+    "VR-SEP-W1-038": "A",
+    "VR-SEP-W1-039": "A"
+   }
   },
   "vr:W1:1": {
    "n": 9,
@@ -42,7 +82,18 @@
     "VR-SEP-W1-041",
     "VR-SEP-W1-044",
     "VR-SEP-W1-046"
-   ]
+   ],
+   "picks": {
+    "VR-SEP-W1-040": "D",
+    "VR-SEP-W1-041": "A",
+    "VR-SEP-W1-042": "B",
+    "VR-SEP-W1-043": "B",
+    "VR-SEP-W1-044": "B",
+    "VR-SEP-W1-045": "C",
+    "VR-SEP-W1-046": "A",
+    "VR-SEP-W1-047": "B",
+    "VR-SEP-W1-048": "A"
+   }
   },
   "vr:W1:2": {
    "n": 9,
@@ -51,7 +102,18 @@
    "wrong": [
     "VR-SEP-W1-054",
     "VR-SEP-W1-056"
-   ]
+   ],
+   "picks": {
+    "VR-SEP-W1-049": "A",
+    "VR-SEP-W1-054": "B",
+    "VR-SEP-W1-055": "B",
+    "VR-SEP-W1-056": "B",
+    "VR-SEP-W1-057": "C",
+    "VR-SEP-W1-058": "B",
+    "VR-SEP-W1-059": "B",
+    "VR-SEP-W1-060": "D",
+    "VR-SEP-W1-061": "A"
+   }
   },
   "vr:W1:3": {
    "n": 9,
@@ -60,13 +122,35 @@
    "wrong": [
     "VR-SEP-W1-064",
     "VR-SEP-W1-066"
-   ]
+   ],
+   "picks": {
+    "VR-SEP-W1-062": "A",
+    "VR-SEP-W1-063": "C",
+    "VR-SEP-W1-064": "B",
+    "VR-SEP-W1-065": "C",
+    "VR-SEP-W1-066": "C",
+    "VR-SEP-W1-067": "D",
+    "VR-SEP-W1-068": "B",
+    "VR-SEP-W1-069": "C",
+    "VR-SEP-W1-070": "A"
+   }
   },
   "qr:W1:0": {
    "n": 9,
    "right": 9,
    "at": "2026-08-31T12:00:00Z",
-   "wrong": []
+   "wrong": [],
+   "picks": {
+    "QR-SEP-001": "C",
+    "QR-W1-S1-02": "B",
+    "QR-W1-S1-03": "D",
+    "QR-W1-S1-04": "B",
+    "QR-W1-S1-05": "C",
+    "QR-W1-S1-06": "D",
+    "QR-W1-S1-07": "C",
+    "QR-W1-S1-08": "A",
+    "QR-W1-S1-09": "B"
+   }
   },
   "qr:W1:1": {
    "n": 9,
@@ -74,19 +158,55 @@
    "at": "2026-08-31T12:00:00Z",
    "wrong": [
     "QR-W1-S2-01"
-   ]
+   ],
+   "picks": {
+    "QR-W1-S1-10": "A",
+    "QR-W1-S1-11": "A",
+    "QR-W1-S1-12": "D",
+    "QR-W1-S2-01": "B",
+    "QR-W1-S2-02": "C",
+    "QR-W1-S2-03": "B",
+    "QR-W1-S2-04": "B",
+    "QR-W1-S2-05": "A",
+    "QR-W1-S2-06": "D"
+   }
   },
   "qr:W1:2": {
    "n": 9,
    "right": 9,
    "at": "2026-08-31T12:00:00Z",
-   "wrong": []
+   "wrong": [],
+   "picks": {
+    "QR-W1-S2-07": "C",
+    "QR-W1-S2-08": "A",
+    "QR-W1-S2-09": "C",
+    "QR-W1-S2-10": "A",
+    "QR-W1-S2-11": "A",
+    "QR-W1-S2-12": "D",
+    "QR-W1-S2-13": "D",
+    "QR-W1-S2-14": "B",
+    "QR-W1-S2-15": "B"
+   }
   },
   "rc:W1:0": {
    "n": 12,
    "right": 12,
    "at": "2026-08-31T12:00:00Z",
-   "wrong": []
+   "wrong": [],
+   "picks": {
+    "RC-SEP-W1-S1-Q01": "D",
+    "RC-SEP-W1-S1-Q02": "D",
+    "RC-SEP-W1-S1-Q03": "C",
+    "RC-SEP-W1-S1-Q04": "D",
+    "RC-SEP-W1-S1-Q05": "A",
+    "RC-SEP-W1-S1-Q06": "D",
+    "RC-SEP-W1-S2-Q01": "D",
+    "RC-SEP-W1-S2-Q02": "A",
+    "RC-SEP-W1-S2-Q03": "B",
+    "RC-SEP-W1-S2-Q04": "D",
+    "RC-SEP-W1-S2-Q05": "C",
+    "RC-SEP-W1-S2-Q06": "C"
+   }
   }
  }
 }

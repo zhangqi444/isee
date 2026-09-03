@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Home, X, XCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, Home, RotateCcw, XCircle } from "lucide-react"
 
 import { D, LTR, keyOf } from "@/lib/content"
 import { go } from "@/lib/router"
@@ -55,11 +55,24 @@ function ActionBar({ children }) {
   )
 }
 
-export function Runner({ items, title, setId, custom, exitPath, exitLabel }) {
+/** Reconstruct the pick indices of a finished set from a stored result: the
+ *  recorded letters when we have them, otherwise "was right => the key". */
+function picksFromResult(items, r) {
+  const wrong = new Set(r.wrong || [])
+  return items.map((q) => {
+    const L = r.picks && r.picks[q.id]
+    if (L && LTR.indexOf(L) > -1) return LTR.indexOf(L)
+    return wrong.has(q.id) ? null : LTR.indexOf(keyOf(q))
+  })
+}
+
+export function Runner({ items, title, setId, custom, exitPath, exitLabel, prior }) {
   const [i, setI] = useState(0)
-  const [picks, setPicks] = useState([])
-  const [done, setDone] = useState(null)
+  const [picks, setPicks] = useState(() => (prior ? picksFromResult(items, prior) : []))
+  const [done, setDone] = useState(() => (prior ? { right: prior.right, at: prior.at, attempts: prior.attempts || 1, reopened: true } : null))
   const it = items[i], total = items.length
+
+  function retry() { setPicks([]); setDone(null); setI(0); window.scrollTo(0, 0) }
 
   function choose(k) { const np = picks.slice(); np[i] = k; setPicks(np) }
   function step(d) {
@@ -72,13 +85,20 @@ export function Runner({ items, title, setId, custom, exitPath, exitLabel }) {
     const wrong = []
     items.forEach((q, j) => { if (LTR[picks[j]] === keyOf(q)) right++; else wrong.push(q.id) })
     if (!custom) {
-      Store.recordSet(setId, { n: items.length, right, at: new Date().toISOString(), wrong })
+      const picksById = {}
+      items.forEach((q, j) => { if (picks[j] != null) picksById[q.id] = LTR[picks[j]] })
+      const res = { n: items.length, right, at: new Date().toISOString(), wrong, picks: picksById }
+      if (prior) {                                   // keep the first attempt on record
+        res.attempts = (prior.attempts || 1) + 1
+        res.first = prior.first || { right: prior.right, at: prior.at }
+      }
+      Store.recordSet(setId, res)
     } else {
       const gotIds = {}
       items.forEach((q, j) => { if (LTR[picks[j]] === keyOf(q)) gotIds[q.id] = 1 })
       Store.clearWrong((_, r) => (r.wrong || []).filter((id) => !gotIds[id]))
     }
-    setDone({ right })
+    setDone({ right, at: new Date().toISOString(), attempts: prior ? (prior.attempts || 1) + 1 : 1 })
     window.scrollTo(0, 0)
   }
 
@@ -103,15 +123,23 @@ export function Runner({ items, title, setId, custom, exitPath, exitLabel }) {
     const msg = pct >= 85 ? "Strong set. Read the notes on anything you guessed."
       : pct >= 60 ? "Solid. The notes below are where the next few marks are."
       : "This one was hard. Work through the notes slowly — that is what moves the score."
+    const when = done.at ? new Date(done.at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : null
+    const noLetters = done.reopened && !(prior && prior.picks)
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
         <Card className="from-primary/5 to-card bg-gradient-to-t items-center text-center" data-testid="score">
           <CardHeader className="w-full">
-            <CardDescription>{title}</CardDescription>
+            <CardDescription>{title}{done.reopened && when ? ` · completed ${when}` : ""}{done.attempts > 1 ? ` · attempt ${done.attempts}` : ""}</CardDescription>
             <CardTitle className="font-serif text-5xl font-semibold tabular-nums">
               {done.right}<span className="text-muted-foreground text-xl font-normal"> / {total}</span>
             </CardTitle>
             <CardDescription className="text-base">{pct}% · {msg}</CardDescription>
+            {!custom && (
+              <div className="mt-2 flex justify-center">
+                <Button variant="outline" size="sm" onClick={retry} data-testid="retry"><RotateCcw /> Try this set again</Button>
+              </div>
+            )}
+            {noLetters && <CardDescription className="text-xs">This set was done before answers were recorded letter by letter, so only right/missed is shown.</CardDescription>}
           </CardHeader>
         </Card>
         <h2 className="mt-2 font-serif text-xl font-semibold">Every question</h2>

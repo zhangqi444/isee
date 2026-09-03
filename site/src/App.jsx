@@ -2,7 +2,7 @@ import * as React from "react"
 
 import { SUBJ, allWrong, setId, setsFor } from "@/lib/content"
 import { useRoute } from "@/lib/router"
-import { useStore } from "@/lib/store"
+import { Store, useStore } from "@/lib/store"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -23,6 +23,7 @@ function Screen({ route }) {
           key={`run:${a}:${b}:${n}`}
           items={set}
           setId={setId(a, b, n)}
+          prior={Store.s.results[setId(a, b, n)] || null}
           title={`${SUBJ[a].name} · ${b} · Set ${n + 1}`}
           exitPath={`/s/${a}/${b}`}
           exitLabel="Back to sets"

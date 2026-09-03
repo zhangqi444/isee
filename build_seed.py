@@ -37,7 +37,7 @@ for sub,(xlsx,sheet,acol,ccol,rows,qcol) in SPECS.items():
         if not a: continue
         c=V(ws,r,ccol)
         q=norm(ws.cell(r,qcol).value)
-        verdict[q]=(str(a).strip()==str(c).strip())
+        verdict[q]=(str(a).strip()==str(c).strip(), str(a).strip().upper()[:1])
     # site's W1 items for this subject, in the app's own order, sliced into sets
     items=[it for it in bundle['subjects'][sub] if it['w']=='W1']
     k=-(-len(items)//SETSIZE); base,extra=divmod(len(items),k)   # balanced, mirrors content.js chunk()
@@ -46,22 +46,24 @@ for sub,(xlsx,sheet,acol,ccol,rows,qcol) in SPECS.items():
         n=base+(1 if i<extra else 0); sets.append(items[at:at+n]); at+=n
     matched=unmatched=0
     for n,st in enumerate(sets):
-        right=0; wrong=[]; seen=0
+        right=0; wrong=[]; seen=0; picks={}
         for it in st:
             v=verdict.get(norm(it['q']))
             if v is None: continue        # she didn't answer this site item
             seen+=1
-            if v: right+=1
+            ok,letter=v
+            if letter in 'ABCD': picks[it['id']]=letter
+            if ok: right+=1
             else: wrong.append(it['id'])
         if seen:
-            results[f'{sub}:W1:{n}']={'n':len(st),'right':right,'at':DATE,'wrong':wrong}
+            results[f'{sub}:W1:{n}']={'n':len(st),'right':right,'at':DATE,'wrong':wrong,'picks':picks}
         matched+=seen; unmatched+=len(st)-seen
     report.append((sub,len(items),len(sets),matched,unmatched,
                    sum(results[k]['right'] for k in results if k.startswith(sub)),
                    sum(len(results[k]['wrong']) for k in results if k.startswith(sub))))
 
-seed={'version':2,'migrated_at':DATE,
-      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v2: balanced set sizes).",
+seed={'version':3,'migrated_at':DATE,
+      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v3: balanced set sizes + her chosen letters).",
       'results':results}
 json.dump(seed,open('site/content/seed.json','w'),ensure_ascii=False,indent=1)
 
