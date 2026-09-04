@@ -1,6 +1,7 @@
 import * as React from "react"
 
-import { D, SUBJ, allWrong, setId, setsFor } from "@/lib/content"
+import { D, SUBJ, setId, setsFor } from "@/lib/content"
+import { reviewQueue, wordQuizItems } from "@/lib/engine"
 import { useRoute } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -15,6 +16,24 @@ import { EssayList, EssayWeek } from "@/pages/essay"
 import { MockCorrections, MockEssay, MockList, MockOverview, MockSection } from "@/pages/mock"
 import { Calendar } from "@/pages/calendar"
 import { Checklist } from "@/pages/checklist"
+import { Mixed, MixedRun } from "@/pages/mixed"
+import { Score } from "@/pages/score"
+
+/** The queue is read once on mount, so finishing the run (which reschedules every item) keeps the score screen up. */
+function ReviewRun({ sub, mode }) {
+  const items = React.useMemo(() => {
+    const q = reviewQueue(sub)
+    const rows = mode === "checkin" ? q.checkin : mode === "all" ? [...q.due, ...q.scheduled] : q.due
+    return rows.map((x) => x.it)
+  }, [sub, mode])
+  if (!items.length) return <Review />
+  return <Runner items={items} custom ctx="review" sub={sub} title={`${SUBJ[sub].name} · ${mode === "checkin" ? "Check-in" : "Review"}`} exitPath="/review" exitLabel="Back to review" />
+}
+function VocabRun({ wk }) {
+  const items = React.useMemo(() => wordQuizItems(wk), [wk])
+  if (!items.length) return <Precision key={wk} wk={wk} />
+  return <Runner items={items} custom ctx="vocab" sub="vr" title={`Precision words · ${wk} · quiz`} exitPath={`/precision/${wk}`} exitLabel="Back to the words" />
+}
 
 function Screen({ route }) {
   const [top, a, b, c] = route
@@ -36,24 +55,12 @@ function Screen({ route }) {
       )
     }
   }
-  if (top === "review" && SUBJ[a]) {
-    const items = allWrong().filter((x) => x.sub === a).map((x) => x.it)
-    if (items.length) {
-      return (
-        <Runner
-          key={`rev:${a}:${items.length}`}
-          items={items}
-          custom
-          title={`${SUBJ[a].name} · Review`}
-          exitPath="/review"
-          exitLabel="Back to review"
-        />
-      )
-    }
-    return <Review />
-  }
+  if (top === "review" && SUBJ[a]) return <ReviewRun key={`rev:${a}:${b || ""}`} sub={a} mode={b} />
   if (top === "review") return <Review />
+  if (top === "precision" && a && D.precision[a] && b === "quiz") return <VocabRun key={"vocab:" + a} wk={a} />
   if (top === "precision" && a && D.precision[a]) return <Precision key={a} wk={a} />
+  if (top === "mixed") return b === undefined && a === "run" ? <MixedRun key="mixed-run" /> : <Mixed />
+  if (top === "score") return <Score />
   if (top === "essay" && a && D.essay.weeks[a]) return <EssayWeek key={a} wk={a} />
   if (top === "essay") return <EssayList />
   if (top === "mock" && a && D.mocks.some((m) => m.id === a)) {

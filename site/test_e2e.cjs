@@ -36,7 +36,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)
     await pg.waitForSelector('[data-slot=card]', { timeout: 10000 });
     const cards = await pg.$$eval('[data-slot=card-description]', (n) => n.map((x) => x.textContent.trim()));
-    check('dashboard stat cards', cards.includes('Sets completed') && cards.includes('Accuracy') && cards.includes('To review'));
+    check('dashboard stat cards', cards.includes('Sets completed') && cards.includes('Accuracy') && cards.includes('Due for review'));
     const body = await pg.textContent('body');
     check('seed applied + legacy set (11 of 82 sets)', /11\s*of\s*82/.test(body), body.match(/\d+\s*of\s*82/)?.[0]);
     check('legacy numeric timestamp renders as a date', /Sep 2/.test(body));
@@ -59,10 +59,10 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
       await pg.click('[data-slot=sidebar-menu-button]:has-text("Review")');
     }
     await pg.waitForFunction(() => location.hash === '#/review');
-    check('review page lists subjects', /to try again/.test(await pg.textContent('body')));
+    check('review page lists subjects', /due now/.test(await pg.textContent('body')));
 
     // Enter a review; header breadcrumb + sidebar trigger must still be there; exit via breadcrumb
-    await pg.click('button:has-text("Start review")');
+    await pg.click('[data-testid^=start-review-]');
     await pg.waitForSelector('[data-testid=choice]');
     check('review runner shows choices', (await pg.$$('[data-testid=choice]')).length === 4);
     check('header still present inside a review', (await pg.$('[data-slot=sidebar-trigger]')) !== null);

@@ -34,10 +34,17 @@ function crumbs(route) {
   } else if (top === "review") {
     out.push({ label: "Review", path: "/review" })
     if (SUBJ[a]) out.push({ label: SUBJ[a].name, path: "/review/" + a })
+    if (SUBJ[a] && b) out.push({ label: b === "checkin" ? "Check-in" : "Everything", path: `/review/${a}/${b}` })
   } else if (top === "precision") {
     out.push({ label: SUBJ.vr.name, path: "/s/vr" })
     if (a) out.push({ label: a, path: "/s/vr/" + a })
     out.push({ label: "Precision review", path: "/precision/" + a })
+    if (b === "quiz") out.push({ label: "Word quiz", path: `/precision/${a}/quiz` })
+  } else if (top === "mixed") {
+    out.push({ label: "Mixed practice", path: "/mixed" })
+    if (a === "run") out.push({ label: "Mixed set", path: "/mixed/run" })
+  } else if (top === "score") {
+    out.push({ label: "Score", path: "/score" })
   } else if (top === "essay") {
     out.push({ label: "Essay", path: "/essay" })
     if (a) out.push({ label: a, path: "/essay/" + a })

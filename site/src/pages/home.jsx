@@ -1,8 +1,10 @@
 import * as React from "react"
 import { ArrowRight, CalendarDays, CheckCircle2, ListChecks, PenLine, RotateCcw, Target } from "lucide-react"
+import { reviewQueue } from "@/lib/engine"
+import { ReadinessCard } from "@/pages/score"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
-import { D, ORDER, SUBJ, accuracyByWeek, allWrong, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
+import { D, ORDER, SUBJ, accuracyByWeek, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { upcoming } from "@/pages/calendar"
@@ -38,7 +40,8 @@ function ScoreBadge({ pct }) {
 
 export function SectionCards() {
   const o = overall()
-  const misses = allWrong().length
+  const q = reviewQueue()
+  const misses = q.due.length
   const cur = currentWeek()
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @4xl/main:grid-cols-4">
@@ -70,12 +73,12 @@ export function SectionCards() {
 
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>To review</CardDescription>
+          <CardDescription>Due for review</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{misses}</CardTitle>
           <CardAction><RotateCcw className="text-muted-foreground size-5" /></CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="text-muted-foreground">{misses ? "Missed questions waiting for a second try" : "Nothing waiting — finish a set to add some"}</div>
+          <div className="text-muted-foreground">{misses ? `Spaced review due today${q.scheduled.length ? ` · ${q.scheduled.length} more scheduled` : ""}` : q.scheduled.length ? `Nothing due today · ${q.scheduled.length} scheduled` : "Nothing waiting — finish a set to add some"}</div>
           {misses ? (
             <Button size="sm" variant="outline" onClick={() => go("/review")}>Start review <ArrowRight /></Button>
           ) : null}
@@ -256,6 +259,7 @@ export function Home() {
   useStore()
   return (
     <div className="flex flex-col gap-4 md:gap-6">
+      <ReadinessCard />
       <SectionCards />
       <div className="grid grid-cols-1 items-start gap-4 @4xl/main:grid-cols-[3fr_2fr] md:gap-6">
         <WeekChecklistCard />

@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { precisionSummary } from "@/pages/precision"
+import { masteryOf, pacingFor, skillsFor } from "@/lib/engine"
+import { LevelBadge } from "@/pages/score"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 function ScoreBadge({ r }) {
   if (!r) return <Badge variant="outline" className="text-muted-foreground">Not started</Badge>
@@ -85,6 +88,44 @@ export function WeekCard({ sub, wk, highlight }) {
   )
 }
 
+/** Skill levels for one subject: weakest first. Mastered needs a right answer in a later mixed set or mock. */
+export function SkillsCard({ sub }) {
+  const skills = skillsFor(sub)
+  const practiced = skills.filter((k) => k.attempted)
+  const m = masteryOf(sub), pace = pacingFor(sub)
+  const [all, setAll] = React.useState(false)
+  const rows = all ? skills : practiced
+  return (
+    <Card className="gap-3 py-5" data-testid="skills">
+      <CardHeader className="px-5">
+        <CardTitle>Skills</CardTitle>
+        <CardDescription>
+          {practiced.length ? `${m.mastered} mastered · ${m.proficient} proficient · ${practiced.length} of ${skills.length} practiced` : `${skills.length} skills in this subject — levels appear after the first set`}
+          {pace.n >= 8 ? ` · median ${Math.round(pace.median)} s a question against a ${pace.budget} s budget` : ""}
+        </CardDescription>
+        <CardAction><Button size="sm" variant="ghost" onClick={() => setAll((v) => !v)}>{all ? "Practiced only" : "All skills"}</Button></CardAction>
+      </CardHeader>
+      {rows.length ? (
+        <CardContent className="px-5">
+          <Table>
+            <TableHeader><TableRow><TableHead>Skill</TableHead><TableHead className="hidden @md/main:table-cell">Weeks</TableHead><TableHead className="text-right">Right now</TableHead><TableHead className="text-right">Level</TableHead></TableRow></TableHeader>
+            <TableBody>
+              {rows.map((k) => (
+                <TableRow key={k.sk}>
+                  <TableCell className="font-medium">{k.sk}{k.overdue ? <span className="text-warning ml-2 text-xs">{k.overdue} due</span> : null}</TableCell>
+                  <TableCell className="text-muted-foreground hidden text-xs @md/main:table-cell">{k.weeks.join(" ")}</TableCell>
+                  <TableCell className="text-right tabular-nums">{k.acc == null ? "—" : `${Math.round(k.acc * 100)}% · ${k.attempted}/${k.total}`}</TableCell>
+                  <TableCell className="text-right"><LevelBadge level={k.level} /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      ) : null}
+    </Card>
+  )
+}
+
 export function Subject({ sub, wk }) {
   useStore()
   const p = subjProgress(sub)
@@ -113,6 +154,7 @@ export function Subject({ sub, wk }) {
           </div>
         </CardContent>
       </Card>
+      {!wk && <SkillsCard sub={sub} />}
       {weeks.map((w) => (
         <WeekCard key={w.w} sub={sub} wk={w.w} highlight={w.w === cur} />
       ))}

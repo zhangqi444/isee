@@ -127,6 +127,15 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.waitForSelector('[data-testid=mock-corrections]');
   const ov = await body(pg);
   check('results table + missed questions once the whole form is done', /Results/.test(ov) && /Missed questions · \d+/.test(ov) && /raw correct/.test(ov));
+  check('next steps worked out from the mock', (await pg.$('[data-testid=next-steps]')) !== null && /Next steps this week/.test(ov));
+  check('stanine estimate per section in the results', /≈Stanine/.test(ov));
+  check('mock misses carry cause tags', (await pg.$$('[data-testid=cause-tags]')).length >= 3);
+  await pg.click('[data-testid=cause-tags] >> nth=0 >> [data-testid=tag-rushed]');
+  await pg.waitForTimeout(200);
+  check('tagging a mock miss sticks', (await pg.$eval('[data-testid=cause-tags] >> nth=0', (e) => e.dataset.tag)) === 'rushed');
+  await pg.evaluate(() => { location.hash = '#/mock'; }); await pg.waitForSelector('[data-testid=band-card]');
+  check('mock list shows the estimated band card', /Estimated score band/.test(await body(pg)) && /stanine/i.test(await body(pg)));
+  await pg.evaluate(() => { location.hash = '#/mock/DGN'; }); await pg.waitForSelector('[data-testid=mock-corrections]');
   await pg.click('[data-testid=mock-corrections]');
   await pg.waitForSelector('[data-testid=choice]');
   check('corrections drill opens as a runner', /Corrections/.test(await body(pg)));
@@ -179,6 +188,72 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.waitForSelector('[data-testid=home-custom]');
   check('quick-add from the dashboard lands on the week list', /Read 20 pages/.test(await body(pg)));
   check('dashboard points at the month parent to-dos', /parent to-do/.test(await body(pg)));
+
+  console.log('== learning engine');
+  await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=readiness-score]');
+  check('readiness score on the dashboard', /^\d+$/.test((await pg.textContent('[data-testid=readiness-score]')).trim()));
+  check('streak + effort points shown', (await pg.$('[data-testid=streak]')) !== null && /\d+ effort points/.test(await body(pg)));
+  check('score parts listed with weights', (await pg.$$('[data-testid=score-parts] li')).length === 6);
+  check('mock band on the dashboard after one mock', /Latest mock ≈ stanine \d/.test(await body(pg)));
+  // a fresh set with timing, pacing mode and cause tags
+  await pg.evaluate(() => { location.hash = '#/run/rc/W2/0'; }); await pg.waitForSelector('[data-testid=choice]');
+  await pg.click('[data-testid=pacing-toggle]'); await pg.waitForSelector('[data-testid=soft-timer]');
+  check('pacing mode shows a soft timer against the budget', /\/ 60/.test(await pg.textContent('[data-testid=soft-timer]')));
+  await pg.click('[data-testid=pacing-toggle]'); await pg.waitForTimeout(100);
+  check('pacing mode toggles off', (await pg.$('[data-testid=soft-timer]')) === null);
+  for (let k = 0; k < 40; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(40); }
+  await pg.waitForSelector('[data-testid=score]');
+  check('per-question pacing summary after a set', (await pg.$('[data-testid=pace-summary]')) !== null && /real-test budget 60 s/.test(await body(pg)));
+  const missTags = await pg.$$('[data-testid=cause-tags]');
+  check('every miss gets cause + confidence tags', missTags.length >= 1 && /of \d+ miss/.test(await body(pg)));
+  await pg.click('[data-testid=cause-tags] >> nth=0 >> [data-testid=tag-careless]');
+  await pg.click('[data-testid=cause-tags] >> nth=0 >> [data-testid=sure-no]');
+  await pg.waitForTimeout(150);
+  check('tag + confidence recorded', (await pg.$eval('[data-testid=cause-tags] >> nth=0', (e) => e.dataset.tag)) === 'careless' && /1 of \d+ miss/.test(await body(pg)));
+  const rcRec = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const id = Object.keys(s.items).find((k) => k.startsWith('RC-') && s.items[k].tag === 'careless'); return s.items[id]; });
+  check('learning record: miss scheduled for tomorrow with ms + tag', !!rcRec && rcRec.step === 0 && rcRec.due > new Date().toISOString() && rcRec.hist[rcRec.hist.length - 1].ms >= 0 && rcRec.sure === false);
+  // spaced review: the migrated Week-1 misses are overdue -> due now
+  await pg.evaluate(() => { location.hash = '#/review'; }); await pg.waitForSelector('[data-testid=cause-bar]');
+  const rv = await body(pg);
+  check('review page: migrated misses due now, cause breakdown shown', /\d+ due now/.test(rv) && /Why misses happen/.test(rv));
+  const dueVR = +(await pg.textContent('[data-testid=due-vr]').catch(() => '0'));
+  check('VR has due items (words rated shaky + misses)', dueVR >= 1, dueVR + ' due');
+  await pg.click('[data-testid=start-review-vr]'); await pg.waitForSelector('[data-testid=choice]');
+  for (let k = 0; k < 60; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await pg.waitForSelector('[data-testid=score]');
+  const afterRv = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const recs = Object.values(s.items).filter((r) => (r.hist || []).some((h) => h.ctx === 'review')); return { n: recs.length, stepped: recs.filter((r) => r.step >= 1).length, reset: recs.filter((r) => r.step === 0 && r.due).length }; });
+  check('review answers recorded: right ones step forward, wrong ones reset', afterRv.n >= 1 && afterRv.stepped + afterRv.reset === afterRv.n, JSON.stringify(afterRv));
+  await pg.evaluate(() => { location.hash = '#/review'; }); await pg.waitForSelector('text=Review');
+  check('review page shows scheduled items after a pass', /scheduled/.test(await body(pg)));
+  // mixed set
+  await pg.evaluate(() => { location.hash = '#/mixed'; }); await pg.waitForSelector('[data-testid=mixed-start]');
+  check('mixed set previews all four subjects', /Verbal · \d/.test(await body(pg)) && /Reading · \d/.test(await body(pg)));
+  await pg.click('[data-testid=mixed-start]'); await pg.waitForSelector('[data-testid=choice]');
+  check('mixed runner titled', /Mixed set · all subjects/.test(await body(pg)) && /1 \/ 12/.test(await body(pg)));
+  for (let k = 0; k < 14; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=2'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await pg.waitForSelector('[data-testid=score]');
+  await pg.evaluate(() => { location.hash = '#/mixed'; }); await pg.waitForSelector('text=Mixed sets so far');
+  check('mixed result stored with per-subject split', (await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const r = Object.values(s.mixed)[0]; return r && r.n === 12 && r.bySub && Object.keys(r.bySub).length === 4; })));
+  // vocabulary quiz
+  await pg.evaluate(() => { location.hash = '#/precision/W1'; }); await pg.waitForSelector('[data-testid=word-quiz]');
+  check('precision page has word summary + quiz', /\d+ known · \d+ learning/.test(await body(pg)));
+  await pg.click('[data-testid=word-quiz]'); await pg.waitForSelector('[data-testid=question]');
+  check('word quiz is 20 synonym questions', /1 \/ 20/.test(await body(pg)) && /most nearly means/.test(await pg.textContent('[data-testid=question]')));
+  const choicesN = (await pg.$$('[data-testid=choice]')).length;
+  check('four distinct choices per word', choicesN === 4);
+  for (let k = 0; k < 22; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(25); }
+  await pg.waitForSelector('[data-testid=score]');
+  const wordRecs = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return Object.keys(s.items).filter((k) => k.startsWith('w:') && s.items[k].hist.some((h) => h.ctx === 'vocab')).length; });
+  check('word answers recorded on the word records', wordRecs === 20, wordRecs + ' words');
+  // skills + mastery on the subject page, and the score page
+  await pg.evaluate(() => { location.hash = '#/s/ma'; }); await pg.waitForSelector('[data-testid=skills]');
+  check('subject page lists skill levels', (await pg.$$('[data-testid=skills] [data-level]')).length >= 3 && /Proficient|Familiar|Needs work/.test(await body(pg)));
+  await pg.evaluate(() => { location.hash = '#/score'; }); await pg.waitForSelector('text=How the number is built');
+  check('score page explains the parts and lists subjects', /Accuracy · 30%/.test(await body(pg)) && /Effort points/.test(await body(pg)));
+  // checklist carries the new items
+  await pg.evaluate(() => { location.hash = '#/checklist/W2'; }); await pg.waitForSelector('[data-testid=ck-item]');
+  const ck2 = await body(pg);
+  check('week checklist has word quiz + mixed set + mock follow-up', /Word quiz/.test(ck2) && /mixed set/.test(ck2) && /Mock follow-up/.test(ck2));
 
   check('no page errors', !errs.length, errs.slice(0, 3).join(' | '));
   await pg.screenshot({ path: 'shot-calendar.png', fullPage: false });

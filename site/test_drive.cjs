@@ -62,6 +62,7 @@ const FAKE_GIS = `
   for (let i = 0; i < 12; i++) { await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); if (i < 11) await pg.waitForSelector('[data-testid=choice]'); }
   await pg.waitForSelector('[data-testid=score]'); await pg.waitForTimeout(1600);
   check('finished set pushed to Drive', /"ma:W2:0"/.test(drive.body));
+  check('learning records travel with it (schema 3, items, mixed)', /"schema":3/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body));
 
   // expire the stored token -> reconnect chip, click -> prompt '' (no consent screen)
   await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
@@ -77,6 +78,20 @@ const FAKE_GIS = `
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   await pg.waitForTimeout(300);
   check('merge tie keeps local picks', (await pg.evaluate(() => JSON.parse(localStorage.getItem('isee.v1')).results['ma:W2:0'].picks.X)) === 'A');
+
+  // Learning records: another device tagged a miss and reviewed it later -> the newer copy wins, histories are merged
+  const missId = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return s.results['ma:W2:0'].wrong[0]; });
+  {
+    const remote = JSON.parse(drive.body.split('\r\n\r\n').pop().split('\r\n--')[0]);
+    const r = remote.items[missId];
+    const later = new Date(Date.now() + 60000).toISOString();
+    remote.items[missId] = { ...r, tag: 'misread', sure: false, step: 1, at: later, hist: [...r.hist, { at: later, ok: true, ms: 4000, ctx: 'review' }] };
+    drive.body = JSON.stringify(remote);
+  }
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  await pg.waitForTimeout(300);
+  const merged = await pg.evaluate((id) => JSON.parse(localStorage.getItem('isee.v1')).items[id], missId);
+  check('newer remote learning record wins tag + schedule, histories merged', merged.tag === 'misread' && merged.step === 1 && merged.hist.length === 2 && merged.hist[1].ctx === 'review', JSON.stringify(merged).slice(0, 160));
 
   // disconnect clears everything
   await pg.click('button:has-text("Saved to Drive")');

@@ -1,7 +1,8 @@
 import * as React from "react"
 import { CalendarDays, ExternalLink, MapPin, Save, Timer } from "lucide-react"
 
-import { D } from "@/lib/content"
+import { mockBand } from "@/lib/engine"
+import { D, fmtDate } from "@/lib/content"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -44,7 +45,11 @@ export function allEvents() {
     const end = new Date(D.starts[w.w] + "T00:00:00"); end.setDate(end.getDate() + 6)
     ev.push({ id: "wk-" + w.w, kind: "week", date: D.starts[w.w], end: iso(end), title: `${w.w} · plan week`, detail: e ? `Essay focus: ${e.focus}` : "", path: "/s/vr/" + w.w })
   }
-  for (const m of D.mocks) ev.push({ id: "mock-" + m.id, kind: "mock", date: m.start, title: m.name, detail: m.blurb, path: "/mock/" + m.id })
+  const band = mockBand()
+  for (const m of D.mocks) {
+    const done = band.mocks.find((x) => x.form === m.id)
+    ev.push({ id: "mock-" + m.id, kind: "mock", date: m.start, title: done ? `${m.name} · ${done.pct}% · stanine ≈${done.st}` : m.name, detail: done ? `Finished ${fmtDate(done.at)}. ${m.blurb}` : m.blurb, path: "/mock/" + m.id })
+  }
   for (const b of D.breaks || []) {
     if (/mock/i.test(b.what)) continue                       // mocks come from D.mocks with real dates
     const d = parseLabelStart(b.label)

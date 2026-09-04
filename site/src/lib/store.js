@@ -29,7 +29,7 @@ export const Store = {
   init() {
     this.s = lsLoad()
     this.s.results = this.s.results || {}
-    for (const k of ["precision", "essays", "mocks", "checklists"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
+    for (const k of ["precision", "essays", "mocks", "checklists", "items", "mixed"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
     // The first (vanilla) site stored `at` as Date.now(); everything since uses ISO strings.
     for (const k of Object.keys(this.s.results)) {
       const r = this.s.results[k]
@@ -84,6 +84,15 @@ export const Store = {
     const next = fn(cur) || cur
     next.at = new Date().toISOString()
     this.s[slice][key] = next
+    lsSave(this.s); emit(); this.schedulePush()
+  },
+  /** Write several keys of a slice at once (one save, one sync). `stamp:false` keeps
+   *  the records' own `at` — used by the backfill so older migrated records never
+   *  outrank a copy another device has since enriched. */
+  setMany(slice, map, { stamp = true } = {}) {
+    if (!this.s[slice]) this.s[slice] = {}
+    const now = new Date().toISOString()
+    for (const k of Object.keys(map)) { const v = map[k]; if (stamp || !v.at) v.at = now; this.s[slice][k] = v }
     lsSave(this.s); emit(); this.schedulePush()
   },
   setPref(k, v) { this.s[k] = v; lsSave(this.s); emit(); this.schedulePush() },
@@ -203,14 +212,29 @@ export const Store = {
   merge(remote) {
     if (!remote || !remote.results) return
     // keyed slices: last-write-wins per key by `at`
-    for (const slice of ["precision", "essays", "mocks", "checklists"]) {
+    for (const slice of ["precision", "essays", "mocks", "checklists", "mixed"]) {
       const rs = remote[slice] || {}, ls = this.s[slice]
       for (const k of Object.keys(rs)) {
         if (!rs[k] || typeof rs[k] !== "object") continue
         if (!ls[k] || ts(rs[k].at) > ts(ls[k].at)) ls[k] = rs[k]
       }
     }
+    // learning records: newer copy wins the schedule/tags, attempt history is the union
+    {
+      const rs = remote.items || {}, ls = this.s.items
+      for (const k of Object.keys(rs)) {
+        const rr = rs[k], lr = ls[k]
+        if (!rr || typeof rr !== "object") continue
+        if (!lr) { ls[k] = rr; continue }
+        const newer = ts(rr.at) > ts(lr.at) ? rr : lr
+        const seen = {}, hist = []
+        for (const h of [...(lr.hist || []), ...(rr.hist || [])]) { const key = (h.at || "") + "|" + (h.ctx || ""); if (h && !seen[key]) { seen[key] = 1; hist.push(h) } }
+        hist.sort((a, b) => ts(a.at) - ts(b.at))
+        ls[k] = { ...newer, hist: hist.slice(-40) }
+      }
+    }
     if (remote.testDate && !this.s.testDate) { this.s.testDate = remote.testDate; this.s.testFormat = remote.testFormat || this.s.testFormat }
+    if (remote.pacing && this.s.pacing == null) this.s.pacing = true
     const local = this.s.results
     for (const k of Object.keys(remote.results)) {
       const rr = remote.results[k], lr = local[k]
@@ -222,6 +246,7 @@ export const Store = {
       else if (rt === lt) local[k] = { ...rr, ...lr, picks: lr.picks || rr.picks }   // same attempt: keep the richer copy
     }
     lsSave(this.s); emit()
+    if (this.afterMerge) this.afterMerge()
   },
   schedulePush() {
     if (!this.valid()) { if (this.s.driveOptIn && DRIVE_ENABLED && this.status !== "expired") this.setStatus("expired"); return }
@@ -231,8 +256,9 @@ export const Store = {
   },
   push() {
     if (!this.valid() || !this.folderId) return Promise.resolve()
-    const body = JSON.stringify({ schema: 2, savedAt: new Date().toISOString(), results: this.s.results,
-      precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, checklists: this.s.checklists, testDate: this.s.testDate || null, testFormat: this.s.testFormat || null })
+    const body = JSON.stringify({ schema: 3, savedAt: new Date().toISOString(), results: this.s.results,
+      precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, checklists: this.s.checklists, items: this.s.items, mixed: this.s.mixed,
+      testDate: this.s.testDate || null, testFormat: this.s.testFormat || null, pacing: !!this.s.pacing })
     if (this.fileId) {
       return this.api(`https://www.googleapis.com/upload/drive/v3/files/${this.fileId}?uploadType=media`,
         { method: "PATCH", headers: { "Content-Type": "application/json" }, body })

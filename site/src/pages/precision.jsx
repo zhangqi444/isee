@@ -1,7 +1,8 @@
 import * as React from "react"
-import { BookA, CheckCircle2, Eye, EyeOff, RotateCcw, Send } from "lucide-react"
+import { BookA, CheckCircle2, Eye, EyeOff, ListChecks, RotateCcw, Send } from "lucide-react"
 
 import { D, weekLabel } from "@/lib/content"
+import { scheduleWord, wordStatus, wordSummary } from "@/lib/engine"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -43,7 +44,9 @@ function WordCard({ wk, entry, idx, state, submitted }) {
       words[entry.word] = { ...(words[entry.word] || {}), ...next, at: new Date().toISOString() }
       return { ...cur, words }
     })
+    if (next.conf) scheduleWord(entry.word, next.conf)   // 1 → review tomorrow, 2 → in three days, 3 → quiz only
   }
+  const ws = wordStatus(entry.word)
   function onText(v) {
     setText(v)
     clearTimeout(timer.current)
@@ -62,7 +65,10 @@ function WordCard({ wk, entry, idx, state, submitted }) {
         </CardTitle>
         <CardDescription className="text-foreground/80 text-[15px]">{entry.task}</CardDescription>
         <CardAction>
-          {due ? <Badge variant="warning"><RotateCcw /> {!r.text ? "Not answered" : !r.conf ? "Needs a rating" : "Review due"}</Badge> : mastered ? <Badge variant="success"><CheckCircle2 /> Mastered</Badge> : null}
+          {due ? <Badge variant="warning"><RotateCcw /> {!r.text ? "Not answered" : !r.conf ? "Needs a rating" : "Review due"}</Badge>
+            : ws.status === "known" ? <Badge variant="success" data-testid="word-known"><CheckCircle2 /> Known</Badge>
+            : ws.status === "due" || ws.status === "brushup" ? <Badge variant="warning" data-testid="word-due"><RotateCcw /> {ws.status === "brushup" ? "Brush-up due" : "Quiz due"}</Badge>
+            : mastered ? <Badge variant="secondary" data-testid="word-learning">Explained · quiz next</Badge> : null}
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 px-5">
@@ -105,6 +111,7 @@ export function Precision({ wk }) {
   if (!data) return null
   const state = precisionState(wk)
   const sum = precisionSummary(wk)
+  const ws = wordSummary(wk)
   const ready = data.words.every((w) => { const r = state.words[w.word]; return r && r.text && r.conf })
 
   function submit() {
@@ -119,16 +126,21 @@ export function Precision({ wk }) {
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><BookA className="size-4" /> Verbal Reasoning · {wk} · {weekLabel(wk)}</CardDescription>
           <CardTitle className="font-serif text-2xl font-semibold tracking-tight">Session 1 — Precision Review</CardTitle>
-          <CardDescription>{data.minutes}. Explain each word in your own words, rate how sure you are, then check the meaning. Submit the whole set once every word has an answer and a rating.</CardDescription>
+          <CardDescription>{data.minutes}. Explain each word in your own words, rate how sure you are, then check the meaning. Submit the whole set once every word has an answer and a rating. A word counts as <em>known</em> once it is explained here and answered right in the synonym quiz on a different day.</CardDescription>
           <CardAction>
             {sum.submitted ? <Badge variant="success"><CheckCircle2 /> Submitted</Badge> : <Badge variant="secondary" className="tabular-nums">{sum.written}/{sum.total} written</Badge>}
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className="flex flex-col gap-3">
           <Progress value={(sum.written / sum.total) * 100} className="h-1.5" />
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => go(`/precision/${wk}/quiz`)} data-testid="word-quiz"><ListChecks /> Word quiz · synonyms{ws.due + ws.brushup ? ` (${ws.due + ws.brushup} due)` : ""}</Button>
+            <span className="text-muted-foreground text-xs">Four choices per word, ISEE style. Best done a day after writing the explanations.</span>
+          </div>
           <div className="text-muted-foreground flex flex-wrap gap-x-4 text-sm tabular-nums">
             <span>{sum.written} of {sum.total} answered</span>
-            {sum.submitted && <span>{sum.total - sum.due} mastered · {sum.due} review due</span>}
+            {sum.submitted && <span>{sum.due} to rate or review</span>}
+            <span data-testid="word-summary">{ws.known} known · {ws.learning + ws.new} learning{ws.due + ws.brushup ? ` · ${ws.due + ws.brushup} quiz due` : ""}</span>
             {sum.submittedAt && <span>submitted {new Date(sum.submittedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>}
           </div>
         </CardContent>

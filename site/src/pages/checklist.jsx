@@ -1,7 +1,9 @@
 import * as React from "react"
 import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, ListChecks, Plus, Printer, Trash2 } from "lucide-react"
 
-import { D, ORDER, SUBJ, allWrong, currentWeek, setId, setsFor, weekLabel } from "@/lib/content"
+import { D, ORDER, SUBJ, currentWeek, setId, setsFor, weekLabel } from "@/lib/content"
+import { mockNextSteps, rec, reviewQueue } from "@/lib/engine"
+import { mixedThisWeek } from "@/pages/mixed"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -41,6 +43,8 @@ export function weekItems(wk) {
     if (s === "vr" && D.precision && D.precision[wk]) {
       const ps = precisionSummary(wk)
       items.push({ id: `prec:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, label: "Session 1 · Precision review — 20 words in your own words", sub: "20–25 min", done: ps.submitted, path: `/precision/${wk}`, auto: true })
+      const quizzed = (D.precision[wk].words || []).some((e) => { const r = rec("w:" + e.word); return r && (r.hist || []).some((h) => h.ctx === "vocab") })
+      items.push({ id: `quiz:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, label: "Word quiz — the same 20 words as ISEE synonym questions", sub: "a day after Session 1", done: quizzed, path: `/precision/${wk}/quiz`, auto: true })
     }
     setsFor(s, wk).forEach((set, n) => {
       const r = Store.s.results[setId(s, wk, n)]
@@ -51,13 +55,17 @@ export function weekItems(wk) {
     const st = essayStatus(wk)
     items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
   }
-  const misses = allWrong().length
-  items.push({ id: `review:${wk}`, group: "Review", tag: "Review", label: misses ? `Clear the review pile — ${misses} to try again` : "Review pile is empty", sub: "due review comes before new work", done: misses === 0, path: "/review", auto: true })
+  const q = reviewQueue(), due = q.due.length
+  items.push({ id: `review:${wk}`, group: "Review", tag: "Review", label: due ? `Clear the review pile — ${due} due now` : q.scheduled.length ? `Review pile clear — ${q.scheduled.length} scheduled for later` : "Review pile is empty", sub: "due review comes before new work", done: due === 0, path: "/review", auto: true })
+  if (wk !== "W1") items.push({ id: `mixed:${wk}`, group: "Mixed practice", tag: "Mixed", label: "One mixed set — 12 questions across all four subjects", sub: "promotes Proficient skills to Mastered", done: mixedThisWeek([a, b]), path: "/mixed", auto: true })
   for (const m of D.mocks) {
     if (m.start >= a && m.start <= b) {
       const sm = mockSummary(m.id)
       items.push({ id: `mock:${m.id}`, group: "Mock exam", tag: "Mock", label: `${m.name} — ${m.blurb}`, sub: sm.complete ? `${sm.right}/${sm.n} raw` : `${sm.done}/${sm.total} sections`, done: sm.complete, path: `/mock/${m.id}`, auto: true })
     }
+    // follow-up steps in the week of the mock and the week after
+    const fin = (Store.s.mocks[m.id] || {}).finishedAt
+    if (fin) { const f = fin.slice(0, 10); if (f >= addDays(a, -7) && f <= b) mockNextSteps(m.id).filter((x) => x.kind !== "tag").forEach((x, i) => items.push({ id: `next:${m.id}:${i}`, group: "Mock follow-up", tag: "Mock", label: x.text, sub: `from ${m.name}`, done: null, path: x.path, auto: false })) }
   }
   for (const e of allEvents()) {
     if (e.kind === "week" || e.kind === "mock" || e.kind === "season") continue

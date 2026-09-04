@@ -12,7 +12,8 @@ import { Progress } from "@/components/ui/progress"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { ActionBar, Choice, Passage, Runner } from "@/pages/runner"
+import { ActionBar, CauseTags, Choice, Passage, Runner } from "@/pages/runner"
+import { STANINE, mockBand, mockNextSteps, recordMockForm } from "@/lib/engine"
 
 /* ---------- state helpers ---------- */
 export function mockState(form) { return Store.s.mocks[form] || { sections: {} } }
@@ -43,6 +44,7 @@ export function MockList() {
           <CardDescription>{D.calendar.level.order}. Use only the allowed time; the timer keeps running if the page is closed. Answers and notes unlock when the whole form is finished.</CardDescription>
         </CardHeader>
       </Card>
+      <BandCard />
       <div className="grid grid-cols-1 gap-4 @2xl/main:grid-cols-2">
         {D.mocks.map((m) => {
           const s = mockSummary(m.id)
@@ -64,6 +66,42 @@ export function MockList() {
         })}
       </div>
     </div>
+  )
+}
+
+/** Estimated stanine band from finished mocks. Honest about being an estimate. */
+export function BandCard() {
+  const b = mockBand()
+  if (!b.n) return null
+  return (
+    <Card className="gap-3 py-5" data-testid="band-card">
+      <CardHeader className="px-5">
+        <CardTitle className="flex items-center gap-2">Estimated score band</CardTitle>
+        <CardDescription>
+          {b.lo != null
+            ? `Stanine ${b.lo === b.hi ? b.lo : `${b.lo}–${b.hi}`} across the last ${Math.min(b.n, 3)} mocks (1–9 scale; 5 is average for the grade).`
+            : `${b.latest.name}: ${b.latest.pct}% raw ≈ stanine ${b.latest.st}. A band appears once a second mock is finished.`}
+          {" "}Rough mapping from percent correct — the real ISEE norms are by grade and vary by form, so treat this as a guide, not a prediction.
+        </CardDescription>
+        <CardAction>
+          {b.lo != null ? <span className="font-serif text-3xl font-semibold tabular-nums">{b.lo === b.hi ? b.lo : `${b.lo}–${b.hi}`}</span> : <span className="font-serif text-3xl font-semibold tabular-nums">≈{b.latest.st}</span>}
+        </CardAction>
+      </CardHeader>
+      <CardContent className="px-5">
+        <Table>
+          <TableHeader><TableRow><TableHead>Mock</TableHead><TableHead className="text-right">Raw</TableHead><TableHead className="text-right">VR</TableHead><TableHead className="text-right">QR</TableHead><TableHead className="text-right">RC</TableHead><TableHead className="text-right">MA</TableHead></TableRow></TableHeader>
+          <TableBody>
+            {b.mocks.map((m) => (
+              <TableRow key={m.form}>
+                <TableCell className="font-medium">{m.name} <span className="text-muted-foreground text-xs">{fmtDate(m.at)}</span></TableCell>
+                <TableCell className="text-right tabular-nums">{m.pct}% · ≈{m.st}</TableCell>
+                {["VR", "QR", "RC", "MA"].map((k) => <TableCell key={k} className="text-right tabular-nums">{m.sections[k] ? `${m.sections[k].pct}% · ${m.sections[k].st}` : "—"}</TableCell>)}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -162,29 +200,52 @@ function MockResults({ form }) {
     const r = (st.sections || {})[s.id] || {}
     D.mockItems[form][s.id].forEach((q, i) => { if ((r.picks || {})[i] !== keyOf(q)) misses.push({ sec: s, q, i, pick: (r.picks || {})[i] || null }) })
   }
+  const steps = mockNextSteps(form)
   return (
     <>
+      {steps.length ? (
+        <Card className="gap-3 py-5 border-primary/40" data-testid="next-steps">
+          <CardHeader className="px-5">
+            <CardTitle>Next steps this week</CardTitle>
+            <CardDescription>Worked out from the misses, blanks, timing and the tags below. They also appear on this week's checklist.</CardDescription>
+          </CardHeader>
+          <CardContent className="px-5">
+            <ol className="flex flex-col gap-2">
+              {steps.map((st, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">{i + 1}</span>
+                  <span className="flex-1">{st.text}</span>
+                  {st.path ? <Button size="sm" variant="outline" onClick={() => go(st.path)}>Go <ChevronRight /></Button> : null}
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      ) : null}
       <Card className="gap-4">
         <CardHeader>
           <CardTitle>Results</CardTitle>
-          <CardDescription>Raw correct per section. Within 24–48 hours, classify every miss: concept, process, misread, timing, guess, or other.</CardDescription>
+          <CardDescription>Raw correct per section, with an estimated stanine (rough mapping from percent). Within 24–48 hours, tag every miss below — one tap says why it went wrong.</CardDescription>
           <CardAction>
             {misses.length ? <Button size="sm" onClick={() => go(`/mock/${form}/corrections`)} data-testid="mock-corrections"><RotateCcw /> Corrections drill · {misses.length}</Button> : null}
           </CardAction>
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader><TableRow><TableHead>Section</TableHead><TableHead className="text-right">Raw</TableHead><TableHead className="text-right">Percent</TableHead><TableHead className="hidden text-right @md/main:table-cell">Time used</TableHead><TableHead className="hidden text-right @md/main:table-cell">Blank</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Section</TableHead><TableHead className="text-right">Raw</TableHead><TableHead className="text-right">Percent</TableHead><TableHead className="text-right">≈Stanine</TableHead><TableHead className="hidden text-right @md/main:table-cell">Time used</TableHead><TableHead className="hidden text-right @md/main:table-cell">Per question</TableHead><TableHead className="hidden text-right @md/main:table-cell">Blank</TableHead></TableRow></TableHeader>
             <TableBody>
               {secs.map((s) => {
                 const r = (st.sections || {})[s.id] || {}
                 const blank = s.n - Object.keys(r.picks || {}).length
+                const pct = Math.round((r.right / s.n) * 100)
                 return (
                   <TableRow key={s.id}>
                     <TableCell className="font-medium">{s.name}</TableCell>
                     <TableCell className="text-right tabular-nums">{r.right}/{s.n}</TableCell>
-                    <TableCell className="text-right tabular-nums">{Math.round((r.right / s.n) * 100)}%</TableCell>
+                    <TableCell className="text-right tabular-nums">{pct}%</TableCell>
+                    <TableCell className="text-right tabular-nums">{STANINE(pct)}</TableCell>
                     <TableCell className="hidden text-right tabular-nums @md/main:table-cell">{fmt(r.timeUsed || 0)} / {s.min}:00</TableCell>
+                    <TableCell className="hidden text-right tabular-nums @md/main:table-cell">{Math.round((r.timeUsed || 0) / 1000 / s.n)} s <span className="text-muted-foreground">/ {Math.round((s.min * 60) / s.n)}</span></TableCell>
                     <TableCell className="hidden text-right tabular-nums @md/main:table-cell">{blank}</TableCell>
                   </TableRow>
                 )
@@ -208,6 +269,7 @@ function MockResults({ form }) {
               <div className="text-muted-foreground">Your answer: <span className="text-foreground font-medium">{pick ? `${pick}. ${q.c[LTR.indexOf(pick)]}` : "—"}</span></div>
               <div className="text-muted-foreground">Correct: <span className="text-foreground font-medium">{keyOf(q)}. {q.c[LTR.indexOf(keyOf(q))]}</span></div>
               {q.e ? <div className="bg-muted/60 text-muted-foreground rounded-md p-3 leading-relaxed">{q.e}</div> : null}
+              <CauseTags id={q.id} />
             </CardContent>
           </Card>
         ))}
@@ -233,12 +295,24 @@ export function MockSection({ form, sec }) {
   const [i, setI] = React.useState(0)
   const [showPalette, setPalette] = React.useState(false)
   const left = useClock(r.submittedAt ? null : r.endsAt)
+  const entered = React.useRef(Date.now()), iRef = React.useRef(0)
 
   const save = React.useCallback((patch) => {
     Store.setSlice("mocks", form, (cur) => ({ ...cur, sections: { ...(cur.sections || {}), [sec]: { ...((cur.sections || {})[sec] || {}), ...patch } } }))
   }, [form, sec])
+  /** Add the time on the current question to its tally (seconds per question feed pacing). */
+  const stamp = React.useCallback(() => {
+    const now = Date.now(), cur = (mockState(form).sections || {})[sec] || {}
+    if (!cur.started || cur.submittedAt) return
+    const times = { ...(cur.times || {}) }
+    times[iRef.current] = (times[iRef.current] || 0) + (now - entered.current)
+    entered.current = now
+    save({ times })
+  }, [form, sec, save])
+  const goTo = React.useCallback((j) => { stamp(); iRef.current = j; setI(j); window.scrollTo(0, 0) }, [stamp])
 
   const submit = React.useCallback((auto) => {
+    stamp()
     const cur = (mockState(form).sections || {})[sec] || {}
     if (cur.submittedAt) return
     let right = 0
@@ -247,16 +321,16 @@ export function MockSection({ form, sec }) {
     save({ submittedAt: new Date().toISOString(), right, n: items.length, timeUsed, autoSubmitted: !!auto })
     // whole form done?
     const s2 = mockSummary(form)
-    if (s2.complete) Store.setSlice("mocks", form, (c) => ({ ...c, finishedAt: new Date().toISOString() }))
+    if (s2.complete) { Store.setSlice("mocks", form, (c) => ({ ...c, finishedAt: new Date().toISOString() })); recordMockForm(form) }
     window.scrollTo(0, 0)
-  }, [form, sec, items, def, save])
+  }, [form, sec, items, def, save, stamp])
 
   React.useEffect(() => { if (left === 0 && r.started && !r.submittedAt) submit(true) }, [left, r.started, r.submittedAt, submit])
 
   if (!def) return null
   if (!items) return null
 
-  function start() { const now = Date.now(); save({ started: now, endsAt: now + def.min * 60000, picks: {}, flags: {} }) }
+  function start() { const now = Date.now(); entered.current = now; iRef.current = 0; save({ started: now, endsAt: now + def.min * 60000, picks: {}, flags: {}, times: {} }) }
   function pick(letter) { save({ picks: { ...(r.picks || {}), [i]: letter } }) }
   function flag() { save({ flags: { ...(r.flags || {}), [i]: !(r.flags || {})[i] } }) }
 
@@ -337,7 +411,7 @@ export function MockSection({ form, sec }) {
         <Card className="py-4">
           <CardContent className="flex flex-wrap gap-1.5">
             {items.map((_, j) => (
-              <button key={j} type="button" onClick={() => { setI(j); window.scrollTo(0, 0) }}
+              <button key={j} type="button" onClick={() => goTo(j)}
                 className={cn("size-8 rounded-md border text-xs font-semibold tabular-nums", j === i && "ring-ring/50 ring-[3px]", (r.picks || {})[j] ? "bg-primary text-primary-foreground border-primary" : "bg-card", (r.flags || {})[j] && "border-warning border-2")}>
                 {j + 1}
               </button>
@@ -347,11 +421,11 @@ export function MockSection({ form, sec }) {
       )}
 
       <ActionBar>
-        <Button variant="outline" onClick={() => { setI(Math.max(0, i - 1)); window.scrollTo(0, 0) }} disabled={i === 0}><ChevronLeft /> Back</Button>
+        <Button variant="outline" onClick={() => goTo(Math.max(0, i - 1))} disabled={i === 0}><ChevronLeft /> Back</Button>
         <Button variant="ghost" size="sm" onClick={() => setPalette((p) => !p)}>{showPalette ? "Hide" : "All questions"}</Button>
         <span className="flex-1" />
         {i < items.length - 1 ? (
-          <Button onClick={() => { setI(i + 1); window.scrollTo(0, 0) }} data-testid="mock-next-q">Next <ChevronRight /></Button>
+          <Button onClick={() => goTo(i + 1)} data-testid="mock-next-q">Next <ChevronRight /></Button>
         ) : (
           <Button onClick={() => { if (answered < items.length && !confirm(`${items.length - answered} question(s) are blank. Submit anyway?`)) return; submit(false) }} data-testid="mock-submit"><Send /> Submit section</Button>
         )}
@@ -375,7 +449,7 @@ export function MockEssay({ form }) {
     const cur = mockState(form).essay || {}
     if (cur.submittedAt) return
     save({ submittedAt: new Date().toISOString(), text: text || cur.text || "", autoSubmitted: !!auto })
-    if (mockSummary(form).complete) Store.setSlice("mocks", form, (c) => ({ ...c, finishedAt: new Date().toISOString() }))
+    if (mockSummary(form).complete) { Store.setSlice("mocks", form, (c) => ({ ...c, finishedAt: new Date().toISOString() })); recordMockForm(form) }
     window.scrollTo(0, 0)
   }, [form, save, text])
   React.useEffect(() => { if (left === 0 && er.started && !er.submittedAt) submit(true) }, [left, er.started, er.submittedAt, submit])
