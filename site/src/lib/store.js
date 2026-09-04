@@ -29,7 +29,7 @@ export const Store = {
   init() {
     this.s = lsLoad()
     this.s.results = this.s.results || {}
-    for (const k of ["precision", "essays", "mocks"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
+    for (const k of ["precision", "essays", "mocks", "checklists"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
     // The first (vanilla) site stored `at` as Date.now(); everything since uses ISO strings.
     for (const k of Object.keys(this.s.results)) {
       const r = this.s.results[k]
@@ -203,7 +203,7 @@ export const Store = {
   merge(remote) {
     if (!remote || !remote.results) return
     // keyed slices: last-write-wins per key by `at`
-    for (const slice of ["precision", "essays", "mocks"]) {
+    for (const slice of ["precision", "essays", "mocks", "checklists"]) {
       const rs = remote[slice] || {}, ls = this.s[slice]
       for (const k of Object.keys(rs)) {
         if (!rs[k] || typeof rs[k] !== "object") continue
@@ -232,7 +232,7 @@ export const Store = {
   push() {
     if (!this.valid() || !this.folderId) return Promise.resolve()
     const body = JSON.stringify({ schema: 2, savedAt: new Date().toISOString(), results: this.s.results,
-      precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, testDate: this.s.testDate || null, testFormat: this.s.testFormat || null })
+      precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, checklists: this.s.checklists, testDate: this.s.testDate || null, testFormat: this.s.testFormat || null })
     if (this.fileId) {
       return this.api(`https://www.googleapis.com/upload/drive/v3/files/${this.fileId}?uploadType=media`,
         { method: "PATCH", headers: { "Content-Type": "application/json" }, body })

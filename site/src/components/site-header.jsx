@@ -48,6 +48,10 @@ function crumbs(route) {
     if (m && b) out.push({ label: b === "corrections" ? "Corrections" : (m.sections.find((x) => x.id === b) || {}).name || b, path: `/mock/${a}/${b}` })
   } else if (top === "calendar") {
     out.push({ label: "Calendar", path: "/calendar" })
+  } else if (top === "checklist") {
+    out.push({ label: "Checklist", path: "/checklist" })
+    if (a === "month" && b) out.push({ label: b, path: `/checklist/month/${b}` })
+    else if (a) out.push({ label: a, path: `/checklist/${a}` })
   }
   return out
 }

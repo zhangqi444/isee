@@ -1,7 +1,8 @@
 import * as React from "react"
-import { BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, PenLine, Play, RotateCcw, Sigma, Timer } from "lucide-react"
+import { BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Sigma, Timer } from "lucide-react"
 
-import { ORDER, SUBJ, allWrong, nextSet, subjProgress } from "@/lib/content"
+import { D, ORDER, SUBJ, allWrong, nextSet, subjProgress } from "@/lib/content"
+import { essayStatus } from "@/pages/essay"
 import { go } from "@/lib/router"
 import { useStore } from "@/lib/store"
 import {
@@ -32,6 +33,7 @@ export function AppSidebar({ route, ...props }) {
   useStore()
   const nav = useNav()
   const misses = allWrong().length
+  const essayDone = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
   const top = route[0] || ""
   const activeSub = top === "s" || top === "run" ? route[1] : top === "precision" ? "vr" : null
 
@@ -80,6 +82,12 @@ export function AppSidebar({ route, ...props }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Checklist" isActive={top === "checklist"} onClick={() => nav("/checklist")}>
+                  <ListChecks />
+                  <span>Checklist</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Review" isActive={top === "review"} onClick={() => nav("/review")}>
                   <RotateCcw />
                   <span>Review</span>
@@ -87,12 +95,6 @@ export function AppSidebar({ route, ...props }) {
                 {misses ? (
                   <SidebarMenuBadge className="bg-destructive text-white rounded-full h-5 min-w-5 px-1.5">{misses}</SidebarMenuBadge>
                 ) : null}
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Essay" isActive={top === "essay"} onClick={() => nav("/essay")}>
-                  <PenLine />
-                  <span>Essay</span>
-                </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Mock exams" isActive={top === "mock"} onClick={() => nav("/mock")}>
@@ -127,6 +129,13 @@ export function AppSidebar({ route, ...props }) {
                   </SidebarMenuItem>
                 )
               })}
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Essay" isActive={top === "essay"} onClick={() => nav("/essay")}>
+                  <PenLine />
+                  <span>Essay</span>
+                </SidebarMenuButton>
+                <SidebarMenuBadge className="text-muted-foreground">{essayDone}/{D.weeks.length}</SidebarMenuBadge>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

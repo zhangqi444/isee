@@ -14,6 +14,7 @@ import { Precision } from "@/pages/precision"
 import { EssayList, EssayWeek } from "@/pages/essay"
 import { MockCorrections, MockEssay, MockList, MockOverview, MockSection } from "@/pages/mock"
 import { Calendar } from "@/pages/calendar"
+import { Checklist } from "@/pages/checklist"
 
 function Screen({ route }) {
   const [top, a, b, c] = route
@@ -63,6 +64,7 @@ function Screen({ route }) {
   }
   if (top === "mock") return <MockList />
   if (top === "calendar") return <Calendar />
+  if (top === "checklist") return a === "month" ? <Checklist month={b} /> : <Checklist wk={a} />
   return <Home />
 }
 

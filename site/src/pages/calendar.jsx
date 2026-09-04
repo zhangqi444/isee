@@ -65,15 +65,30 @@ function TestDayCard() {
   const today = iso(new Date())
   const days = store.s.testDate ? Math.round((new Date(store.s.testDate + "T00:00:00") - new Date(today + "T00:00:00")) / 86400000) : null
   function save() { Store.setPref("testDate", date || null); Store.setPref("testFormat", format || null) }
+  const sittings = D.calendar.events.filter((e) => e.kind === "school-test")
   return (
     <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
       <CardHeader>
-        <CardDescription className="flex items-center gap-2"><Timer className="size-4" /> Test day</CardDescription>
+        <CardDescription className="flex items-center gap-2"><Timer className="size-4" /> Sheila's real ISEE date</CardDescription>
         <CardTitle className="font-serif text-2xl font-semibold tracking-tight">
-          {store.s.testDate ? (days > 0 ? `${days} days to go` : days === 0 ? "Today" : `${-days} days ago`) : "Not booked yet"}
+          {store.s.testDate ? (days > 0 ? `${days} days to go` : days === 0 ? "Today" : `${-days} days ago`) : "Which day will she take the real test?"}
         </CardTitle>
-        <CardDescription>{store.s.testDate ? `${new Date(store.s.testDate + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}${store.s.testFormat ? " · " + store.s.testFormat : ""}` : "Pin the real date here once it is booked; the countdown and the timeline update."}</CardDescription>
+        <CardDescription>
+          {store.s.testDate
+            ? `${new Date(store.s.testDate + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}${store.s.testFormat ? " · " + store.s.testFormat : ""}`
+            : "Today is known; this is the target the countdown counts down to. Nothing is booked yet — pick a planned date now (you can change it any time) or the exact date once it is booked."}
+        </CardDescription>
       </CardHeader>
+      {!store.s.testDate && sittings.length ? (
+        <CardContent className="flex flex-wrap items-center gap-2 pb-0">
+          <span className="text-muted-foreground text-xs">Known sittings nearby:</span>
+          {sittings.map((e) => (
+            <Button key={e.id} size="sm" variant="outline" onClick={() => { setDate(e.date); setFormat("School test site") }} data-testid={`pick-${e.id}`}>
+              {fmtShort(e.date)} · {e.title.replace(/^ISEE at /, "")}
+            </Button>
+          ))}
+        </CardContent>
+      ) : null}
       <CardContent className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="testDate" className="text-muted-foreground text-xs">Date</Label>

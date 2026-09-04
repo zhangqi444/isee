@@ -1,11 +1,13 @@
 import * as React from "react"
-import { ArrowRight, CalendarDays, CheckCircle2, ListChecks, RotateCcw, Target } from "lucide-react"
+import { ArrowRight, CalendarDays, CheckCircle2, ListChecks, PenLine, RotateCcw, Target } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { D, ORDER, SUBJ, accuracyByWeek, allWrong, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { upcoming } from "@/pages/calendar"
+import { essayStatus } from "@/pages/essay"
+import { weekItems } from "@/pages/checklist"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -88,7 +90,8 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">{weekLabel(cur)}</div>
-          <div className="text-muted-foreground">{weekStatus(cur)}</div>
+          <div className="text-muted-foreground">{(() => { const w = weekItems(cur).filter((x) => x.auto); const d = w.filter((x) => x.done).length; return `${d} of ${w.length} plan tasks done` })()}</div>
+          <Button size="sm" variant="outline" onClick={() => go("/checklist/" + cur)}>This week's checklist <ArrowRight /></Button>
         </CardFooter>
       </Card>
     </div>
@@ -126,9 +129,32 @@ export function AccuracyChart() {
   )
 }
 
+function EssayCard() {
+  const done = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
+  const cur = currentWeek()
+  const next = D.weeks.find((w) => essayStatus(w.w) !== "complete" && w.w >= cur) || D.weeks.find((w) => essayStatus(w.w) !== "complete")
+  return (
+    <Card className="gap-4">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><PenLine className="text-muted-foreground size-4" /> Essay</CardTitle>
+        <CardDescription>One 30-minute prompt a week</CardDescription>
+        <CardAction><Badge variant={done ? "success" : "outline"} className="tabular-nums">{done}/{D.weeks.length}</Badge></CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
+        <Progress value={(done / D.weeks.length) * 100} className="h-1.5" />
+        <div className="text-muted-foreground text-sm tabular-nums">{done} of {D.weeks.length} weeks written</div>
+      </CardContent>
+      <CardFooter className="gap-2">
+        {next ? <Button size="sm" onClick={() => go("/essay/" + next.w)}>{essayStatus(next.w) === "in progress" ? "Continue" : "Write"} <span className="text-primary-foreground/80 font-normal">{next.w}</span></Button> : <Button size="sm" variant="secondary" disabled><CheckCircle2 /> All done</Button>}
+        <Button size="sm" variant="ghost" onClick={() => go("/essay")}>All weeks</Button>
+      </CardFooter>
+    </Card>
+  )
+}
+
 export function SubjectCards() {
   return (
-    <div className="grid grid-cols-1 gap-4 @2xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 @2xl/main:grid-cols-2 @5xl/main:grid-cols-5">
       {ORDER.map((s) => {
         const p = subjProgress(s)
         const nx = nextSet(s)
@@ -159,6 +185,7 @@ export function SubjectCards() {
           </Card>
         )
       })}
+      <EssayCard />
     </div>
   )
 }
@@ -210,7 +237,7 @@ export function Breaks() {
     <Card>
       <CardHeader>
         <CardTitle>Coming up</CardTitle>
-        <CardDescription>{test ? `${days} days until the ISEE.` : "Mocks, ISEE windows and deadlines."}</CardDescription>
+        <CardDescription>{test ? `${days} days until Sheila's ISEE.` : "Mocks, ISEE windows and deadlines. Set her real test date on the calendar for a countdown."}</CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => go("/calendar")}>Calendar <ArrowRight /></Button></CardAction>
       </CardHeader>
       <CardContent className="flex flex-col divide-y">
