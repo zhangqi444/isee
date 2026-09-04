@@ -194,7 +194,9 @@ export const Store = {
       if (!rr || typeof rr !== "object") continue
       if (typeof rr.at === "number") rr.at = new Date(rr.at).toISOString()
       if (!Array.isArray(rr.wrong)) rr.wrong = []
-      if (!lr || ts(rr.at) >= ts(lr.at)) local[k] = rr   // last-write-wins by timestamp
+      const lt = lr ? ts(lr.at) : -1, rt = ts(rr.at)
+      if (!lr || rt > lt) local[k] = rr                    // last-write-wins by timestamp
+      else if (rt === lt) local[k] = { ...rr, ...lr, picks: lr.picks || rr.picks }   // same attempt: keep the richer copy
     }
     lsSave(this.s); emit()
   },

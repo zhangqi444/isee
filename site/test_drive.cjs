@@ -71,6 +71,13 @@ const FAKE_GIS = `
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   check('reconnect uses prompt:"" (silent), then live', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent",""]');
 
+  // A remote copy of the same attempt without per-item picks must not erase local picks (seed v3 upgrade case)
+  drive.body = drive.body.replace(/"picks":\{[^}]*\}/g, '"picks":{}');
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.results['ma:W2:0'].picks = { X: 'A' }; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  await pg.waitForTimeout(300);
+  check('merge tie keeps local picks', (await pg.evaluate(() => JSON.parse(localStorage.getItem('isee.v1')).results['ma:W2:0'].picks.X)) === 'A');
+
   // disconnect clears everything
   await pg.click('button:has-text("Saved to Drive")');
   await pg.waitForSelector('button:has-text("Save to Drive")');

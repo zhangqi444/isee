@@ -62,8 +62,8 @@ for sub,(xlsx,sheet,acol,ccol,rows,qcol) in SPECS.items():
                    sum(results[k]['right'] for k in results if k.startswith(sub)),
                    sum(len(results[k]['wrong']) for k in results if k.startswith(sub))))
 
-seed={'version':3,'migrated_at':DATE,
-      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v3: balanced set sizes + her chosen letters).",
+seed={'version':4,'migrated_at':DATE,
+      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v4: balanced set sizes + her chosen letters; re-applied after the merge fix).",
       'results':results}
 json.dump(seed,open('site/content/seed.json','w'),ensure_ascii=False,indent=1)
 

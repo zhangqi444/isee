@@ -1,7 +1,7 @@
 {
- "version": 3,
+ "version": 4,
  "migrated_at": "2026-08-31T12:00:00Z",
- "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v3: balanced set sizes + her chosen letters).",
+ "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v4: balanced set sizes + her chosen letters; re-applied after the merge fix).",
  "results": {
   "ma:W1:0": {
    "n": 12,
