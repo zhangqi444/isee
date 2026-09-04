@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { precisionSummary } from "@/pages/precision"
 
 function ScoreBadge({ r }) {
   if (!r) return <Badge variant="outline" className="text-muted-foreground">Not started</Badge>
@@ -28,7 +29,7 @@ export function WeekCard({ sub, wk, highlight }) {
           {wk} <span className="text-muted-foreground font-normal">· {weekLabel(wk)}</span>
           {highlight && <Badge>This week</Badge>}
         </CardTitle>
-        <CardDescription>{itemsFor(sub, wk).length} questions · {sets.length} sets of about {SETSIZE}. Each set is one sitting.</CardDescription>
+        <CardDescription>{sub === "vr" ? "Session 1 is written; sessions 2–3 are the ISEE-style sets. " : ""}{itemsFor(sub, wk).length} questions · {sets.length} sets of about {SETSIZE}. Each set is one sitting.</CardDescription>
         <CardAction>
           <Badge variant={done === sets.length && sets.length ? "success" : done ? "warning" : "secondary"} className="tabular-nums">
             {done}/{sets.length} sets
@@ -37,6 +38,27 @@ export function WeekCard({ sub, wk, highlight }) {
       </CardHeader>
       <CardContent className="px-2">
         <ul className="flex flex-col">
+          {sub === "vr" && D.precision && D.precision[wk] ? (() => {
+            const ps = precisionSummary(wk)
+            return (
+              <li key="precision">
+                <button
+                  type="button"
+                  onClick={() => go(`/precision/${wk}`)}
+                  className="hover:bg-accent/60 focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm outline-none transition-colors focus-visible:ring-[3px]"
+                  data-testid="precision-row"
+                >
+                  <span className="bg-accent text-accent-foreground flex size-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold">S1</span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="font-medium">Session 1 · Precision review</span>
+                    <span className="text-muted-foreground text-xs">{ps.total} words to explain in your own words · 20–25 min{ps.submitted ? ` · submitted${ps.submittedAt ? " " + new Date(ps.submittedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}` : ""}</span>
+                  </span>
+                  {ps.submitted ? <Badge variant={ps.due ? "warning" : "success"} className="tabular-nums">{ps.due ? `${ps.due} to review` : "Mastered"}</Badge> : <Badge variant="outline" className="text-muted-foreground tabular-nums">{ps.written}/{ps.total} written</Badge>}
+                  <ChevronRight className="text-muted-foreground size-4" />
+                </button>
+              </li>
+            )
+          })() : null}
           {sets.map((set, n) => {
             const r = store.s.results[setId(sub, wk, n)]
             return (

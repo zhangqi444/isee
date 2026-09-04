@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:artifact": "ISEE_TARGET=artifact vite build && node scripts/artifact.mjs",
     "preview": "vite preview",
-    "test": "node test_e2e.cjs && node test_drive.cjs && node test_artifact.cjs"
+    "test": "node test_e2e.cjs && node test_drive.cjs && node test_features.cjs && node test_artifact.cjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.6",

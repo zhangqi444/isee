@@ -1,7 +1,110 @@
 {
- "version": 4,
+ "version": 5,
+ "precision": {
+  "W1": {
+   "words": {
+    "benign": {
+     "text": "benign ( comepletly harmless.",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "dubious": {
+     "text": "dubious means suspicous and so does skeptical",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "eradicate": {
+     "text": "because eradicate means destroy completly and remove is taking away",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "feisty": {
+     "text": "feisty means energetic and confident unexpectedly. i can be feisty",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "reminisce": {
+     "text": "reminisce means remember. i often reminisce about the past",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "conspicuous": {
+     "text": "noticible and invisible",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "discretion": {
+     "text": "discretion is important law things",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "cultivate": {
+     "text": "it means fill something with plants flowers etc",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "predicament": {
+     "text": "a situation which both options are bad",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "retaliate": {
+     "text": "retaliate is like communicate. i retaliate against sandals with sock",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "resolute": {
+     "text": "resolute means determind and sure.",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "sanctuary": {
+     "text": "its a place",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "stifle": {
+     "text": "prevent , keep away from,",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "subordinate": {
+     "text": "???",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "suffrage": {
+     "text": "voting",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "tangible": {
+     "text": "tangible mean real intangible means fake",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "treacherous": {
+     "text": "the jungle is treacherous. i am treacherous sometimes.",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "unanimous": {
+     "text": "because all - all the people agree while majority is most people agree",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    },
+    "wane": {
+     "text": "wane means dissapear or get less. grow",
+     "conf": null,
+     "at": "2026-08-31T12:00:00Z"
+    }
+   },
+   "submittedAt": "2026-08-31T12:00:00Z",
+   "at": "2026-08-31T12:00:00Z"
+  }
+ },
  "migrated_at": "2026-08-31T12:00:00Z",
- "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v4: balanced set sizes + her chosen letters; re-applied after the merge fix).",
+ "note": "Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v5: + her Week-1 precision-review responses).",
  "results": {
   "ma:W1:0": {
    "n": 12,

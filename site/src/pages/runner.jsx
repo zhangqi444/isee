@@ -14,7 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 const { useState, useEffect } = React
 
-function Passage({ id }) {
+export function Passage({ id }) {
   const p = D.passages[id]
   if (!p) return null
   return (
@@ -28,7 +28,7 @@ function Passage({ id }) {
 }
 
 /** One choice, rendered as a card-sized radio so the whole row is the target. */
-function Choice({ k, text, checked, onSelect }) {
+export function Choice({ k, text, checked, onSelect }) {
   return (
     <RadioGroupPrimitive.Item
       value={LTR[k]}
@@ -47,7 +47,7 @@ function Choice({ k, text, checked, onSelect }) {
   )
 }
 
-function ActionBar({ children }) {
+export function ActionBar({ children }) {
   return (
     <div className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky bottom-0 z-10 -mx-4 -mb-4 mt-2 flex items-center gap-3 border-t px-4 py-3 backdrop-blur md:-mx-6 md:-mb-6 md:px-6">
       {children}
@@ -66,7 +66,7 @@ function picksFromResult(items, r) {
   })
 }
 
-export function Runner({ items, title, setId, custom, exitPath, exitLabel, prior }) {
+export function Runner({ items, title, setId, custom, exitPath, exitLabel, prior, record = true }) {
   const [i, setI] = useState(0)
   const [picks, setPicks] = useState(() => (prior ? picksFromResult(items, prior) : []))
   const [done, setDone] = useState(() => (prior ? { right: prior.right, at: prior.at, attempts: prior.attempts || 1, reopened: true } : null))
@@ -93,7 +93,7 @@ export function Runner({ items, title, setId, custom, exitPath, exitLabel, prior
         res.first = prior.first || { right: prior.right, at: prior.at }
       }
       Store.recordSet(setId, res)
-    } else {
+    } else if (record) {
       const gotIds = {}
       items.forEach((q, j) => { if (LTR[picks[j]] === keyOf(q)) gotIds[q.id] = 1 })
       Store.clearWrong((_, r) => (r.wrong || []).filter((id) => !gotIds[id]))

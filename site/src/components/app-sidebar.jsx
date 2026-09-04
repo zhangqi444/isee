@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BookA, BookOpen, Calculator, GraduationCap, LayoutDashboard, Play, RotateCcw, Sigma } from "lucide-react"
+import { BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, PenLine, Play, RotateCcw, Sigma, Timer } from "lucide-react"
 
 import { ORDER, SUBJ, allWrong, nextSet, subjProgress } from "@/lib/content"
 import { go } from "@/lib/router"
@@ -33,7 +33,7 @@ export function AppSidebar({ route, ...props }) {
   const nav = useNav()
   const misses = allWrong().length
   const top = route[0] || ""
-  const activeSub = top === "s" || top === "run" ? route[1] : null
+  const activeSub = top === "s" || top === "run" ? route[1] : top === "precision" ? "vr" : null
 
   // "Continue" jumps to the first unfinished set, preferring this week and the subject she's on.
   function continuePractice() {
@@ -87,6 +87,24 @@ export function AppSidebar({ route, ...props }) {
                 {misses ? (
                   <SidebarMenuBadge className="bg-destructive text-white rounded-full h-5 min-w-5 px-1.5">{misses}</SidebarMenuBadge>
                 ) : null}
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Essay" isActive={top === "essay"} onClick={() => nav("/essay")}>
+                  <PenLine />
+                  <span>Essay</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Mock exams" isActive={top === "mock"} onClick={() => nav("/mock")}>
+                  <Timer />
+                  <span>Mock exams</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Calendar" isActive={top === "calendar"} onClick={() => nav("/calendar")}>
+                  <CalendarDays />
+                  <span>Calendar</span>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Cloud, CloudOff, Home as HomeIcon, Loader2, Moon, Sun } from "lucide-react"
 
-import { SUBJ } from "@/lib/content"
+import { D, SUBJ } from "@/lib/content"
 import { go } from "@/lib/router"
 import { DRIVE_ENABLED, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -34,6 +34,20 @@ function crumbs(route) {
   } else if (top === "review") {
     out.push({ label: "Review", path: "/review" })
     if (SUBJ[a]) out.push({ label: SUBJ[a].name, path: "/review/" + a })
+  } else if (top === "precision") {
+    out.push({ label: SUBJ.vr.name, path: "/s/vr" })
+    if (a) out.push({ label: a, path: "/s/vr/" + a })
+    out.push({ label: "Precision review", path: "/precision/" + a })
+  } else if (top === "essay") {
+    out.push({ label: "Essay", path: "/essay" })
+    if (a) out.push({ label: a, path: "/essay/" + a })
+  } else if (top === "mock") {
+    out.push({ label: "Mock exams", path: "/mock" })
+    const m = a && D.mocks.find((x) => x.id === a)
+    if (m) out.push({ label: m.name, path: "/mock/" + a })
+    if (m && b) out.push({ label: b === "corrections" ? "Corrections" : (m.sections.find((x) => x.id === b) || {}).name || b, path: `/mock/${a}/${b}` })
+  } else if (top === "calendar") {
+    out.push({ label: "Calendar", path: "/calendar" })
   }
   return out
 }

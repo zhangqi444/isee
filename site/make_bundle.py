@@ -27,6 +27,33 @@ out['starts']={'W1':'2026-08-31','W2':'2026-09-07','W3':'2026-09-14','W4':'2026-
 out['breaks']=[{'label':'Sep 21 – 27','what':'Split baseline mock'},
  {'label':'Oct 19 – 25','what':'Mock 1'},{'label':'Oct 26 – Nov 1','what':'Correction and retest'},
  {'label':'Nov 2 – 8','what':'Mock 2'}]
+# ---- Session 1 precision review (VR), essay programme, mocks, calendar ----
+out['precision']=json.load(open('content/precision.json'))
+out['essay']=json.load(open('content/essay.json'))
+mock_bank=json.load(open('content/question-banks/mock.json'))['items']
+mock_essays=json.load(open('content/mock_essays.json'))
+for p in json.load(open('content/passages/mock-passages.json'))['items']:
+    out['passages'][p['id']]={'t':p.get('title',''),'x':p['text']}
+FORMS=[('DGN','Split diagnostic','Baseline, split across two sittings: Part A = VR + QR, Part B = RC + MA + Essay','Sep 21 – 27','2026-09-21','DIAGNOSTIC',True),
+       ('M01','Mock 1','Full length, one sitting, after the first four-week cycle','Oct 19 – 25','2026-10-19','MOCK 1',False),
+       ('M02','Mock 2','Full length, one sitting, after the second four-week cycle','Nov 2 – 8','2026-11-02','MOCK 2',False),
+       ('M03','Mock 3','Final readiness rehearsal in the last days before the real test','Nov 23 – 29','2026-11-23','MOCK 3',False)]
+SECTIONS=[('VR','Verbal Reasoning',34,20),('QR','Quantitative Reasoning',38,35),('RC','Reading Comprehension',25,25),('MA','Mathematics Achievement',30,30)]
+out['mocks']=[]; out['mockItems']={}
+for fid,name,blurb,label,start,ekey,split in FORMS:
+    secs=[]; out['mockItems'][fid]={}
+    for sid,sname,n,mins in SECTIONS:
+        its=[i for i in mock_bank if i['form']==fid and i['subject']==sid]
+        its.sort(key=lambda i:i['id'])
+        assert len(its)==n,(fid,sid,len(its))
+        out['mockItems'][fid][sid]=[{'id':i['id'],'sk':i.get('skill',''),'d':i.get('difficulty',''),'q':i['prompt'],
+            'c':[i['choices'][k] for k in 'ABCD'],'k':i['correct'],'e':i.get('explanation',''),'p':i.get('passage_id','')} for i in its]
+        secs.append({'id':sid,'name':sname,'n':n,'min':mins,'part':'A' if sid in ('VR','QR') else 'B'})
+    secs.insert(2,{'id':'BREAK1','name':'Break','min':10,'part':'A'})
+    secs.append({'id':'BREAK2','name':'Break','min':10,'part':'B'})
+    secs.append({'id':'ESSAY','name':'Essay','min':30,'part':'B','prompt':mock_essays[ekey]})
+    out['mocks'].append({'id':fid,'name':name,'blurb':blurb,'label':label,'start':start,'split':split,'sections':secs})
+out['calendar']=json.load(open('content/calendar.json'))
 import os as _os
 if _os.path.exists('site/content/seed.json'):
     out['seed']=json.load(open('site/content/seed.json'))

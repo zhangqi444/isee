@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { SUBJ, allWrong, setId, setsFor } from "@/lib/content"
+import { D, SUBJ, allWrong, setId, setsFor } from "@/lib/content"
 import { useRoute } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -10,6 +10,10 @@ import { Home } from "@/pages/home"
 import { Subject } from "@/pages/subject"
 import { Runner } from "@/pages/runner"
 import { Review } from "@/pages/review"
+import { Precision } from "@/pages/precision"
+import { EssayList, EssayWeek } from "@/pages/essay"
+import { MockCorrections, MockEssay, MockList, MockOverview, MockSection } from "@/pages/mock"
+import { Calendar } from "@/pages/calendar"
 
 function Screen({ route }) {
   const [top, a, b, c] = route
@@ -48,6 +52,17 @@ function Screen({ route }) {
     return <Review />
   }
   if (top === "review") return <Review />
+  if (top === "precision" && a && D.precision[a]) return <Precision key={a} wk={a} />
+  if (top === "essay" && a && D.essay.weeks[a]) return <EssayWeek key={a} wk={a} />
+  if (top === "essay") return <EssayList />
+  if (top === "mock" && a && D.mocks.some((m) => m.id === a)) {
+    if (b === "corrections") return <MockCorrections form={a} />
+    if (b === "ESSAY") return <MockEssay key={a} form={a} />
+    if (b) return <MockSection key={a + b} form={a} sec={b} />
+    return <MockOverview form={a} />
+  }
+  if (top === "mock") return <MockList />
+  if (top === "calendar") return <Calendar />
   return <Home />
 }
 

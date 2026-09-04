@@ -1,0 +1,381 @@
+{
+ "_note": "Model meanings for precision-review words that are not in the Vocabulary Master (weeks 2, 4-7). Lower Level register. Verified independently before publishing.",
+ "imply / infer": {
+  "pos": "verbs (a pair)",
+  "meaning": "IMPLY = to suggest something without saying it directly (the speaker or writer sends the hint). INFER = to work out what is meant from clues (the listener or reader draws the conclusion).",
+  "example": "When Mom said 'It's getting late,' she implied we should leave; I inferred from her hint that it was time to go.",
+  "usage": "The sender implies; the receiver infers. The classic mix-up is saying 'Are you inferring that…?' when you mean 'Are you implying that…?'"
+ },
+ "objective / subjective": {
+  "pos": "adjectives (a pair)",
+  "meaning": "OBJECTIVE = based on facts that can be checked, not on feelings or opinions. SUBJECTIVE = based on personal feelings, taste, or opinion.",
+  "example": "'The pool is 25 meters long' is objective; 'the pool is too cold' is subjective.",
+  "usage": "A judge tries to be objective; a review of a movie is subjective. Objective can also be a noun meaning a goal."
+ },
+ "rigid / rigorous": {
+  "pos": "adjectives (a pair)",
+  "meaning": "RIGID = stiff and unbending, either physically or in rules and attitudes (not flexible). RIGOROUS = extremely careful, thorough, and demanding.",
+  "example": "The rigid schedule allowed no changes; the rigorous training tested every skill.",
+  "usage": "Rigid is often negative (too strict); rigorous is usually positive (high standards, careful work)."
+ },
+ "stable / stationary / static": {
+  "pos": "adjectives (a set)",
+  "meaning": "STABLE = steady, not likely to fall, change, or collapse. STATIONARY = not moving, staying in one place. STATIC = not changing or developing over time; showing no movement or progress.",
+  "example": "The ladder was stable; the bus stayed stationary at the stop; the town's population stayed static for years.",
+  "usage": "Stable is about balance and reliability; stationary is about position; static is about lack of change. Do not confuse stationary with stationery (paper)."
+ },
+ "superior / inferior / subordinate": {
+  "pos": "adjectives and nouns (a set)",
+  "meaning": "SUPERIOR = higher in quality, rank, or importance; as a noun, a person above you. INFERIOR = lower in quality or rank. SUBORDINATE = lower in rank and under someone's authority; as a noun, a person who reports to another.",
+  "example": "The captain is the sailor's superior; a cheap copy is inferior to the original; a subordinate follows the manager's orders.",
+  "usage": "Superior/inferior compare quality or rank; subordinate is specifically about the chain of command."
+ },
+ "superior / subordinate": {
+  "pos": "adjectives and nouns (a pair)",
+  "meaning": "SUPERIOR = higher in rank, quality, or importance; as a noun, the person above you. SUBORDINATE = lower in rank and under someone's authority; as a noun, a person who reports to another.",
+  "example": "A lieutenant is subordinate to a captain; the captain is the lieutenant's superior.",
+  "usage": "The two words describe the same relationship from opposite ends."
+ },
+ "elaborate / intricate": {
+  "pos": "adjectives (a pair)",
+  "meaning": "ELABORATE = worked out in great detail, with many parts (as a verb, to add more detail). INTRICATE = very complicated, with many small, carefully connected parts.",
+  "example": "She built an elaborate model of the city; the clock's intricate gears fit together perfectly.",
+  "usage": "Both mean detailed; intricate stresses fine, tangled complexity, while elaborate stresses effort and richness. Only elaborate is also a verb ('please elaborate')."
+ },
+ "consent / consensus": {
+  "pos": "nouns (a pair)",
+  "meaning": "CONSENT = permission or agreement given by one person (also a verb: to agree). CONSENSUS = general agreement reached by a whole group.",
+  "example": "A parent must give consent for the field trip; the class reached a consensus on the theme.",
+  "usage": "Consent is one person's yes; consensus is everyone's shared yes."
+ },
+ "conspicuous / prominent": {
+  "pos": "adjectives (a pair)",
+  "meaning": "CONSPICUOUS = easily seen or noticed, standing out (sometimes in an unwanted way). PROMINENT = important, well-known, or standing out because of size or position.",
+  "example": "The red hat was conspicuous in the gray crowd; a prominent scientist spoke at the museum.",
+  "usage": "Conspicuous is about being noticeable; prominent adds importance or status. Opposite of conspicuous: inconspicuous."
+ },
+ "painstaking / diligent / industrious": {
+  "pos": "adjectives (a set)",
+  "meaning": "PAINSTAKING = done with great care and attention to every detail. DILIGENT = working hard and carefully, steadily and persistently. INDUSTRIOUS = hard-working and busy, getting a lot done.",
+  "example": "Restoring the painting was painstaking work; a diligent student checks every answer; the industrious ants filled the hill by noon.",
+  "usage": "Painstaking usually describes the work itself (careful, detailed); diligent and industrious usually describe the worker (steady, hard-working)."
+ },
+ "skeptical / dubious": {
+  "pos": "adjectives (a pair)",
+  "meaning": "SKEPTICAL = not easily convinced; having doubts and wanting proof. DUBIOUS = doubtful or uncertain (about something), or, of a thing, of questionable quality or honesty.",
+  "example": "I was skeptical of the magic trick; the salesman's dubious promise made everyone uneasy.",
+  "usage": "A person is skeptical; a claim, plan, or honor can be dubious ('a dubious excuse'). Dubious can also describe the person who doubts."
+ },
+ "prejudice / biased": {
+  "pos": "noun and adjective (a pair)",
+  "meaning": "PREJUDICE (noun) = an unfair opinion formed before knowing the facts, often against a group of people. BIASED (adjective) = unfairly favoring one side or view over another.",
+  "example": "Prejudice kept them from listening to the new student; a biased referee favored the home team.",
+  "usage": "Prejudice is the unfair opinion; biased describes a person, judgment, or report that leans unfairly."
+ },
+ "candid": {
+  "pos": "adjective",
+  "meaning": "honest and direct, saying what you really think; frank, open, truthful",
+  "example": "Her candid answer was that the cake tasted burnt.",
+  "usage": "A candid photo is one taken without posing. Opposite: guarded, evasive."
+ },
+ "thorough": {
+  "pos": "adjective",
+  "meaning": "complete and careful, leaving nothing out; detailed, meticulous",
+  "example": "A thorough search of the room finally turned up the keys.",
+  "usage": "Opposite: careless, superficial. A surgeon or an editor needs to be thorough."
+ },
+ "plausible": {
+  "pos": "adjective",
+  "meaning": "seeming likely to be true or reasonable; believable, credible",
+  "example": "His excuse was plausible, so the teacher accepted it.",
+  "usage": "Plausible means it could be true, not that it is proven. Opposite: implausible, far-fetched."
+ },
+ "tedious": {
+  "pos": "adjective",
+  "meaning": "long, slow, and boring; dull, tiresome, monotonous",
+  "example": "Copying the whole list by hand was tedious.",
+  "usage": "Usually describes tasks, talks, or journeys. Opposite: exciting, engaging."
+ },
+ "superficial": {
+  "pos": "adjective",
+  "meaning": "only on the surface; not deep or thorough; shallow",
+  "example": "The scratch was superficial and healed in a day; his superficial reading missed the story's point.",
+  "usage": "Can be physical (a superficial cut) or about thinking (a superficial answer). Opposite: deep, thorough."
+ },
+ "mediocre": {
+  "pos": "adjective",
+  "meaning": "of only average or slightly below-average quality; ordinary, unremarkable, so-so",
+  "example": "The pizza was mediocre—not bad, but nothing special.",
+  "usage": "Mildly negative. Opposite: excellent, outstanding."
+ },
+ "lenient": {
+  "pos": "adjective",
+  "meaning": "not strict; merciful and easygoing when judging or punishing",
+  "example": "The lenient coach let us skip laps after the long game.",
+  "usage": "Opposite: strict, harsh, severe. Noun: leniency."
+ },
+ "admirable": {
+  "pos": "adjective",
+  "meaning": "deserving respect and approval; praiseworthy, commendable, excellent",
+  "example": "Her admirable honesty earned the team's trust.",
+  "usage": "From admire. Opposite: shameful, contemptible."
+ },
+ "concede": {
+  "pos": "verb",
+  "meaning": "to admit that something is true after first resisting; to give up or yield (a point, a game)",
+  "example": "After seeing the photo, he conceded that he had been wrong.",
+  "usage": "Concede a point, concede defeat, concede the election. Noun: concession."
+ },
+ "critique": {
+  "pos": "noun / verb",
+  "meaning": "(noun) a careful judgment of a piece of work, noting strengths and weaknesses; (verb) to evaluate in detail",
+  "example": "The art teacher's critique praised the colors but questioned the composition.",
+  "usage": "A critique is not just criticism—it can be positive. Do not confuse with critic (the person)."
+ },
+ "sincere": {
+  "pos": "adjective",
+  "meaning": "genuine and honest, meaning what you say; heartfelt, not fake",
+  "example": "She gave a sincere apology and meant every word.",
+  "usage": "Opposite: insincere, fake. Noun: sincerity."
+ },
+ "scrutinize": {
+  "pos": "verb",
+  "meaning": "to examine very closely and carefully",
+  "example": "The judge scrutinized every line of the contract.",
+  "usage": "Stronger than look at or check. Noun: scrutiny ('under scrutiny')."
+ },
+ "merit": {
+  "pos": "noun / verb",
+  "meaning": "(noun) the quality of deserving praise; a good point or strength; (verb) to deserve",
+  "example": "The plan has merit; her hard work merits a reward.",
+  "usage": "'Judge on merit' means by quality alone. Adjective: meritorious."
+ },
+ "versatile": {
+  "pos": "adjective",
+  "meaning": "able to do many different things or be used in many ways; adaptable, all-round",
+  "example": "A versatile athlete plays soccer, swims, and runs track.",
+  "usage": "Used for people and objects (a versatile tool). Noun: versatility."
+ },
+ "benevolent": {
+  "pos": "adjective",
+  "meaning": "kind and generous, wanting to do good for others",
+  "example": "A benevolent neighbor paid for the playground repairs.",
+  "usage": "Opposite: malevolent, malicious. Root: bene- = good, well."
+ },
+ "malicious": {
+  "pos": "adjective",
+  "meaning": "meaning to cause harm or hurt on purpose; spiteful, mean",
+  "example": "The malicious rumor was spread to embarrass her.",
+  "usage": "Opposite: kind, benevolent. Root: mal- = bad. Noun: malice."
+ },
+ "submerge": {
+  "pos": "verb",
+  "meaning": "to put or go completely under water or another liquid; to cover or hide",
+  "example": "The submarine submerged and disappeared from view.",
+  "usage": "Root: sub- = under + merge = dip. Opposite: surface, emerge."
+ },
+ "surplus": {
+  "pos": "noun / adjective",
+  "meaning": "an amount left over after what is needed is used; extra",
+  "example": "The bakery sold its surplus bread at half price.",
+  "usage": "Opposite: shortage, deficit. Root: sur- = over, above."
+ },
+ "subterranean": {
+  "pos": "adjective",
+  "meaning": "underground; existing or happening beneath the earth's surface",
+  "example": "A subterranean river runs beneath the cave.",
+  "usage": "Roots: sub- = under + terra = earth."
+ },
+ "premature": {
+  "pos": "adjective",
+  "meaning": "happening or done too early, before the right time",
+  "example": "Celebrating before the final whistle was premature.",
+  "usage": "Roots: pre- = before + mature = ripe. A premature baby is born early."
+ },
+ "contradict": {
+  "pos": "verb",
+  "meaning": "to say the opposite of what someone else said; to be opposed to or inconsistent with",
+  "example": "The witness contradicted the story told by the driver.",
+  "usage": "Roots: contra- = against + dict = say. Noun: contradiction."
+ },
+ "dejected": {
+  "pos": "adjective",
+  "meaning": "sad and without hope, especially after a disappointment; downcast, discouraged",
+  "example": "The dejected team sat silently after the loss.",
+  "usage": "Root: de- = down + ject = throw. Opposite: cheerful, elated."
+ },
+ "prospect": {
+  "pos": "noun / verb",
+  "meaning": "(noun) the possibility or likelihood of something happening in the future; a chance; (verb) to search for gold or minerals",
+  "example": "The prospect of snow excited the class; miners prospected for gold in the hills.",
+  "usage": "Roots: pro- = forward + spect = look. Prospects (plural) often means chances of success."
+ },
+ "export": {
+  "pos": "verb / noun",
+  "meaning": "(verb) to send goods to another country to sell; (noun) a product sent abroad",
+  "example": "The farm exports apples to Japan.",
+  "usage": "Roots: ex- = out + port = carry. Opposite: import."
+ },
+ "inscribe": {
+  "pos": "verb",
+  "meaning": "to write, carve, or engrave words on something",
+  "example": "Her name was inscribed on the trophy.",
+  "usage": "Roots: in- = in, on + scrib = write. Noun: inscription."
+ },
+ "divert": {
+  "pos": "verb",
+  "meaning": "to turn something aside from its course or direction; to distract or entertain",
+  "example": "Police diverted traffic around the parade; the puppet show diverted the restless children.",
+  "usage": "Roots: di- = apart + vert = turn. Noun: diversion."
+ },
+ "credible": {
+  "pos": "adjective",
+  "meaning": "able to be believed; convincing, trustworthy",
+  "example": "The credible witness gave the same clear account every time.",
+  "usage": "Root: cred = believe. Do not confuse with credulous (too ready to believe). Opposite: unbelievable (also incredible, in its original sense)."
+ },
+ "abrupt": {
+  "pos": "adjective",
+  "meaning": "sudden and unexpected; also short and curt in manner",
+  "example": "The bus came to an abrupt stop; his abrupt reply ended the conversation.",
+  "usage": "Root: rupt = break. Opposite: gradual; (of manner) polite, gentle."
+ },
+ "obstruct": {
+  "pos": "verb",
+  "meaning": "to block or get in the way of; to hinder",
+  "example": "A fallen tree obstructed the road.",
+  "usage": "Root: struct = build. Noun: obstruction. Synonyms: block, impede."
+ },
+ "retract": {
+  "pos": "verb",
+  "meaning": "to take back something said or written; to pull back in",
+  "example": "The newspaper retracted the false report; a cat retracts its claws.",
+  "usage": "Roots: re- = back + tract = pull. Noun: retraction."
+ },
+ "propel": {
+  "pos": "verb",
+  "meaning": "to push or drive something forward",
+  "example": "Wind propelled the sailboat across the lake.",
+  "usage": "Roots: pro- = forward + pel = push. Related: propeller, propulsion."
+ },
+ "audible": {
+  "pos": "adjective",
+  "meaning": "loud enough to be heard",
+  "example": "Her whisper was barely audible from the back row.",
+  "usage": "Root: aud = hear. Opposite: inaudible."
+ },
+ "novice": {
+  "pos": "noun",
+  "meaning": "a person who is new to an activity and not yet skilled; a beginner",
+  "example": "As a novice skier, he stayed on the gentle slope.",
+  "usage": "Root: nov = new. Opposite: expert, veteran."
+ },
+ "frugal": {
+  "pos": "adjective",
+  "meaning": "careful with money and resources; not wasteful; thrifty, economical",
+  "example": "A frugal shopper compares prices and skips extras.",
+  "usage": "Usually positive (sensible). Compare stingy, which is negative."
+ },
+ "stingy": {
+  "pos": "adjective",
+  "meaning": "unwilling to spend or give, even when you should; ungenerous with money",
+  "example": "The stingy uncle refused to chip in for the birthday cake.",
+  "usage": "Negative. Compare frugal (sensible saving). Opposite: generous."
+ },
+ "inquisitive": {
+  "pos": "adjective",
+  "meaning": "eager to learn and ask questions; curious",
+  "example": "The inquisitive child asked how the clock worked.",
+  "usage": "Root: quis = ask (as in inquire, question). Mostly positive; can hint at nosy."
+ },
+ "sly": {
+  "pos": "adjective",
+  "meaning": "clever in a sneaky or secretive way; cunning, crafty",
+  "example": "With a sly grin, the fox slipped past the sleeping dog.",
+  "usage": "Slightly negative. 'On the sly' means secretly."
+ },
+ "arrogant": {
+  "pos": "adjective",
+  "meaning": "having an exaggerated sense of one's own importance; proud and looking down on others",
+  "example": "The arrogant champion refused to shake hands.",
+  "usage": "Negative. Opposite: modest, humble. Noun: arrogance."
+ },
+ "modest": {
+  "pos": "adjective",
+  "meaning": "not boastful about one's abilities or achievements; humble. Also: moderate or not large in size or amount",
+  "example": "Though she won, she was modest about it; they live in a modest house.",
+  "usage": "Opposite: arrogant, boastful. Noun: modesty."
+ },
+ "stern": {
+  "pos": "adjective",
+  "meaning": "serious and strict; severe in manner or expression",
+  "example": "The stern librarian silenced the room with one look.",
+  "usage": "Opposite: lenient, gentle. Also a noun: the back of a ship."
+ },
+ "loyal": {
+  "pos": "adjective",
+  "meaning": "faithful and supportive to a person, group, or cause; steadfast",
+  "example": "A loyal friend stays when things get hard.",
+  "usage": "Opposite: disloyal, treacherous. Noun: loyalty."
+ },
+ "blunt": {
+  "pos": "adjective",
+  "meaning": "(of a person or remark) very direct and plain, even if it hurts; (of an edge) not sharp",
+  "example": "Her blunt review said the story was boring; the blunt knife would not cut the rope.",
+  "usage": "Blunt speech is honest but tactless. Opposite: tactful; (edge) sharp."
+ },
+ "indignant": {
+  "pos": "adjective",
+  "meaning": "angry because of something unfair or wrong",
+  "example": "She was indignant when she was blamed for a mess she did not make.",
+  "usage": "Anger with a sense of injustice. Noun: indignation."
+ },
+ "envious": {
+  "pos": "adjective",
+  "meaning": "wanting what someone else has; jealous of another's success or possessions",
+  "example": "He was envious of his cousin's new bike.",
+  "usage": "Noun: envy. Envious is about wanting what others have; jealous also covers fearing to lose what you have."
+ },
+ "grateful": {
+  "pos": "adjective",
+  "meaning": "feeling or showing thanks; appreciative",
+  "example": "I am grateful for the ride home in the rain.",
+  "usage": "Noun: gratitude. Opposite: ungrateful."
+ },
+ "solemn": {
+  "pos": "adjective",
+  "meaning": "very serious and dignified; not cheerful or playful",
+  "example": "The crowd grew solemn as the flag was lowered.",
+  "usage": "Also: a solemn promise = a serious, formal one. Opposite: light-hearted."
+ },
+ "enthusiastic": {
+  "pos": "adjective",
+  "meaning": "full of eager excitement and interest",
+  "example": "The enthusiastic fans cheered every play.",
+  "usage": "Noun: enthusiasm. Opposite: indifferent, unenthusiastic."
+ },
+ "cautious": {
+  "pos": "adjective",
+  "meaning": "careful to avoid danger or mistakes; wary",
+  "example": "The cautious hiker tested each rock before stepping.",
+  "usage": "Noun: caution. Opposite: reckless, careless."
+ },
+ "sympathetic": {
+  "pos": "adjective",
+  "meaning": "feeling or showing understanding and care for someone's trouble; also, approving of or supportive toward an idea",
+  "example": "A sympathetic nurse listened to the worried patient.",
+  "usage": "Noun: sympathy. Compare empathetic (actually sharing the feeling)."
+ },
+ "nostalgic": {
+  "pos": "adjective",
+  "meaning": "feeling a bittersweet longing for the past",
+  "example": "Old photos made Grandpa nostalgic for his school days.",
+  "usage": "Noun: nostalgia. Often positive-sad: happy memories mixed with missing them."
+ },
+ "weary": {
+  "pos": "adjective",
+  "meaning": "very tired, especially after long effort; also, tired of something",
+  "example": "The weary hikers dropped their packs at camp; she grew weary of the same jokes.",
+  "usage": "'Weary of' = fed up with. Do not confuse with wary (cautious)."
+ }
+}

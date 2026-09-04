@@ -4,7 +4,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { D, ORDER, SUBJ, accuracyByWeek, allWrong, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
 import { go } from "@/lib/router"
-import { useStore } from "@/lib/store"
+import { Store, useStore } from "@/lib/store"
+import { upcoming } from "@/pages/calendar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -202,18 +203,21 @@ export function RecentSets() {
 }
 
 export function Breaks() {
-  if (!D.breaks || !D.breaks.length) return null
+  const ev = upcoming(5)
+  const test = Store.s.testDate
+  const days = test ? Math.round((new Date(test + "T00:00:00") - new Date(new Date().toISOString().slice(0, 10) + "T00:00:00")) / 86400000) : null
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Weeks off the rotation</CardTitle>
-        <CardDescription>Mock exams and correction weeks — no new sets those weeks.</CardDescription>
+        <CardTitle>Coming up</CardTitle>
+        <CardDescription>{test ? `${days} days until the ISEE.` : "Mocks, ISEE windows and deadlines."}</CardDescription>
+        <CardAction><Button size="sm" variant="ghost" onClick={() => go("/calendar")}>Calendar <ArrowRight /></Button></CardAction>
       </CardHeader>
       <CardContent className="flex flex-col divide-y">
-        {D.breaks.map((b, i) => (
-          <div key={i} className="flex items-center justify-between gap-4 py-2 text-sm first:pt-0 last:pb-0">
-            <span className="font-medium tabular-nums">{b.label}</span>
-            <span className="text-muted-foreground">{b.what}</span>
+        {ev.map((e) => (
+          <div key={e.id} className="flex items-start gap-3 py-2 text-sm first:pt-0 last:pb-0">
+            <span className="text-muted-foreground w-14 shrink-0 text-xs tabular-nums">{new Date(e.date + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+            {e.path ? <button type="button" className="text-left font-medium hover:underline" onClick={() => go(e.path)}>{e.title}</button> : <span className="font-medium">{e.title}</span>}
           </div>
         ))}
       </CardContent>

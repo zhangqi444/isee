@@ -62,8 +62,18 @@ for sub,(xlsx,sheet,acol,ccol,rows,qcol) in SPECS.items():
                    sum(results[k]['right'] for k in results if k.startswith(sub)),
                    sum(len(results[k]['wrong']) for k in results if k.startswith(sub))))
 
-seed={'version':4,'migrated_at':DATE,
-      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v4: balanced set sizes + her chosen letters; re-applied after the merge fix).",
+# Session 1 precision review, Week 1: her written responses
+import openpyxl as _ox
+_wb=_ox.load_workbook('vr_check.xlsx',data_only=True); _ws=_wb['Sep VR W1']
+_words={}
+for _r in range(6,26):
+    _w=_ws.cell(_r,2).value; _t=_ws.cell(_r,4).value; _c=_ws.cell(_r,5).value
+    if _w and _t: _words[str(_w).strip()]={'text':str(_t).strip(),'conf':(int(float(_c)) if _c not in (None,'') else None),'at':DATE}
+precision={'W1':{'words':_words,'submittedAt':DATE if _ws.cell(26,7).value else None,'at':DATE}}
+print(f"precision W1: {len(_words)} responses, submitted={bool(_ws.cell(26,7).value)}")
+
+seed={'version':5,'precision':precision,'migrated_at':DATE,
+      'note':"Sheila's Week-1 work, migrated from the Google Sheets on 2026-09-01 (v5: + her Week-1 precision-review responses).",
       'results':results}
 json.dump(seed,open('site/content/seed.json','w'),ensure_ascii=False,indent=1)
 
