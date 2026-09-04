@@ -7,7 +7,7 @@ import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -40,31 +40,38 @@ export function weekItems(wk) {
   for (const s of ORDER) {
     if (s === "vr" && D.precision && D.precision[wk]) {
       const ps = precisionSummary(wk)
-      items.push({ id: `prec:${wk}`, group: SUBJ.vr.name, label: "Session 1 · Precision review — 20 words in your own words", sub: "20–25 min", done: ps.submitted, path: `/precision/${wk}`, auto: true })
+      items.push({ id: `prec:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, label: "Session 1 · Precision review — 20 words in your own words", sub: "20–25 min", done: ps.submitted, path: `/precision/${wk}`, auto: true })
     }
     setsFor(s, wk).forEach((set, n) => {
       const r = Store.s.results[setId(s, wk, n)]
-      items.push({ id: `set:${s}:${wk}:${n}`, group: SUBJ[s].name, label: `Set ${n + 1} — ${set.length} questions`, sub: r ? `${r.right}/${r.n}` : "one sitting, no notes", done: !!r, path: `/run/${s}/${wk}/${n}`, auto: true })
+      items.push({ id: `set:${s}:${wk}:${n}`, group: SUBJ[s].name, tag: SUBJ[s].short, label: `Set ${n + 1} — ${set.length} questions`, sub: r ? `${r.right}/${r.n}` : "one sitting, no notes", done: !!r, path: `/run/${s}/${wk}/${n}`, auto: true })
     })
   }
   if (D.essay && D.essay.weeks[wk]) {
     const st = essayStatus(wk)
-    items.push({ id: `essay:${wk}`, group: "Essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
+    items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
   }
   const misses = allWrong().length
-  items.push({ id: `review:${wk}`, group: "Review", label: misses ? `Clear the review pile — ${misses} to try again` : "Review pile is empty", sub: "due review comes before new work", done: misses === 0, path: "/review", auto: true })
+  items.push({ id: `review:${wk}`, group: "Review", tag: "Review", label: misses ? `Clear the review pile — ${misses} to try again` : "Review pile is empty", sub: "due review comes before new work", done: misses === 0, path: "/review", auto: true })
   for (const m of D.mocks) {
     if (m.start >= a && m.start <= b) {
       const sm = mockSummary(m.id)
-      items.push({ id: `mock:${m.id}`, group: "Mock exam", label: `${m.name} — ${m.blurb}`, sub: sm.complete ? `${sm.right}/${sm.n} raw` : `${sm.done}/${sm.total} sections`, done: sm.complete, path: `/mock/${m.id}`, auto: true })
+      items.push({ id: `mock:${m.id}`, group: "Mock exam", tag: "Mock", label: `${m.name} — ${m.blurb}`, sub: sm.complete ? `${sm.right}/${sm.n} raw` : `${sm.done}/${sm.total} sections`, done: sm.complete, path: `/mock/${m.id}`, auto: true })
     }
   }
   for (const e of allEvents()) {
     if (e.kind === "week" || e.kind === "mock" || e.kind === "season") continue
-    if (e.date >= a && e.date <= b) items.push({ id: `ev:${e.id}`, group: "Calendar", label: `${fmt(e.date)} · ${e.title}`, sub: e.detail || "", done: null, path: e.path || "/calendar", auto: false })
+    if (e.date >= a && e.date <= b) items.push({ id: `ev:${e.id}`, group: "Calendar", tag: "Date", label: `${fmt(e.date)} · ${e.title}`, sub: e.detail || "", done: null, path: e.path || "/calendar", auto: false })
   }
   return items
 }
+
+/** Parent to-dos for a month that have not been ticked yet. */
+export function monthTodosLeft(key) {
+  const st = listState(key)
+  return ((D.calendar.monthly || {})[key] || []).filter((t) => !st.checked[`todo:${key}:${t.id}`]).length
+}
+export const thisMonthKey = () => monthKey(iso(new Date()))
 
 /** Month view: the weeks that fall in the month, mocks, calendar events and the parent to-dos. */
 export function monthItems(key) {
@@ -89,27 +96,107 @@ export function monthItems(key) {
 }
 
 /* ---------- UI ---------- */
-function Row({ item, listKey }) {
-  const st = listState(listKey)
+function isDone(item, listKey) { return item.done == null ? !!listState(listKey).checked[item.id] : item.done }
+
+function Row({ item, listKey, compact, testId = "ck-item" }) {
   const manual = item.done == null
-  const done = manual ? !!st.checked[item.id] : item.done
+  const done = isDone(item, listKey)
   function toggle() { if (!manual) return; setList(listKey, (cur) => ({ ...cur, checked: { ...cur.checked, [item.id]: !cur.checked[item.id] } })) }
   return (
-    <li className={cn("flex items-start gap-3 px-3 py-2.5", done && "opacity-70")} data-testid="ck-item" data-done={done ? "1" : "0"}>
+    <li className={cn("flex items-start gap-3 px-3", compact ? "py-2" : "py-2.5", done && "opacity-70")} data-testid={testId} data-done={done ? "1" : "0"}>
       <button type="button" onClick={toggle} disabled={!manual} aria-label={done ? "Done" : "Not done"} className={cn("mt-0.5 shrink-0 rounded-full", manual ? "cursor-pointer" : "cursor-default")}>
         {done ? <CheckCircle2 className="text-success size-5" /> : <Circle className="text-muted-foreground size-5" />}
       </button>
+      {compact && item.tag ? <span className="text-muted-foreground mt-0.5 w-20 shrink-0 truncate text-xs">{item.tag}</span> : null}
       <div className="flex min-w-0 flex-1 flex-col">
         {item.path ? (
           <button type="button" className={cn("text-left text-sm font-medium hover:underline", done && "line-through decoration-muted-foreground/60")} onClick={() => go(item.path)}>{item.label}</button>
         ) : (
           <span className={cn("text-sm font-medium", done && "line-through decoration-muted-foreground/60")}>{item.label}</span>
         )}
-        {item.sub ? <span className="text-muted-foreground text-xs">{item.sub}</span> : null}
+        {item.sub && !compact ? <span className="text-muted-foreground text-xs">{item.sub}</span> : null}
         {item.pct != null ? <Progress value={item.pct * 100} className="mt-1 h-1" /> : null}
       </div>
-      {!manual && !done ? <Badge variant="outline" className="text-muted-foreground shrink-0">auto</Badge> : null}
+      {compact && item.sub && done ? <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{item.sub}</span> : null}
+      {!manual && !done && !compact ? <Badge variant="outline" className="text-muted-foreground shrink-0">auto</Badge> : null}
     </li>
+  )
+}
+
+/** Dashboard card: this week's list with what's left on top, finished work folded away,
+ *  a quick-add box and a pointer to the month's parent to-dos. */
+export function WeekChecklistCard() {
+  useStore()
+  const cur = currentWeek()
+  const items = weekItems(cur)
+  const auto = items.filter((x) => x.auto), done = auto.filter((x) => x.done).length
+  const open = items.filter((it) => !isDone(it, cur)), finished = items.filter((it) => isDone(it, cur))
+  const st = listState(cur)
+  const [showDone, setShowDone] = React.useState(false)
+  const [text, setText] = React.useState("")
+  const mk = thisMonthKey(), todosLeft = monthTodosLeft(mk)
+  function add() {
+    const t = text.trim(); if (!t) return
+    setList(cur, (c) => ({ ...c, custom: [...c.custom, { id: "c" + Date.now(), text: t, done: false }] }))
+    setText("")
+  }
+  function toggleCustom(id) { setList(cur, (c) => ({ ...c, custom: c.custom.map((x) => (x.id === id ? { ...x, done: !x.done } : x)) })) }
+  const customOpen = st.custom.filter((c) => !c.done), customDone = st.custom.filter((c) => c.done)
+  const allClear = !open.length && !customOpen.length
+  return (
+    <Card className="gap-4" data-testid="home-checklist">
+      <CardHeader>
+        <CardDescription className="flex items-center gap-2"><ListChecks className="size-4" /> This week's checklist</CardDescription>
+        <CardTitle className="font-serif text-xl">{cur} · {weekLabel(cur)}</CardTitle>
+        <CardDescription className="tabular-nums">{done} of {auto.length} plan tasks done{open.length ? ` · ${open.length} left` : ""}</CardDescription>
+        <CardAction><Button size="sm" variant="ghost" onClick={() => go(`/checklist/${cur}`)}>Full checklist <ChevronRight /></Button></CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <Progress value={auto.length ? (done / auto.length) * 100 : 0} className="h-1.5" />
+        {allClear ? (
+          <div className="text-success flex items-center gap-2 rounded-md border px-3 py-3 text-sm font-medium"><CheckCircle2 className="size-4" /> Everything on this week's list is done.</div>
+        ) : (
+          <ul className="divide-y rounded-md border">
+            {open.map((it) => <Row key={it.id} item={it} listKey={cur} compact />)}
+            {customOpen.map((c) => (
+              <li key={c.id} className="flex items-center gap-3 px-3 py-2" data-testid="home-custom">
+                <button type="button" onClick={() => toggleCustom(c.id)} aria-label="Not done"><Circle className="text-muted-foreground size-5" /></button>
+                <span className="text-muted-foreground w-20 shrink-0 text-xs">Yours</span>
+                <span className="text-sm font-medium">{c.text}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {finished.length + customDone.length ? (
+          <div className="flex flex-col gap-2">
+            <button type="button" className="text-muted-foreground self-start text-xs hover:underline" onClick={() => setShowDone((v) => !v)} data-testid="home-toggle-done">
+              {showDone ? "Hide" : "Show"} {finished.length + customDone.length} done
+            </button>
+            {showDone ? (
+              <ul className="divide-y rounded-md border">
+                {finished.map((it) => <Row key={it.id} item={it} listKey={cur} compact testId="home-done" />)}
+                {customDone.map((c) => (
+                  <li key={c.id} className="flex items-center gap-3 px-3 py-2 opacity-70">
+                    <button type="button" onClick={() => toggleCustom(c.id)} aria-label="Done"><CheckCircle2 className="text-success size-5" /></button>
+                    <span className="text-muted-foreground w-20 shrink-0 text-xs">Yours</span>
+                    <span className="text-muted-foreground text-sm line-through">{c.text}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
+        <div className="flex gap-2">
+          <Input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") add() }} placeholder="Add something for this week" className="h-8" data-testid="home-ck-add" />
+          <Button size="sm" variant="outline" onClick={add}><Plus /> Add</Button>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button size="sm" variant="outline" onClick={() => go(`/checklist/month/${mk}`)}>
+          <CalendarDays /> {monthLabel(mk)} {todosLeft ? <Badge variant="warning" className="ml-1 tabular-nums">{todosLeft} parent to-do{todosLeft === 1 ? "" : "s"} left</Badge> : <span className="text-muted-foreground font-normal">· parent to-dos ticked</span>}
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }
 

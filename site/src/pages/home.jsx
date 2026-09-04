@@ -7,7 +7,7 @@ import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { upcoming } from "@/pages/calendar"
 import { essayStatus } from "@/pages/essay"
-import { weekItems } from "@/pages/checklist"
+import { WeekChecklistCard, weekItems } from "@/pages/checklist"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -91,7 +91,7 @@ export function SectionCards() {
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">{weekLabel(cur)}</div>
           <div className="text-muted-foreground">{(() => { const w = weekItems(cur).filter((x) => x.auto); const d = w.filter((x) => x.done).length; return `${d} of ${w.length} plan tasks done` })()}</div>
-          <Button size="sm" variant="outline" onClick={() => go("/checklist/" + cur)}>This week's checklist <ArrowRight /></Button>
+          <Button size="sm" variant="outline" onClick={() => document.querySelector("[data-testid=home-checklist]")?.scrollIntoView({ behavior: "smooth", block: "start" })}>See the list <ArrowRight /></Button>
         </CardFooter>
       </Card>
     </div>
@@ -257,12 +257,13 @@ export function Home() {
   return (
     <div className="flex flex-col gap-4 md:gap-6">
       <SectionCards />
-      <AccuracyChart />
-      <SubjectCards />
-      <div className="grid grid-cols-1 gap-4 @4xl/main:grid-cols-[2fr_1fr] md:gap-6">
-        <RecentSets />
+      <div className="grid grid-cols-1 items-start gap-4 @4xl/main:grid-cols-[3fr_2fr] md:gap-6">
+        <WeekChecklistCard />
         <Breaks />
       </div>
+      <SubjectCards />
+      <AccuracyChart />
+      <RecentSets />
     </div>
   )
 }

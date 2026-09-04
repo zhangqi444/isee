@@ -169,6 +169,16 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.click('[data-testid=ck-item][data-done="0"] >> nth=-1 >> button >> nth=0').catch(() => {});
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('text=plan tasks done');
   check('dashboard tile shows this week checklist progress', /\d+ of \d+ plan tasks done/.test(await body(pg)));
+  await pg.waitForSelector('[data-testid=home-checklist]');
+  const homeOpen = await pg.$$eval('[data-testid=home-checklist] [data-testid=ck-item][data-done="0"]', (n) => n.length);
+  const homeDoneShown = await pg.$$eval('[data-testid=home-checklist] [data-testid=ck-item][data-done="1"]', (n) => n.length);
+  check('dashboard checklist lists only what is left', homeOpen >= 1 && homeDoneShown === 0, `${homeOpen} open, ${homeDoneShown} done shown`);
+  await pg.click('[data-testid=home-toggle-done]');
+  check('finished work folds open on request', (await pg.$$('[data-testid=home-done]')).length >= 1);
+  await pg.fill('[data-testid=home-ck-add]', 'Read 20 pages'); await pg.press('[data-testid=home-ck-add]', 'Enter');
+  await pg.waitForSelector('[data-testid=home-custom]');
+  check('quick-add from the dashboard lands on the week list', /Read 20 pages/.test(await body(pg)));
+  check('dashboard points at the month parent to-dos', /parent to-do/.test(await body(pg)));
 
   check('no page errors', !errs.length, errs.slice(0, 3).join(' | '));
   await pg.screenshot({ path: 'shot-calendar.png', fullPage: false });
