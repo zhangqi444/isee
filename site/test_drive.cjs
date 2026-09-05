@@ -71,7 +71,7 @@ const FAKE_GIS = `
   for (let i = 0; i < 12; i++) { await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); if (i < 11) await pg.waitForSelector('[data-testid=choice]'); }
   await pg.waitForSelector('[data-testid=score]'); await pg.waitForTimeout(1600);
   check('finished set pushed to Drive', /"ma:W2:0"/.test(drive.body));
-  check('learning records travel with it (schema 4, items, mixed)', /"schema":4/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body));
+  check('learning records travel with it (schema 5, items, mixed, reviews)', /"schema":5/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body) && /"reviews":\{/.test(drive.body));
 
   // The hour expiry should be invisible: the next Drive call refreshes silently.
   await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
@@ -120,6 +120,24 @@ const FAKE_GIS = `
   await pg.waitForTimeout(300);
   const merged = await pg.evaluate((id) => JSON.parse(localStorage.getItem('isee.v1')).items[id], missId);
   check('newer remote learning record wins tag + schedule, histories merged', merged.tag === 'misread' && merged.step === 1 && merged.hist.length === 2 && merged.hist[1].ctx === 'review', JSON.stringify(merged).slice(0, 160));
+
+  // An essay review written into progress.json from outside the app (docs/essay-review.md)
+  // must reach her, and must survive her next save: every push reads the remote copy first.
+  const remoteBody = () => JSON.parse(drive.body.split('\r\n\r\n').pop().split('\r\n--')[0]);
+  const mkReview = (wk, day) => ({ id: `essay:${wk}:${day}`, v: 1, target: { kind: 'essay', wk }, at: `${day}T18:00:00Z`, reviewer: 'Claude, asked by Dad', summary: `You changed your mind on the page (${wk}).`, strengths: ['a specific detail'], suggestions: ['one line of dialogue'], next: 'dialogue' });
+  { const remote = remoteBody(); remote.reviews = { 'essay:W2:2026-09-05': mkReview('W2', '2026-09-05') }; drive.body = JSON.stringify(remote); }
+  await pg.evaluate(() => { location.hash = '#/essay/W2'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  await pg.waitForSelector('[data-testid=essay-review]', { timeout: 5000 });
+  check('a review added to progress.json outside the app shows on the essay', /changed your mind on the page \(W2\)/.test(await pg.textContent('[data-testid=essay-review]')));
+  { const remote = remoteBody(); remote.reviews['essay:W3:2026-09-06'] = mkReview('W3', '2026-09-06'); drive.body = JSON.stringify(remote); }
+  const callsBefore = drive.calls.length;
+  await pg.fill('[data-testid=essay-time-plan]', '5');       // any local save
+  await pg.waitForTimeout(1800);
+  const pushed = remoteBody();
+  check('a local save merges the remote copy first, so a review it never saw is kept', pushed.reviews['essay:W3:2026-09-06'] && pushed.reviews['essay:W2:2026-09-05'] && pushed.essays.W2.time.plan === 5, drive.calls.slice(callsBefore).join(' , '));
+  check('and the review is now on this device too', await pg.evaluate(() => !!JSON.parse(localStorage.getItem('isee.v1')).reviews['essay:W3:2026-09-06']));
+  await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=today]');
 
   // disconnect clears everything
   await pg.click('button:has-text("Saved to Drive")');

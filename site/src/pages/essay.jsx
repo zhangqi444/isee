@@ -1,10 +1,12 @@
 import * as React from "react"
-import { BookOpen, CheckCircle2, ChevronRight, Clock, PenLine, Play, RotateCcw, Square } from "lucide-react"
+import { BookOpen, CheckCircle2, ChevronRight, Clock, MessageSquareText, PenLine, Play, RotateCcw, Square } from "lucide-react"
 
 import { D, currentWeek, weekLabel } from "@/lib/content"
+import { isSeen, reviewsFor } from "@/lib/reviews"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { ReviewCard } from "@/components/review-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -168,13 +170,16 @@ export function EssayList() {
         {weeks.map(({ w, label, e }) => {
           const status = essayStatus(w)
           const t = essayTime(w)
+          const reviews = reviewsFor({ kind: "essay", wk: w })
+          const unread = reviews.some((r) => !isSeen(r.id))
           return (
             <Card key={w} className={cn("gap-3 py-5", w === cur && "border-primary/50 ring-primary/15 ring-2")}>
               <CardHeader className="px-5">
                 <CardTitle className="flex items-center gap-2">{w} <span className="text-muted-foreground font-normal">· {label}</span>{w === cur && <Badge>This week</Badge>}</CardTitle>
                 <CardDescription>{e.focus}</CardDescription>
-                <CardAction>
+                <CardAction className="flex flex-col items-end gap-1">
                   <Badge variant={status === "complete" ? "success" : status === "in progress" ? "warning" : "outline"}>{status}</Badge>
+                  {reviews.length ? <Badge variant="secondary" data-testid={`essay-reviewed-${w}`} data-unread={unread ? "1" : "0"}>{unread ? <span className="bg-primary size-2 rounded-full" /> : null} Reviewed</Badge> : null}
                 </CardAction>
               </CardHeader>
               <CardContent className="flex flex-col gap-3 px-5">
@@ -201,6 +206,7 @@ export function EssayWeek({ wk }) {
   const status = essayStatus(wk)
   const draftWords = ["opening", "middle", "ending"].reduce((n, k) => n + words((st.draft || {})[k]), 0)
   const bank = D.essay.bank.filter((b) => (e.alternate || "").includes(b.id))
+  const reviews = reviewsFor({ kind: "essay", wk })
   const [tab, setTab] = React.useState(status === "complete" ? "feedback" : "plan")
 
   function setFeedback(check, patch) {
@@ -228,12 +234,17 @@ export function EssayWeek({ wk }) {
           <CardDescription className="flex items-center gap-2"><PenLine className="size-4" /> Essay · {wk} · {weekLabel(wk)}</CardDescription>
           <CardTitle className="text-xl leading-snug font-semibold" data-testid="essay-prompt">{e.prompt}</CardTitle>
           <CardDescription>Week focus: {e.focus}</CardDescription>
-          <CardAction>
+          <CardAction className="flex flex-col items-end gap-1">
             {status === "complete" ? <Badge variant="success"><CheckCircle2 /> Complete</Badge> : <Badge variant="secondary" className="tabular-nums">{draftWords} words</Badge>}
+            {reviews.length ? <Badge variant="outline"><MessageSquareText /> {reviews.length === 1 ? "Reviewed" : `${reviews.length} reviews`}</Badge> : null}
           </CardAction>
         </CardHeader>
         <CardContent className="text-muted-foreground text-sm">{e.target}</CardContent>
       </Card>
+
+      {/* A review sits above the phases, whatever tab she is on: someone wrote it for her,
+          and it may arrive from Drive after the page is already open. */}
+      {reviews.map((r) => <ReviewCard key={r.id} r={r} changedAt={st.at} />)}
 
       <TimeLog wk={wk} />
 

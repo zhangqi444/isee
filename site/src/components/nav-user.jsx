@@ -76,7 +76,7 @@ export function NavUser() {
               {DRIVE_ENABLED ? (
                 live ? (
                   <>
-                    <DropdownMenuItem onSelect={() => store.push().then(() => store.setStatus("live")).catch(() => store.setStatus("error"))}>
+                    <DropdownMenuItem onSelect={() => { store.setStatus("syncing"); store.pull().then(() => { store.lastSync = new Date(); store.setStatus("live") }).catch(() => store.setStatus("error")) }}>
                       <RefreshCw /> Sync now
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => store.signOut()}>

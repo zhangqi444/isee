@@ -71,10 +71,13 @@ The app is a static page that keeps the learner's data **in her own Google Drive
 - **Merge** (`Store.merge`): per key, last write wins by `at`; on a tie the richer
   copy is kept. Learning records union their attempt histories. Merging must never
   be able to delete an answer.
-- **Payload**: `schema: 4` — `results, precision, essays, mocks, checklists, items,
-  mixed, badges, rewards, books, testDate, testFormat, pacing`. Adding a slice means
-  bumping the schema, adding it to `init`, `merge` and `push`, and covering it in
-  `test_drive.cjs`.
+- **Payload**: `schema: 5` — `results, precision, essays, mocks, checklists, items,
+  mixed, badges, rewards, books, reviews, reviewsSeen, testDate, testFormat, pacing`.
+  Adding a slice means bumping the schema, adding it to `init`, `merge` and `push`,
+  and covering it in `test_drive.cjs`.
+- **Every push reads first**: `flush` runs `pull` (GET, merge, PATCH), so a change
+  another device or an outside reviewer put in `progress.json` is merged, never
+  overwritten. The `pagehide` keepalive write is the one blind PATCH.
 - **Popups**: never call `requestAccessToken` without a click behind it; browsers
   block it. First grant uses `prompt: "consent"`, later ones `prompt: ""`.
 
@@ -89,6 +92,14 @@ state plus an `online` listener retries a save that failed.
 works signed out, so "Not now — this device only" is a real answer and is
 remembered (`signInAsked`). It returns only when a save has actually failed for
 auth reasons (`reconnectNeeded`), never merely because a token aged out.
+
+## Essay reviews
+
+A parent asks Claude to review an essay; the review reaches the site as an import
+link (`#/import/<payload>`), is stored in `reviews`, synced to Drive, and shown on
+the essay. A Google Doc copy goes in the Drive folder. Contract:
+[docs/essay-review.md](docs/essay-review.md); workflow: `.claude/skills/essay-review/`.
+Reviews are written to Sheila, never grade-like, and never deleted by the app.
 
 ## Data model
 
@@ -122,8 +133,8 @@ Four suites, all real browsers against the built `dist/`:
 | Suite | Covers |
 |---|---|
 | `test_e2e.cjs` | desktop + phone shells, navigation, a full set, persistence |
-| `test_drive.cjs` | Google stubbed: sign-in once, reload without a prompt, silent reconnect, merge conflicts |
-| `test_features.cjs` | precision, essay, mocks, calendar, checklist, learning engine, rewards, reading, AoPS pointers |
+| `test_drive.cjs` | Google stubbed: sign-in once, reload without a prompt, silent reconnect, merge conflicts, a review arriving from Drive and surviving a save |
+| `test_features.cjs` | precision, essay (time log, review import), mocks, calendar, checklist, learning engine, rewards, reading, AoPS pointers |
 | `test_artifact.cjs` | the single-file build: no Drive, no external requests, host theme |
 
 Rules: every feature gets checks in the suite it belongs to; a UI change that

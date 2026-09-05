@@ -161,6 +161,33 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.waitForSelector('[data-testid=choice]');
   check('corrections drill opens as a runner', /Corrections/.test(await body(pg)));
 
+  console.log('== essay review');
+  // a review made outside the app arrives as a link: #/import/<base64url JSON>
+  const review = { target: { kind: 'essay', wk: 'W2' }, at: '2026-09-05T18:00:00Z', reviewer: 'Claude, asked by Dad', source: 'her progress file in Google Drive', summary: 'You changed your mind on the page, and the reader can see why.', strengths: ['The seed experiment is a real, specific detail.'], suggestions: ['Say what you said to your friend when you gave up the volcano.'], next: 'Add one sentence of dialogue.', rubric: { Specificity: 3, Structure: 2, Bogus: 9 } };
+  const payload = Buffer.from(JSON.stringify(review)).toString('base64url');
+  await pg.evaluate((p) => { location.hash = '#/import/' + p; }, payload);
+  await pg.waitForSelector('[data-testid=import-preview]');
+  check('an import link previews the review before adding it', /Essay · W2/.test(await body(pg)) && /Claude, asked by Dad/.test(await body(pg)));
+  await pg.click('[data-testid=import-add]');
+  await pg.waitForSelector('[data-testid=essay-review]');
+  const rvText = await pg.textContent('[data-testid=essay-review]');
+  check('adding it opens the essay with the review under the prompt',/#\/essay\/W2$/.test(await pg.evaluate(() => location.hash)) && /seed experiment is a real/.test(rvText) && /For next week/.test(rvText) && /Google Drive/.test(rvText));
+  check('rubric chips use the content rubric and drop unknown dimensions', /Specificity · 3/.test(await pg.textContent('[data-testid=review-rubric]')) && !/Bogus/.test(rvText));
+  check('the review is stored with her progress and marked read', await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const r = s.reviews['essay:W2:2026-09-05']; return !!r && r.target.wk === 'W2' && r.v === 1 && !!s.reviewsSeen['essay:W2:2026-09-05']; }));
+  await pg.evaluate(() => { location.hash = '#/essay'; }); await pg.waitForSelector('[data-testid=essay-reviewed-W2]');
+  check('the week card says Reviewed, with no dot once read', (await pg.$eval('[data-testid=essay-reviewed-W2]', (e) => e.dataset.unread)) === '0');
+  // a second review lands from Drive while she is away: a dot in the sidebar, a job on Today
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.reviews['essay:W3:2026-09-06'] = { id: 'essay:W3:2026-09-06', v: 1, target: { kind: 'essay', wk: 'W3' }, at: '2026-09-06T18:00:00Z', reviewer: 'Mum', summary: 'A brave start.', strengths: [], suggestions: [], next: '' }; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
+  check('an unread review is a dot in the sidebar and a job on Today', (await pg.$('[data-testid=reviews-new]')) !== null && /Essay · W3 · read the review/.test(await pg.textContent('[data-testid=today-jobs]')));
+  // the paste box, for a phone that cannot open the long link
+  await pg.evaluate(() => { location.hash = '#/import'; }); await pg.waitForSelector('[data-testid=import-text]');
+  await pg.fill('[data-testid=import-text]', 'not a review'); await pg.click('[data-testid=import-paste-add]');
+  check('a bad paste is refused in plain words', /does not look like a review/.test(await body(pg)));
+  await pg.fill('[data-testid=import-text]', JSON.stringify({ target: { kind: 'mock', form: 'DGN' }, summary: 'You fixed the board and told the story straight.', reviewer: 'Dad' }));
+  await pg.click('[data-testid=import-paste-add]'); await pg.waitForSelector('[data-testid=essay-review]');
+  check('a pasted review of the mock essay opens on that essay', /#\/mock\/DGN\/ESSAY$/.test(await pg.evaluate(() => location.hash)) && /fixed the board/.test(await pg.textContent('[data-testid=essay-review]')));
+
   console.log('== calendar');
   await pg.evaluate(() => { location.hash = '#/calendar'; });
   await pg.waitForSelector('[data-testid=test-date]');

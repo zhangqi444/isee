@@ -1,6 +1,7 @@
 import * as React from "react"
-import { ArrowRight, BookMarked, CheckCircle2, Flame, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sparkles } from "lucide-react"
+import { ArrowRight, BookMarked, CheckCircle2, Flame, ListChecks, MessageSquareText, PenLine, Play, RotateCcw, Shuffle, Sparkles } from "lucide-react"
 import { effortPoints, streakInfo, thisWeekRange } from "@/lib/engine"
+import { reviewPath, reviewTargetLabel, unseenReviews } from "@/lib/reviews"
 import { currentBook, readToday } from "@/lib/books"
 import { ReadinessCard } from "@/pages/score"
 import { RewardsCard } from "@/pages/rewards"
@@ -51,6 +52,8 @@ export function TodayCard() {
     label: `${x.tag} · ${x.short || x.label}`, sub: x.sub || "", path: x.path,
   }))
   if (book && !readToday()) jobs.push({ id: "read", icon: BookMarked, label: `Reading · ${book.title}`, sub: "reading days count too", path: "/books" })
+  // a review she has not read yet is quick, and someone wrote it for her: it goes first
+  for (const r of unseenReviews().reverse()) jobs.unshift({ id: "review:" + r.id, icon: MessageSquareText, label: `${reviewTargetLabel(r)} · read the review`, sub: `from ${r.reviewer}`, path: reviewPath(r) })
 
   const rest = jobs.filter((j) => !next || j.path !== next.path)
 
