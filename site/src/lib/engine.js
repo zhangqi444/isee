@@ -4,6 +4,7 @@
  * few writers at the top. Nothing here ever deletes a result. */
 import { D, ORDER, SUBJ, LTR, keyOf, setId, setsFor, currentWeek } from "./content"
 import { Store, ts } from "./store"
+import { aopsFor } from "./aops"
 
 /* ---------- constants ---------- */
 export const CAUSES = [
@@ -480,7 +481,8 @@ export function mockNextSteps(form) {
     // the practice set with the most questions on that skill, from weeks already reached
     let best = null
     for (const w of D.weeks) { if (w.w > cur) break; setsFor(c.sub, w.w).forEach((set, n) => { const k = set.filter((q) => baseSkill(skillOf(c.sub, q)) === c.sk || baseSkill(q.sk) === c.sk).length; if (k && (!best || k > best.k)) best = { k, path: `/run/${c.sub}/${w.w}/${n}`, label: `${w.w} set ${n + 1}` } }) }
-    steps.push({ kind: "skill", text: `${SUBJ[c.sub].short} · ${c.sk}: ${c.n} missed — the review pile has them now; ${best ? `redo ${best.label} (${best.k} on this skill)` : "reteach it before the next set"}`, path: best ? best.path : `/review/${c.sub}`, sub: c.sub })
+    const a = aopsFor(c.sub, c.sk) || aopsFor(c.sub, c.sk.charAt(0).toUpperCase() + c.sk.slice(1))
+    steps.push({ kind: "skill", text: `${SUBJ[c.sub].short} · ${c.sk}: ${c.n} missed — the review pile has them now; ${best ? `redo ${best.label} (${best.k} on this skill)` : "reteach it before the next set"}${a ? `. AoPS: ${a.ba}, or Prealgebra “${a.pa}”` : ""}`, path: best ? best.path : `/review/${c.sub}`, sub: c.sub })
   }
   const tagged = missTotal - untagged
   if (tagged >= 3) {

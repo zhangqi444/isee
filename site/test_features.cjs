@@ -258,6 +258,16 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   const ck2 = await body(pg);
   check('week checklist has word quiz + mixed set + mock follow-up', /Word quiz/.test(ck2) && /mixed set/.test(ck2) && /Mock follow-up/.test(ck2));
 
+  console.log('== AoPS pointers');
+  await pg.evaluate(() => { location.hash = '#/s/ma'; }); await pg.waitForSelector('[data-testid=skills]');
+  const hints = await pg.$$eval('[data-testid=aops-hint]', (n) => n.map((x) => x.dataset.skill));
+  check('weak maths skills carry the AoPS chapter that teaches them', hints.includes('Percent') && hints.includes('Fractions'), hints.join(', '));
+  check('the pointer names a Beast Academy unit and a Prealgebra chapter', /5D · Percents/.test(await pg.textContent('[data-testid=skills]')));
+  await pg.evaluate(() => { location.hash = '#/s/vr'; }); await pg.waitForSelector('[data-testid=skills]');
+  check('verbal gets no AoPS pointer, because there is no honest one', (await pg.$$('[data-testid=aops-hint]')).length === 0);
+  await pg.evaluate(() => { location.hash = '#/review'; }); await pg.waitForSelector('[data-testid=review-ma]');
+  check('the review pile names the chapter for its worst maths skill', (await pg.$('[data-testid=review-ma] [data-testid=aops-hint]')) !== null && /Alcumus/.test(await pg.textContent('[data-testid=review-ma]')));
+
   console.log('== reading log');
   await pg.evaluate(() => { location.hash = '#/books'; }); await pg.waitForSelector('[data-testid=book]');
   const bk = await body(pg);

@@ -12,6 +12,8 @@ import { Progress } from "@/components/ui/progress"
 import { precisionSummary } from "@/pages/precision"
 import { masteryOf, pacingFor, skillsFor } from "@/lib/engine"
 import { LevelBadge } from "@/pages/score"
+import { AopsHint } from "@/components/aops-hint"
+import { aopsFor } from "@/lib/aops"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 function ScoreBadge({ r }) {
@@ -88,6 +90,9 @@ export function WeekCard({ sub, wk, highlight }) {
   )
 }
 
+/** A skill worth relearning rather than just practising again. */
+const weak = (k) => k.attempted && (k.level === "Needs work" || k.level === "Started" || (k.acc != null && k.acc < 0.75))
+
 /** Skill levels for one subject: weakest first. Mastered needs a right answer in a later mixed set or mock. */
 export function SkillsCard({ sub }) {
   const skills = skillsFor(sub)
@@ -104,6 +109,7 @@ export function SkillsCard({ sub }) {
           {pace.n >= 8 ? ` · median ${Math.round(pace.median)} s a question against a ${pace.budget} s budget` : ""}
         </CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => setAll((v) => !v)}>{all ? "Practiced only" : "All skills"}</Button></CardAction>
+        {rows.some((k) => weak(k) && aopsFor(sub, k.sk)) ? <CardDescription className="text-xs">Weak skills carry the AoPS chapter that teaches them — hover for the Beast Academy unit, the Prealgebra chapter and the Alcumus topic.</CardDescription> : null}
       </CardHeader>
       {rows.length ? (
         <CardContent className="px-5">
@@ -112,7 +118,12 @@ export function SkillsCard({ sub }) {
             <TableBody>
               {rows.map((k) => (
                 <TableRow key={k.sk}>
-                  <TableCell className="font-medium">{k.sk}{k.overdue ? <span className="text-warning ml-2 text-xs">{k.overdue} due</span> : null}</TableCell>
+                  <TableCell className="font-medium">
+                    <span className="flex flex-col gap-0.5">
+                      <span>{k.sk}{k.overdue ? <span className="text-warning ml-2 text-xs">{k.overdue} due</span> : null}</span>
+                      {weak(k) ? <AopsHint sub={sub} skill={k.sk} inline /> : null}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-muted-foreground hidden text-xs @md/main:table-cell">{k.weeks.join(" ")}</TableCell>
                   <TableCell className="text-right tabular-nums">{k.acc == null ? "—" : `${Math.round(k.acc * 100)}% · ${k.attempted}/${k.total}`}</TableCell>
                   <TableCell className="text-right"><LevelBadge level={k.level} /></TableCell>

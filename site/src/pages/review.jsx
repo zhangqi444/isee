@@ -8,6 +8,8 @@ import { useStore } from "@/lib/store"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { AopsHint } from "@/components/aops-hint"
+import { aopsFor } from "@/lib/aops"
 
 /** Small horizontal breakdown of misses by cause. */
 export function CauseBar({ profile, className }) {
@@ -91,6 +93,11 @@ export function Review() {
                   </CardContent>
                 ) : null}
                 {due.length ? <CardContent><CauseBar profile={causeBreakdown(due)} /></CardContent> : null}
+                {(() => {
+                  // the skill she is missing most in this subject, if AoPS teaches it
+                  const worst = top.find(([sk]) => aopsFor(s, sk))
+                  return worst && worst[1] >= 2 ? <CardContent><AopsHint sub={s} skill={worst[0]} /></CardContent> : null
+                })()}
                 <CardFooter className="flex-wrap gap-2">
                   {due.length ? <Button size="sm" onClick={() => go("/review/" + s)} data-testid={`start-review-${s}`}><Play /> Review {due.length} due</Button> : null}
                   {sched.length ? <Button size="sm" variant={due.length ? "ghost" : "outline"} onClick={() => go(`/review/${s}/all`)}>Everything · {due.length + sched.length}</Button> : null}

@@ -55,6 +55,7 @@ for fid,name,blurb,label,start,ekey,split in FORMS:
     out['mocks'].append({'id':fid,'name':name,'blurb':blurb,'label':label,'start':start,'split':split,'sections':secs})
 out['calendar']=json.load(open('content/calendar.json'))
 out['books']=json.load(open('content/books.json'))
+out['aops']=json.load(open('content/aops.json'))
 import os as _os
 if _os.path.exists('site/content/seed.json'):
     out['seed']=json.load(open('site/content/seed.json'))
