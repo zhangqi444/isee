@@ -1,6 +1,7 @@
 /* Turn the single-file build (dist-artifact/index.html) into ../artifact.html,
  * the body-only form the claude.ai Artifact tool wraps in its own skeleton:
- * <title> + font <link>s + <style> + #root + inline <script type="module">. */
+ * <title> + <style> + #root + inline <script type="module">. The UI font is the
+ * device's own, so the artifact needs no external stylesheet at all. */
 import fs from "node:fs"
 import path from "node:path"
 

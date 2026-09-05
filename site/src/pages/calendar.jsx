@@ -75,7 +75,7 @@ function TestDayCard() {
     <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><Timer className="size-4" /> Sheila's real ISEE date</CardDescription>
-        <CardTitle className="font-serif text-2xl font-semibold tracking-tight">
+        <CardTitle className="text-2xl font-semibold tracking-tight">
           {store.s.testDate ? (days > 0 ? `${days} days to go` : days === 0 ? "Today" : `${-days} days ago`) : "Which day will she take the real test?"}
         </CardTitle>
         <CardDescription>
@@ -160,7 +160,7 @@ export function Calendar() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <h2 className="flex items-center gap-2 font-serif text-xl font-semibold"><CalendarDays className="size-5" /> Timeline</h2>
+        <h2 className="flex items-center gap-2 text-xl font-semibold"><CalendarDays className="size-5" /> Timeline</h2>
         <p className="text-muted-foreground text-sm">Plan weeks, mocks, and the real ISEE windows for the Seattle area (researched {D.calendar.researched_at}). Tap a plan week or mock to open it.</p>
       </div>
 
@@ -175,7 +175,7 @@ export function Calendar() {
                 <li key={row.e.id + idx} className={cn("flex gap-4 px-5 py-3", row.e.date < today && (row.e.end || row.e.date) < today && "opacity-60", row.e.kind === "season" && "bg-primary/5")}>
                   <div className="w-11 shrink-0 text-center">
                     <div className="text-muted-foreground text-[11px] uppercase">{row.f.wd}</div>
-                    <div className="font-serif text-xl leading-none font-semibold tabular-nums">{row.f.day}</div>
+                    <div className="text-xl leading-none font-semibold tabular-nums">{row.f.day}</div>
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="flex flex-wrap items-center gap-2">

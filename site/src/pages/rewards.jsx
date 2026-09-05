@@ -77,7 +77,7 @@ export function RewardsCard() {
     <Card className="gap-4" data-testid="rewards-card">
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><Trophy className="size-4" /> Rewards</CardDescription>
-        <CardTitle className="font-serif text-xl">Level {w.level.n} · {w.level.title}</CardTitle>
+        <CardTitle className="text-xl">Level {w.level.n} · {w.level.title}</CardTitle>
         <CardDescription className="tabular-nums">{counts.earned} of {counts.total} badges · {w.balance} points to spend</CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => go("/rewards")}>Open <Gift /></Button></CardAction>
       </CardHeader>
@@ -212,19 +212,19 @@ export function Rewards() {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><Trophy className="size-4" /> Rewards</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">Level {w.level.n} · {w.level.title}</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">Level {w.level.n} · {w.level.title}</CardTitle>
           <CardDescription>Points are for showing up and doing the work — every set, review, word, essay and mock pays, whatever the score. Badges are earned once and kept for good.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-6">
           <Ring value={w.level.pct} size={112} color="text-primary">
-            <span className="font-serif text-3xl font-semibold tabular-nums" data-testid="level">{w.level.n}</span>
+            <span className="text-3xl font-semibold tabular-nums" data-testid="level">{w.level.n}</span>
             <span className="text-muted-foreground text-[11px]">level</span>
           </Ring>
           <div className="flex min-w-48 flex-1 flex-col gap-2">
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-              <span><span className="font-serif text-2xl font-semibold tabular-nums">{w.lifetime}</span> <span className="text-muted-foreground">points earned</span></span>
-              <span><span className="font-serif text-2xl font-semibold tabular-nums" data-testid="wallet-balance">{w.balance}</span> <span className="text-muted-foreground">to spend</span></span>
-              <span><span className="font-serif text-2xl font-semibold tabular-nums">{counts.earned}</span> <span className="text-muted-foreground">of {counts.total} badges</span></span>
+              <span><span className="text-2xl font-semibold tabular-nums">{w.lifetime}</span> <span className="text-muted-foreground">points earned</span></span>
+              <span><span className="text-2xl font-semibold tabular-nums" data-testid="wallet-balance">{w.balance}</span> <span className="text-muted-foreground">to spend</span></span>
+              <span><span className="text-2xl font-semibold tabular-nums">{counts.earned}</span> <span className="text-muted-foreground">of {counts.total} badges</span></span>
             </div>
             <Progress value={w.level.pct} className="h-1.5" />
             <span className="text-muted-foreground text-xs tabular-nums">
@@ -257,7 +257,7 @@ export function Rewards() {
             return (
               <div key={g} className="flex flex-col gap-2">
                 <div className="flex items-baseline justify-between">
-                  <h3 className="font-serif text-base font-semibold">{g}</h3>
+                  <h3 className="text-base font-semibold">{g}</h3>
                   <span className="text-muted-foreground text-xs tabular-nums">{done}/{all.filter((b) => b.group === g).length}</span>
                 </div>
                 <ul className="grid grid-cols-1 gap-2 @2xl/main:grid-cols-2">

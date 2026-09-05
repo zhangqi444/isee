@@ -85,7 +85,7 @@ export function EssayList() {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-3">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><PenLine className="size-4" /> Essay</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">One prompt a week, thirty minutes</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">One prompt a week, thirty minutes</CardTitle>
           <CardDescription>{D.essay.home.target}</CardDescription>
         </CardHeader>
         <CardContent className="text-muted-foreground text-sm">{D.essay.home.structure} · {D.essay.home.goal}</CardContent>
@@ -150,7 +150,7 @@ export function EssayWeek({ wk }) {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-3">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><PenLine className="size-4" /> Essay · {wk} · {weekLabel(wk)}</CardDescription>
-          <CardTitle className="font-serif text-xl leading-snug font-semibold" data-testid="essay-prompt">{e.prompt}</CardTitle>
+          <CardTitle className="text-xl leading-snug font-semibold" data-testid="essay-prompt">{e.prompt}</CardTitle>
           <CardDescription>Week focus: {e.focus}</CardDescription>
           <CardAction>
             {status === "complete" ? <Badge variant="success"><CheckCircle2 /> Complete</Badge> : <Badge variant="secondary" className="tabular-nums">{draftWords} words</Badge>}

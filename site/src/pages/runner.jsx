@@ -23,7 +23,7 @@ export function Passage({ id }) {
   return (
     <ScrollArea className="bg-muted/40 max-h-64 rounded-lg border [&>[data-radix-scroll-area-viewport]]:max-h-64">
       <div className="flex flex-col gap-3 p-4 text-[15px] leading-7">
-        {p.t ? <h3 className="font-serif text-base font-semibold">{p.t}</h3> : null}
+        {p.t ? <h3 className="text-base font-semibold">{p.t}</h3> : null}
         {p.x.split(/\n+/).map((para, k) => <p key={k}>{para}</p>)}
       </div>
     </ScrollArea>
@@ -202,7 +202,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
         <Card className="from-primary/5 to-card bg-gradient-to-t items-center text-center" data-testid="score">
           <CardHeader className="w-full">
             <CardDescription>{title}{done.reopened && when ? ` · completed ${when}` : ""}{done.attempts > 1 ? ` · attempt ${done.attempts}` : ""}</CardDescription>
-            <CardTitle className="font-serif text-5xl font-semibold tabular-nums">
+            <CardTitle className="text-5xl font-semibold tabular-nums">
               {done.right}<span className="text-muted-foreground text-xl font-normal"> / {total}</span>
             </CardTitle>
             <CardDescription className="text-base">{pct}% · {msg}</CardDescription>
@@ -230,7 +230,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
             {noLetters && <CardDescription className="text-xs">This set was done before answers were recorded letter by letter, so only right/missed is shown.</CardDescription>}
           </CardHeader>
         </Card>
-        <h2 className="mt-2 font-serif text-xl font-semibold">Every question</h2>
+        <h2 className="mt-2 text-xl font-semibold">Every question</h2>
         <div className="flex flex-col gap-3">
           {items.map((q, j) => {
             const ok = LTR[picks[j]] === keyOf(q)

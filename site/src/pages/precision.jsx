@@ -60,7 +60,7 @@ function WordCard({ wk, entry, idx, state, submitted }) {
       <CardHeader className="px-5">
         <CardTitle className="flex flex-wrap items-baseline gap-x-2">
           <span className="text-muted-foreground text-xs font-normal tabular-nums">#{idx + 1}</span>
-          <span className="font-serif text-xl font-semibold">{entry.word}</span>
+          <span className="text-xl font-semibold">{entry.word}</span>
           {entry.pos ? <span className="text-muted-foreground text-xs font-normal">{entry.pos}</span> : null}
         </CardTitle>
         <CardDescription className="text-foreground/80 text-[15px]">{entry.task}</CardDescription>
@@ -125,7 +125,7 @@ export function Precision({ wk }) {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><BookA className="size-4" /> Verbal Reasoning · {wk} · {weekLabel(wk)}</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">Session 1 — Precision Review</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">Session 1 — Precision Review</CardTitle>
           <CardDescription>{data.minutes}. Explain each word in your own words, rate how sure you are, then check the meaning. Submit the whole set once every word has an answer and a rating. A word counts as <em>known</em> once it is explained here and answered right in the synonym quiz on a different day.</CardDescription>
           <CardAction>
             {sum.submitted ? <Badge variant="success"><CheckCircle2 /> Submitted</Badge> : <Badge variant="secondary" className="tabular-nums">{sum.written}/{sum.total} written</Badge>}

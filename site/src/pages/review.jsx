@@ -35,7 +35,7 @@ export function Review() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 md:gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="font-serif text-2xl font-semibold tracking-tight">Review</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Review</h1>
         <p className="text-muted-foreground max-w-prose text-sm">
           A missed question comes back after {INTERVALS[0]} day, then {INTERVALS[1]} days, then a week. Get it right on two spaced days and it leaves the pile — with one check-in three weeks later to make sure it stuck. Words rated shaky in the precision review are in here too.
         </p>

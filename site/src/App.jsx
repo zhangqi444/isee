@@ -85,7 +85,7 @@ class ErrorBoundary extends React.Component {
     if (!this.state.err) return this.props.children
     return (
       <div className="mx-auto mt-16 flex max-w-md flex-col gap-3 rounded-xl border bg-card p-6 text-center shadow-sm">
-        <h2 className="font-serif text-xl font-semibold">Something went wrong</h2>
+        <h2 className="text-xl font-semibold">Something went wrong</h2>
         <p className="text-muted-foreground text-sm">{String(this.state.err && this.state.err.message || this.state.err)}</p>
         <div className="flex justify-center gap-2">
           <button className="rounded-md border px-3 py-1.5 text-sm" onClick={() => location.reload()}>Reload</button>

@@ -57,14 +57,14 @@ export function ReadinessCard() {
     <Card className="from-primary/5 to-card bg-gradient-to-t gap-4" data-testid="readiness">
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><Trophy className="size-4" /> Readiness</CardDescription>
-        <CardTitle className="font-serif text-xl">{R.label}</CardTitle>
+        <CardTitle className="text-xl">{R.label}</CardTitle>
         <CardDescription>{R.advice ? R.advice.text : "One number for how ready Sheila is, from accuracy, mocks, mastery, pacing, the review pile and consistency."}</CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => go("/score")}>How it's scored <ArrowRight /></Button></CardAction>
       </CardHeader>
       <CardContent className="grid grid-cols-1 gap-5 @2xl/main:grid-cols-[auto_1fr_1fr] @2xl/main:items-center">
         <div className="flex items-center gap-4">
           <Ring value={R.score} size={120}>
-            <span className={cn("font-serif text-4xl font-semibold tabular-nums", tone(R.score))} data-testid="readiness-score">{R.score == null ? "—" : R.score}</span>
+            <span className={cn("text-4xl font-semibold tabular-nums", tone(R.score))} data-testid="readiness-score">{R.score == null ? "—" : R.score}</span>
             <span className="text-muted-foreground text-[11px]">of 100</span>
           </Ring>
           <div className="flex flex-col gap-2">
@@ -161,7 +161,7 @@ export function Score() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><span className="inline-block size-2.5 rounded-full" style={{ background: SUBJ[s].color }} /> {SUBJ[s].name}</CardTitle>
                 <CardDescription>{x.mastery.practiced ? `${x.mastery.practiced} of ${x.mastery.total} skills practiced` : "No skills practiced yet"}</CardDescription>
-                <CardAction><span className={cn("font-serif text-3xl font-semibold tabular-nums", tone(x.score))}>{x.score == null ? "—" : x.score}</span></CardAction>
+                <CardAction><span className={cn("text-3xl font-semibold tabular-nums", tone(x.score))}>{x.score == null ? "—" : x.score}</span></CardAction>
               </CardHeader>
               <CardContent><PartBars parts={x.parts} compact /></CardContent>
               {skills.length ? (

@@ -55,7 +55,7 @@ export function AppSidebar({ route, ...props }) {
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <a href="#/" onClick={(e) => { e.preventDefault(); nav("/") }}>
                 <GraduationCap className="!size-5 text-primary" />
-                <span className="font-serif text-base font-semibold tracking-tight">Sheila · ISEE</span>
+                <span className="text-base font-semibold tracking-tight">Sheila · ISEE</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

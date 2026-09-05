@@ -155,7 +155,7 @@ export function WeekChecklistCard() {
     <Card className="gap-4" data-testid="home-checklist">
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><ListChecks className="size-4" /> This week's checklist</CardDescription>
-        <CardTitle className="font-serif text-xl">{cur} · {weekLabel(cur)}</CardTitle>
+        <CardTitle className="text-xl">{cur} · {weekLabel(cur)}</CardTitle>
         <CardDescription className="tabular-nums">{done} of {auto.length} plan tasks done{open.length ? ` · ${open.length} left` : ""}</CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => go(`/checklist/${cur}`)}>Full checklist <ChevronRight /></Button></CardAction>
       </CardHeader>
@@ -278,7 +278,7 @@ export function Checklist({ wk: wkParam, month: monthParam }) {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-3 print:hidden">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><ListChecks className="size-4" /> Checklist</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">Everything the plan expects, ticked off as it happens</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">Everything the plan expects, ticked off as it happens</CardTitle>
           <CardDescription>Sets, the precision review, the essay, the review pile and mocks tick themselves when finished. Dates and parent to-dos are ticked by hand. Add your own items to either list.</CardDescription>
           <CardAction><Button variant="outline" size="sm" onClick={() => window.print()}><Printer /> Print</Button></CardAction>
         </CardHeader>
@@ -298,9 +298,9 @@ export function Checklist({ wk: wkParam, month: monthParam }) {
                 <Button size="icon-sm" variant="ghost" disabled={idx >= D.weeks.length - 1} onClick={() => go(`/checklist/${D.weeks[idx + 1].w}`)} aria-label="Next week"><ChevronRight /></Button>
                 {wk !== cur && <Button size="sm" variant="ghost" onClick={() => go(`/checklist/${cur}`)}>Back to this week</Button>}
               </div>
-              <CardTitle className="font-serif text-xl">{wk} · {weekLabel(wk)} {wk === cur && <Badge>This week</Badge>}</CardTitle>
+              <CardTitle className="text-xl">{wk} · {weekLabel(wk)} {wk === cur && <Badge>This week</Badge>}</CardTitle>
               <CardDescription>{fmt(a)} – {fmt(b)} · {wDone} of {wAuto.length} plan tasks done</CardDescription>
-              <CardAction><span className="font-serif text-2xl font-semibold tabular-nums">{wAuto.length ? Math.round((wDone / wAuto.length) * 100) : 0}%</span></CardAction>
+              <CardAction><span className="text-2xl font-semibold tabular-nums">{wAuto.length ? Math.round((wDone / wAuto.length) * 100) : 0}%</span></CardAction>
             </CardHeader>
             <CardContent className="px-5"><Progress value={wAuto.length ? (wDone / wAuto.length) * 100 : 0} className="h-1.5" /></CardContent>
           </Card>
@@ -316,7 +316,7 @@ export function Checklist({ wk: wkParam, month: monthParam }) {
                 <Button size="icon-sm" variant="ghost" onClick={() => go(`/checklist/month/${shiftMonth(month, 1)}`)} aria-label="Next month"><ChevronRight /></Button>
                 {month !== monthKey(iso(new Date())) && <Button size="sm" variant="ghost" onClick={() => go(`/checklist/month/${monthKey(iso(new Date()))}`)}>Back to this month</Button>}
               </div>
-              <CardTitle className="font-serif text-xl flex items-center gap-2"><CalendarDays className="size-5" /> {monthLabel(month)}</CardTitle>
+              <CardTitle className="text-xl flex items-center gap-2"><CalendarDays className="size-5" /> {monthLabel(month)}</CardTitle>
               <CardDescription>{mItems.length ? `${mItems.filter((x) => x.auto).filter((x) => x.done).length} of ${mItems.filter((x) => x.auto).length} plan items done · ${mItems.filter((x) => !x.auto).length} dates and to-dos` : "Nothing scheduled this month."}</CardDescription>
             </CardHeader>
           </Card>

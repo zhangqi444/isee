@@ -136,7 +136,7 @@ export function Subject({ sub, wk }) {
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 md:gap-6">
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
         <CardHeader>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">{SUBJ[sub].name}</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">{SUBJ[sub].name}</CardTitle>
           <CardDescription>{SUBJ[sub].blurb}</CardDescription>
           <CardAction>
             {nx ? (

@@ -40,7 +40,7 @@ export function MockList() {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-3">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><Timer className="size-4" /> Mock exams</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">Four full-length Lower Level forms, timed like the real day</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">Four full-length Lower Level forms, timed like the real day</CardTitle>
           <CardDescription>{D.calendar.level.order}. Use only the allowed time; the timer keeps running if the page is closed. Answers and notes unlock when the whole form is finished.</CardDescription>
         </CardHeader>
       </Card>
@@ -84,7 +84,7 @@ export function BandCard() {
           {" "}Rough mapping from percent correct — the real ISEE norms are by grade and vary by form, so treat this as a guide, not a prediction.
         </CardDescription>
         <CardAction>
-          {b.lo != null ? <span className="font-serif text-3xl font-semibold tabular-nums">{b.lo === b.hi ? b.lo : `${b.lo}–${b.hi}`}</span> : <span className="font-serif text-3xl font-semibold tabular-nums">≈{b.latest.st}</span>}
+          {b.lo != null ? <span className="text-3xl font-semibold tabular-nums">{b.lo === b.hi ? b.lo : `${b.lo}–${b.hi}`}</span> : <span className="text-3xl font-semibold tabular-nums">≈{b.latest.st}</span>}
         </CardAction>
       </CardHeader>
       <CardContent className="px-5">
@@ -134,12 +134,12 @@ export function MockOverview({ form }) {
       <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
         <CardHeader>
           <CardDescription className="flex items-center gap-2"><Timer className="size-4" /> Mock exam · scheduled {m.label}</CardDescription>
-          <CardTitle className="font-serif text-2xl font-semibold tracking-tight">{m.name}</CardTitle>
+          <CardTitle className="text-2xl font-semibold tracking-tight">{m.name}</CardTitle>
           <CardDescription>{m.blurb}</CardDescription>
           <CardAction>
             {sum.complete ? (
               <div className="text-right">
-                <div className="font-serif text-3xl font-semibold tabular-nums">{sum.right}<span className="text-muted-foreground text-base font-normal"> / {sum.n}</span></div>
+                <div className="text-3xl font-semibold tabular-nums">{sum.right}<span className="text-muted-foreground text-base font-normal"> / {sum.n}</span></div>
                 <div className="text-muted-foreground text-xs">raw correct</div>
               </div>
             ) : next ? (
@@ -254,7 +254,7 @@ function MockResults({ form }) {
           </Table>
         </CardContent>
       </Card>
-      <h2 className="mt-2 font-serif text-xl font-semibold">Missed questions · {misses.length}</h2>
+      <h2 className="mt-2 text-xl font-semibold">Missed questions · {misses.length}</h2>
       <div className="flex flex-col gap-3">
         {misses.map(({ sec, q, i, pick }) => (
           <Card key={q.id} className="gap-3 border-destructive/40 py-5">
@@ -344,7 +344,7 @@ export function MockSection({ form, sec }) {
         <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
           <CardHeader>
             <CardDescription>{m.name} · Section</CardDescription>
-            <CardTitle className="font-serif text-2xl font-semibold">{def.name}</CardTitle>
+            <CardTitle className="text-2xl font-semibold">{def.name}</CardTitle>
             <CardDescription>{def.n} questions · {def.min} minutes. The clock starts when you press Start and does not pause. When it reaches zero the section submits itself. Unanswered questions count as wrong, so answer every one.</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
@@ -364,7 +364,7 @@ export function MockSection({ form, sec }) {
         <Card className="from-primary/5 to-card bg-gradient-to-t items-center text-center" data-testid="mock-score">
           <CardHeader className="w-full">
             <CardDescription>{m.name} · {def.name}{r.autoSubmitted ? " · time ran out" : ""}</CardDescription>
-            <CardTitle className="font-serif text-5xl font-semibold tabular-nums">{r.right}<span className="text-muted-foreground text-xl font-normal"> / {items.length}</span></CardTitle>
+            <CardTitle className="text-5xl font-semibold tabular-nums">{r.right}<span className="text-muted-foreground text-xl font-normal"> / {items.length}</span></CardTitle>
             <CardDescription className="text-base">{pct}% · time used {fmt(r.timeUsed || 0)} of {def.min}:00 · {items.length - Object.keys(r.picks || {}).length} left blank</CardDescription>
             <CardDescription className="text-xs">Which questions were missed, and why, unlocks when the whole form is finished.</CardDescription>
           </CardHeader>
@@ -462,7 +462,7 @@ export function MockEssay({ form }) {
         <Card className="from-primary/5 to-card bg-gradient-to-t gap-4">
           <CardHeader>
             <CardDescription>{m.name} · Essay</CardDescription>
-            <CardTitle className="font-serif text-2xl font-semibold">30-minute essay</CardTitle>
+            <CardTitle className="text-2xl font-semibold">30-minute essay</CardTitle>
             <CardDescription>The prompt is unseen until you press Start. Plan briefly, write for the full time, and keep this timed version as it is. Schools see the essay; it is not scored.</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
@@ -479,7 +479,7 @@ export function MockEssay({ form }) {
         <Card className="gap-4">
           <CardHeader>
             <CardDescription>{m.name} · Essay · submitted {fmtDate(er.submittedAt)}{er.autoSubmitted ? " · time ran out" : ""}</CardDescription>
-            <CardTitle className="font-serif text-lg leading-snug">{def.prompt}</CardTitle>
+            <CardTitle className="text-lg leading-snug">{def.prompt}</CardTitle>
             <CardAction><Badge variant="success" className="tabular-nums">{(er.text || "").trim().split(/\s+/).filter(Boolean).length} words</Badge></CardAction>
           </CardHeader>
           <CardContent className="text-[15px] leading-7 whitespace-pre-wrap">{er.text}</CardContent>
@@ -501,7 +501,7 @@ export function MockEssay({ form }) {
       </div>
       <Card className="gap-4">
         <CardHeader>
-          <CardTitle className="font-serif text-lg leading-snug" data-testid="mock-essay-prompt">{def.prompt}</CardTitle>
+          <CardTitle className="text-lg leading-snug" data-testid="mock-essay-prompt">{def.prompt}</CardTitle>
           <CardDescription>Plan briefly at the top, then write. Autosaves as you type.</CardDescription>
         </CardHeader>
         <CardContent>
