@@ -6,7 +6,10 @@ import { Store, ts } from "./store"
 
 const rows = () => Store.s.books || {}
 const newId = () => Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36)
-const today = () => new Date().toISOString().slice(0, 10)
+/** Local calendar day, YYYY-MM-DD. (toISOString is UTC: at 8 pm on the west coast it is
+ *  already tomorrow there, which put "I read today" on the wrong day.) */
+export const dayOf = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+const today = () => dayOf()
 
 /** One-time: put the books she has actually read on the shelf. Never overwrites. */
 export function seedBooks() {
@@ -62,14 +65,23 @@ export function setPages(id, pages, page) {
   write(id, (cur) => ({ ...cur, pages: pages == null ? cur.pages : (pages ? Math.max(1, +pages) : null), page: page == null ? cur.page : (page === "" ? null : Math.max(0, +page)) }))
 }
 export function rateBook(id, stars) { write(id, (cur) => ({ ...cur, rating: cur.rating === stars ? null : stars })) }
-/** "I read today" — optionally with where she got to. One session per day per book. */
-export function logSession(id, { page, minutes } = {}) {
-  const on = today()
+/** A reading day — today unless `on` (YYYY-MM-DD, not in the future) says otherwise, so a
+ *  day she forgot to tap can be put in afterwards. Optionally where she got to. One session
+ *  per day per book; logging the same day again replaces it. */
+export function logSession(id, { on, page, minutes } = {}) {
+  const day = /^\d{4}-\d{2}-\d{2}$/.test(on || "") && on <= today() ? on : today()
+  // `at` drives the streak and effort points, so a back-dated day lands on that day
+  const at = day === today() ? new Date().toISOString() : new Date(day + "T12:00:00").toISOString()
   write(id, (cur) => {
-    const sessions = (cur.sessions || []).filter((s) => s.on !== on)
-    sessions.push({ on, at: new Date().toISOString(), page: page ? +page : null, minutes: minutes ? +minutes : null })
-    return { ...cur, sessions: sessions.slice(-400), status: cur.status === "finished" ? cur.status : "reading", startedAt: cur.startedAt || new Date().toISOString(), page: page ? +page : cur.page }
+    const sessions = (cur.sessions || []).filter((s) => s.on !== day)
+    sessions.push({ on: day, at, page: page ? +page : null, minutes: minutes ? +minutes : null })
+    sessions.sort((a, b) => (a.on < b.on ? -1 : a.on > b.on ? 1 : 0))
+    // the page she is on only moves forward from the latest day, not from a back-dated one
+    const latest = sessions[sessions.length - 1]
+    const pageNow = page && latest.on === day ? +page : cur.page
+    return { ...cur, sessions: sessions.slice(-400), status: cur.status === "finished" ? cur.status : "reading", startedAt: cur.startedAt || at, page: pageNow }
   })
+  return day
 }
 export function undoSession(id, on) {
   write(id, (cur) => ({ ...cur, sessions: (cur.sessions || []).filter((s) => s.on !== on) }))

@@ -1,9 +1,9 @@
 import * as React from "react"
-import { BookMarked, BookOpen, Check, ChevronRight, Highlighter, Library, Plus, RotateCcw, Star, Trash2, X } from "lucide-react"
+import { BookMarked, BookOpen, CalendarDays, Check, ChevronRight, Highlighter, Library, Plus, RotateCcw, Star, Trash2, X } from "lucide-react"
 
 import { fmtDate } from "@/lib/content"
 import {
-  addBook, addWord, books, currentBook, finishBook, finishedBooks, logSession, progressOf, rateBook,
+  addBook, addWord, books, currentBook, dayOf, finishBook, finishedBooks, logSession, progressOf, rateBook,
   readToday, readingDays, removeBook, removeWord, reopenBook, setPages, shelf, startBook, suggestions,
   undoSession, wordsCollected,
 } from "@/lib/books"
@@ -13,12 +13,13 @@ import { useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
-const today = () => new Date().toISOString().slice(0, 10)
+const today = () => dayOf()
+const fmtDay = (on) => new Date(on + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })
 
 function Stars({ value, onPick }) {
   return (
@@ -38,8 +39,10 @@ function BookRow({ b, open, onToggle }) {
   const done = b.status === "finished"
   const [word, setWord] = React.useState("")
   const [page, setPage] = React.useState("")
+  const [on, setOn] = React.useState(today)
   const readOn = (b.sessions || []).some((s) => s.on === today())
-  function log() { logSession(b.id, { page: page || null }); setPage(""); syncBadges() }
+  const sessions = b.sessions || []
+  function log(day) { logSession(b.id, { on: day, page: page || null }); setPage(""); setOn(today()); syncBadges() }
   function finish() { finishBook(b.id); syncBadges() }
   return (
     <li className="flex flex-col gap-3 px-4 py-3" data-testid="book" data-status={b.status} data-id={b.id}>
@@ -59,7 +62,7 @@ function BookRow({ b, open, onToggle }) {
         {done ? <Stars value={b.rating || 0} onPick={(n) => rateBook(b.id, n)} /> : null}
         {b.status === "want" ? <Button size="sm" variant="outline" onClick={() => startBook(b.id)} data-testid={`start-${b.id}`}>Start reading</Button> : null}
         {b.status === "reading" ? (
-          <Button size="sm" variant={readOn ? "secondary" : "default"} onClick={log} data-testid={`log-${b.id}`}>
+          <Button size="sm" variant={readOn ? "secondary" : "default"} onClick={() => log()} data-testid={`log-${b.id}`}>
             {readOn ? <><Check /> Read today</> : "I read today"}
           </Button>
         ) : null}
@@ -68,31 +71,59 @@ function BookRow({ b, open, onToggle }) {
       {pct != null && !done ? <Progress value={pct} className="h-1.5" /> : null}
 
       {open ? (
-        <div className="flex flex-col gap-3 rounded-md border p-3" data-testid="book-detail">
-          <div className="flex flex-wrap items-end gap-3">
-            <label className="flex flex-col gap-1 text-xs">
-              <span className="text-muted-foreground">Page she's on</span>
-              <Input type="number" min="0" value={b.page ?? ""} onChange={(e) => setPages(b.id, null, e.target.value)} className="h-8 w-24 tabular-nums" data-testid="page-now" />
-            </label>
-            <label className="flex flex-col gap-1 text-xs">
-              <span className="text-muted-foreground">Pages in the book</span>
-              <Input type="number" min="1" value={b.pages ?? ""} onChange={(e) => setPages(b.id, e.target.value, null)} className="h-8 w-24 tabular-nums" placeholder="—" data-testid="page-total" />
-            </label>
-            {b.status === "reading" ? (
-              <>
+        <div className="flex flex-col gap-4 rounded-md border p-3" data-testid="book-detail">
+          {/* 1. Log a reading day — today by default, or a day she forgot to tap. */}
+          {!done ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-muted-foreground flex items-center gap-1.5 text-xs"><CalendarDays className="size-3.5" /> Log a reading day</span>
+              <div className="flex flex-wrap items-end gap-2">
                 <label className="flex flex-col gap-1 text-xs">
-                  <span className="text-muted-foreground">Log today up to page</span>
-                  <Input type="number" min="0" value={page} onChange={(e) => setPage(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") log() }} className="h-8 w-28 tabular-nums" placeholder="optional" />
+                  <span className="text-muted-foreground">Day</span>
+                  <Input type="date" value={on} max={today()} onChange={(e) => setOn(e.target.value || today())} className="h-8 w-40 tabular-nums" data-testid="log-date" />
                 </label>
-                <Button size="sm" variant="outline" onClick={log}>Log</Button>
-                <Button size="sm" onClick={finish} data-testid={`finish-${b.id}`}><Check /> Finished it</Button>
-              </>
-            ) : null}
-            {done ? <Button size="sm" variant="outline" onClick={() => reopenBook(b.id)}><RotateCcw /> Still reading</Button> : null}
-            <span className="flex-1" />
-            <Button size="icon-sm" variant="ghost" aria-label="Remove book" onClick={() => removeBook(b.id)}><Trash2 /></Button>
+                <label className="flex flex-col gap-1 text-xs">
+                  <span className="text-muted-foreground">Up to page</span>
+                  <Input type="number" min="0" value={page} onChange={(e) => setPage(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") log(on) }} className="h-8 w-24 tabular-nums" placeholder="optional" data-testid="log-page" />
+                </label>
+                <Button size="sm" onClick={() => log(on)} data-testid="log-add"><Check /> {on === today() ? "Read today" : `Read on ${fmtDay(on)}`}</Button>
+              </div>
+            </div>
+          ) : null}
+          {sessions.length ? (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-muted-foreground text-xs">{sessions.length} reading day{sessions.length === 1 ? "" : "s"} · tap one to take it back</span>
+              <div className="flex flex-wrap gap-1.5" data-testid="sessions">
+                {sessions.slice(-21).reverse().map((s) => (
+                  <Tooltip key={s.on}>
+                    <TooltipTrigger asChild>
+                      <button type="button" className="text-muted-foreground hover:text-foreground hover:border-destructive/50 rounded border px-1.5 py-0.5 text-xs tabular-nums" onClick={() => undoSession(b.id, s.on)} data-on={s.on}>
+                        {fmtDay(s.on)}{s.page ? ` · p${s.page}` : ""}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Remove this day from the log</TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {/* 2. The book itself. */}
+          <div className="flex flex-col gap-2">
+            <span className="text-muted-foreground flex items-center gap-1.5 text-xs"><BookOpen className="size-3.5" /> Where she is in the book</span>
+            <div className="flex flex-wrap items-end gap-2">
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">Page she's on</span>
+                <Input type="number" min="0" value={b.page ?? ""} onChange={(e) => setPages(b.id, null, e.target.value)} className="h-8 w-24 tabular-nums" data-testid="page-now" />
+              </label>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">Pages in the book</span>
+                <Input type="number" min="1" value={b.pages ?? ""} onChange={(e) => setPages(b.id, e.target.value, null)} className="h-8 w-24 tabular-nums" placeholder="—" data-testid="page-total" />
+              </label>
+              {pct != null && !done ? <span className="text-muted-foreground pb-2 text-xs tabular-nums">{pct}% through</span> : null}
+            </div>
           </div>
 
+          {/* 3. Words. */}
           <div className="flex flex-col gap-2">
             <span className="text-muted-foreground flex items-center gap-1.5 text-xs"><Highlighter className="size-3.5" /> Words she looked up in this book</span>
             {(b.words || []).length ? (
@@ -115,20 +146,14 @@ function BookRow({ b, open, onToggle }) {
             </div>
           </div>
 
-          {(b.sessions || []).length ? (
-            <div className="flex flex-wrap gap-1.5">
-              {(b.sessions || []).slice(-14).reverse().map((s) => (
-                <Tooltip key={s.on}>
-                  <TooltipTrigger asChild>
-                    <button type="button" className="text-muted-foreground hover:text-foreground rounded border px-1.5 py-0.5 text-xs tabular-nums" onClick={() => undoSession(b.id, s.on)}>
-                      {new Date(s.on + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}{s.page ? ` · p${s.page}` : ""}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>Click to undo this day</TooltipContent>
-                </Tooltip>
-              ))}
-            </div>
-          ) : null}
+          {/* 4. What happens to the book: finish, reopen, or take it off the shelf. */}
+          <div className="flex flex-wrap items-center gap-2 border-t pt-3">
+            {b.status === "reading" ? <Button size="sm" onClick={finish} data-testid={`finish-${b.id}`}><Check /> Finished it</Button> : null}
+            {b.status === "want" ? <Button size="sm" onClick={() => startBook(b.id)}>Start reading</Button> : null}
+            {done ? <Button size="sm" variant="outline" onClick={() => reopenBook(b.id)}><RotateCcw /> Still reading</Button> : null}
+            <span className="flex-1" />
+            <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={() => { if (confirm(`Take “${b.title}” off the shelf?`)) removeBook(b.id) }}><Trash2 /> Remove from shelf</Button>
+          </div>
         </div>
       ) : null}
     </li>
@@ -211,20 +236,25 @@ export function Books() {
             {list.map((b) => <BookRow key={b.id} b={b} open={open === b.id} onToggle={() => setOpen(open === b.id ? null : b.id)} />)}
           </ul>
         </CardContent>
-        <CardFooter className="flex-wrap gap-2 px-4">
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") add("reading") }} placeholder="Title" className="h-9 min-w-44 flex-1" data-testid="book-title" />
-          <Input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Author" className="h-9 w-40" data-testid="book-author" />
-          <Button variant="outline" onClick={() => add("reading")} data-testid="book-add"><Plus /> Reading now</Button>
-          <Button variant="ghost" onClick={() => add("want")}>Add to the list</Button>
-        </CardFooter>
       </Card>
 
       <Card className="gap-2 py-4">
         <CardHeader className="px-4">
           <CardTitle className="text-base">What to read next</CardTitle>
-          <CardDescription>Well-known books chosen for the reading skills the ISEE asks about. One tap puts one on the list.</CardDescription>
+          <CardDescription>Well-known books chosen for the reading skills the ISEE asks about. One tap puts one on the list, or add a book of her own.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2 px-4">
+          <div className="bg-muted/40 flex flex-col gap-2 rounded-md border p-3" data-testid="book-own">
+            <span className="text-sm font-medium">A book of her own</span>
+            <div className="flex flex-wrap gap-2">
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") add("reading") }} placeholder="Title" className="h-9 min-w-44 flex-1" data-testid="book-title" />
+              <Input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Author" className="h-9 w-40 flex-1" data-testid="book-author" />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => add("reading")} disabled={!title.trim()} data-testid="book-add"><BookOpen /> Reading it now</Button>
+              <Button size="sm" variant="outline" onClick={() => add("want")} disabled={!title.trim()}><Plus /> Add to the list</Button>
+            </div>
+          </div>
           {suggestions().filter((s) => !already.has(s.title.toLowerCase())).map((s) => (
             <div key={s.title} className="flex flex-wrap items-start gap-3 rounded-md border p-3" data-testid="suggestion">
               <div className="flex min-w-0 flex-1 flex-col">
