@@ -1,8 +1,9 @@
 import * as React from "react"
-import { BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sigma, Timer, Trophy } from "lucide-react"
+import { Award, BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sigma, Timer, Trophy } from "lucide-react"
 
 import { D, ORDER, SUBJ, nextSet, subjProgress } from "@/lib/content"
 import { reviewQueue } from "@/lib/engine"
+import { badgeCounts, recentBadges } from "@/lib/rewards"
 import { essayStatus } from "@/pages/essay"
 import { go } from "@/lib/router"
 import { useStore } from "@/lib/store"
@@ -34,6 +35,7 @@ export function AppSidebar({ route, ...props }) {
   useStore()
   const nav = useNav()
   const misses = reviewQueue().due.length
+  const fresh = recentBadges(3).length, badges = badgeCounts()
   const essayDone = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
   const top = route[0] || ""
   const activeSub = top === "s" || top === "run" ? route[1] : top === "precision" ? "vr" : null
@@ -108,6 +110,13 @@ export function AppSidebar({ route, ...props }) {
                   <Trophy />
                   <span>Score</span>
                 </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Rewards" isActive={top === "rewards"} onClick={() => nav("/rewards")}>
+                  <Award />
+                  <span>Rewards</span>
+                </SidebarMenuButton>
+                {fresh ? <SidebarMenuBadge className="bg-primary text-primary-foreground rounded-full h-5 min-w-5 px-1.5">{fresh}</SidebarMenuBadge> : <SidebarMenuBadge className="text-muted-foreground">{badges.earned}</SidebarMenuBadge>}
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Mock exams" isActive={top === "mock"} onClick={() => nav("/mock")}>

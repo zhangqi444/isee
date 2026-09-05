@@ -17,14 +17,14 @@ const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`
 const tone = (s) => s == null ? "text-muted-foreground" : s >= 85 ? "text-success" : s >= 70 ? "text-primary" : s >= 50 ? "text-warning" : "text-destructive"
 
 /** Ring gauge: one hue, the number in the middle. */
-export function Ring({ value, size = 112, stroke = 9, children }) {
+export function Ring({ value, size = 112, stroke = 9, color, children }) {
   const r = (size - stroke) / 2, c = 2 * Math.PI * r
   const v = value == null ? 0 : Math.max(0, Math.min(100, value))
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={stroke} className="text-muted" />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${(v / 100) * c} ${c}`} className={cn("transition-[stroke-dasharray] duration-700", tone(value))} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${(v / 100) * c} ${c}`} className={cn("transition-[stroke-dasharray] duration-700", color || tone(value))} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">{children}</div>
     </div>

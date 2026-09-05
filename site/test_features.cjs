@@ -232,6 +232,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('mixed runner titled', /Mixed set · all subjects/.test(await body(pg)) && /1 \/ 12/.test(await body(pg)));
   for (let k = 0; k < 14; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=2'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
   await pg.waitForSelector('[data-testid=score]');
+  check('finishing a mixed set announces the badge it earned', (await pg.$('[data-testid=badges-won]')) !== null && /Shuffled/.test(await pg.textContent('[data-testid=badges-won]')));
   await pg.evaluate(() => { location.hash = '#/mixed'; }); await pg.waitForSelector('text=Mixed sets so far');
   check('mixed result stored with per-subject split', (await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const r = Object.values(s.mixed)[0]; return r && r.n === 12 && r.bySub && Object.keys(r.bySub).length === 4; })));
   // vocabulary quiz
@@ -254,6 +255,33 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.evaluate(() => { location.hash = '#/checklist/W2'; }); await pg.waitForSelector('[data-testid=ck-item]');
   const ck2 = await body(pg);
   check('week checklist has word quiz + mixed set + mock follow-up', /Word quiz/.test(ck2) && /mixed set/.test(ck2) && /Mock follow-up/.test(ck2));
+
+  console.log('== rewards');
+  await pg.evaluate(() => { location.hash = '#/rewards'; }); await pg.waitForSelector('[data-testid=level]');
+  const rw = await body(pg);
+  check('level + points + badge count', /Level \d+ · \w+/.test(rw) && /points earned/.test(rw) && /\d+ of 40 badges/.test(rw));
+  const earned = await pg.$$('[data-testid=badge][data-done="1"]');
+  check('badges earned from the work already done', earned.length >= 5, earned.length + ' earned');
+  check('locked badges show progress toward them', (await pg.$$('[data-testid=badge][data-done="0"]')).length >= 10);
+  const before = +(await pg.textContent('[data-testid=wallet-balance]'));
+  await pg.click('text=Pick Friday\'s movie · 150');
+  await pg.waitForSelector('[data-testid=reward-item]');
+  check('a suggested reward goes on the shelf', /Pick Friday's movie/.test(await body(pg)));
+  await pg.click('[data-testid^=claim-]');
+  await pg.waitForSelector('[data-testid=claim-row]');
+  const after = +(await pg.textContent('[data-testid=wallet-balance]'));
+  check('claiming spends points but never the level', after === before - 150 && /Level \d/.test(await body(pg)), `${before} -> ${after}`);
+  await pg.click('[data-testid=mark-given]');
+  await pg.waitForSelector('[data-testid=claim-row][data-status=given]');
+  check('parent can mark a reward as given', /Given/.test(await body(pg)));
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=claim-row]');
+  check('shelf, claim and badges survive a reload', /Pick Friday's movie/.test(await body(pg)) && (await pg.$$('[data-testid=badge][data-done="1"]')).length >= 5);
+  await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=rewards-card]');
+  const card = await pg.textContent('[data-testid=rewards-card]');
+  check('dashboard rewards card shows the level and the closest badge', /Level \d/.test(card) && /points to spend/.test(card) && (await pg.$('[data-testid=next-badge]')) !== null);
+  const pinned = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.results = {}; localStorage.setItem('isee.v1', JSON.stringify(s)); return Object.keys(s.badges).length; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=rewards-card]');
+  check('a badge stays earned even if the work behind it is gone', (await pg.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('isee.v1')).badges).length)) === pinned, pinned + ' pinned');
 
   check('no page errors', !errs.length, errs.slice(0, 3).join(' | '));
   await pg.screenshot({ path: 'shot-calendar.png', fullPage: false });

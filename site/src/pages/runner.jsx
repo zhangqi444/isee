@@ -1,8 +1,9 @@
 import * as React from "react"
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Gauge, Home, RotateCcw, Timer, XCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, Award, Check, CheckCircle2, Gauge, Home, RotateCcw, Timer, XCircle } from "lucide-react"
 
 import { D, LTR, keyOf } from "@/lib/content"
 import { BUDGET, CAUSES, findItem, paceFlag, rec, recordAttempts, setTag } from "@/lib/engine"
+import { syncBadges } from "@/lib/rewards"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
@@ -121,6 +122,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
   const [i, setI] = useState(0)
   const [picks, setPicks] = useState(() => (prior ? picksFromResult(items, prior) : []))
   const [done, setDone] = useState(() => (prior ? { right: prior.right, at: prior.at, attempts: prior.attempts || 1, reopened: true, times: prior.times || null } : null))
+  const [won, setWon] = useState([])           // badges earned by finishing this set
   const spent = useRef({})                    // question index -> ms
   const entered = useRef(Date.now())
   const it = items[i], total = items.length
@@ -128,7 +130,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
   const budget = BUDGET[subOf(it || items[0], subHint)] || 50
 
   function leave() { spent.current[i] = (spent.current[i] || 0) + (Date.now() - entered.current); entered.current = Date.now() }
-  function retry() { setPicks([]); setDone(null); setI(0); spent.current = {}; entered.current = Date.now(); window.scrollTo(0, 0) }
+  function retry() { setPicks([]); setDone(null); setWon([]); setI(0); spent.current = {}; entered.current = Date.now(); window.scrollTo(0, 0) }
 
   function choose(k) { const np = picks.slice(); np[i] = k; setPicks(np) }
   function step(d) {
@@ -162,6 +164,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
     }
     if (record) recordAttempts(entries, kind)
     if (onFinish) onFinish({ right, n: items.length, at, wrong, bySub, times })
+    if (record) setWon(syncBadges())
     setDone({ right, at, attempts: prior ? (prior.attempts || 1) + 1 : 1, times })
     window.scrollTo(0, 0)
   }
@@ -211,6 +214,13 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
             )}
             {canTag && misses.length ? (
               <CardDescription className="text-xs" data-testid="tag-progress">{tagged} of {misses.length} miss{misses.length === 1 ? "" : "es"} tagged — one tap each below says why it went wrong.</CardDescription>
+            ) : null}
+            {won.length ? (
+              <div className="border-primary/40 bg-primary/5 mt-3 flex flex-col items-center gap-1.5 rounded-lg border p-3" data-testid="badges-won">
+                <span className="text-primary flex items-center gap-1.5 text-sm font-medium"><Award className="size-4" /> {won.length === 1 ? "New badge" : `${won.length} new badges`}</span>
+                <span className="text-sm">{won.map((b) => b.name).join(" · ")}</span>
+                <Button size="sm" variant="ghost" onClick={() => go("/rewards")}>See rewards</Button>
+              </div>
             ) : null}
             {!custom && (
               <div className="mt-2 flex justify-center">

@@ -2,6 +2,7 @@ import * as React from "react"
 import { ArrowRight, CalendarDays, CheckCircle2, ListChecks, PenLine, RotateCcw, Target } from "lucide-react"
 import { reviewQueue } from "@/lib/engine"
 import { ReadinessCard } from "@/pages/score"
+import { RewardsCard } from "@/pages/rewards"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { D, ORDER, SUBJ, accuracyByWeek, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
@@ -263,7 +264,10 @@ export function Home() {
       <SectionCards />
       <div className="grid grid-cols-1 items-start gap-4 @4xl/main:grid-cols-[3fr_2fr] md:gap-6">
         <WeekChecklistCard />
-        <Breaks />
+        <div className="flex flex-col gap-4 md:gap-6">
+          <RewardsCard />
+          <Breaks />
+        </div>
       </div>
       <SubjectCards />
       <AccuracyChart />

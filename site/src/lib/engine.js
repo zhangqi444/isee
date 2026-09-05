@@ -318,6 +318,8 @@ function wordIndex() {
   return WORD_IDX
 }
 export function wordEntry(word) { return wordIndex()[word] || null }
+/** Every distinct precision word (a word repeated across weeks appears once). */
+export function allWordEntries() { return Object.values(wordIndex()) }
 /** "harmless, gentle, kind" / "(noun) city, funds; (adj) …" / "IMPLY = to suggest…" → one short answer phrase per sense. */
 function senses(entry) {
   const m = entry.meaning || ""

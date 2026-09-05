@@ -62,7 +62,7 @@ const FAKE_GIS = `
   for (let i = 0; i < 12; i++) { await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); if (i < 11) await pg.waitForSelector('[data-testid=choice]'); }
   await pg.waitForSelector('[data-testid=score]'); await pg.waitForTimeout(1600);
   check('finished set pushed to Drive', /"ma:W2:0"/.test(drive.body));
-  check('learning records travel with it (schema 3, items, mixed)', /"schema":3/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body));
+  check('learning records travel with it (schema 4, items, mixed)', /"schema":4/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body));
 
   // expire the stored token -> reconnect chip, click -> prompt '' (no consent screen)
   await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });

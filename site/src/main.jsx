@@ -6,6 +6,7 @@ import App from "./App"
 import { setBundle } from "./lib/content"
 import { DRIVE_ENABLED, Store } from "./lib/store"
 import { backfill } from "./lib/engine"
+import { syncBadges } from "./lib/rewards"
 
 /* Theme: saved choice > host's data-theme (the artifact viewer sets it) > OS. */
 function applyTheme() {
@@ -29,7 +30,8 @@ function boot(bundle) {
   if (bundle.seed) Store.applySeed(bundle.seed)
   // Learning records for everything answered before the engine existed; again after every Drive merge.
   backfill()
-  Store.afterMerge = () => backfill()
+  syncBadges()
+  Store.afterMerge = () => { backfill(); syncBadges() }
 
   ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
