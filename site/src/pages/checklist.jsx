@@ -42,26 +42,26 @@ export function weekItems(wk) {
   for (const s of ORDER) {
     if (s === "vr" && D.precision && D.precision[wk]) {
       const ps = precisionSummary(wk)
-      items.push({ id: `prec:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, label: "Session 1 · Precision review — 20 words in your own words", sub: "20–25 min", done: ps.submitted, path: `/precision/${wk}`, auto: true })
+      items.push({ id: `prec:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, short: "Precision review", label: "Session 1 · Precision review — 20 words in your own words", sub: "20–25 min", done: ps.submitted, path: `/precision/${wk}`, auto: true })
       const quizzed = (D.precision[wk].words || []).some((e) => { const r = rec("w:" + e.word); return r && (r.hist || []).some((h) => h.ctx === "vocab") })
-      items.push({ id: `quiz:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, label: "Word quiz — the same 20 words as ISEE synonym questions", sub: "a day after Session 1", done: quizzed, path: `/precision/${wk}/quiz`, auto: true })
+      items.push({ id: `quiz:${wk}`, group: SUBJ.vr.name, tag: SUBJ.vr.short, short: "Word quiz", label: "Word quiz — the same 20 words as ISEE synonym questions", sub: "a day after Session 1", done: quizzed, path: `/precision/${wk}/quiz`, auto: true })
     }
     setsFor(s, wk).forEach((set, n) => {
       const r = Store.s.results[setId(s, wk, n)]
-      items.push({ id: `set:${s}:${wk}:${n}`, group: SUBJ[s].name, tag: SUBJ[s].short, label: `Set ${n + 1} — ${set.length} questions`, sub: r ? `${r.right}/${r.n}` : "one sitting, no notes", done: !!r, path: `/run/${s}/${wk}/${n}`, auto: true })
+      items.push({ id: `set:${s}:${wk}:${n}`, group: SUBJ[s].name, tag: SUBJ[s].short, short: `Set ${n + 1}`, label: `Set ${n + 1} — ${set.length} questions`, sub: r ? `${r.right}/${r.n}` : "one sitting, no notes", done: !!r, path: `/run/${s}/${wk}/${n}`, auto: true })
     })
   }
   if (D.essay && D.essay.weeks[wk]) {
     const st = essayStatus(wk)
-    items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
+    items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", short: "Weekly essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
   }
   const q = reviewQueue(), due = q.due.length
-  items.push({ id: `review:${wk}`, group: "Review", tag: "Review", label: due ? `Clear the review pile — ${due} due now` : q.scheduled.length ? `Review pile clear — ${q.scheduled.length} scheduled for later` : "Review pile is empty", sub: "due review comes before new work", done: due === 0, path: "/review", auto: true })
-  if (wk !== "W1") items.push({ id: `mixed:${wk}`, group: "Mixed practice", tag: "Mixed", label: "One mixed set — 12 questions across all four subjects", sub: "promotes Proficient skills to Mastered", done: mixedThisWeek([a, b]), path: "/mixed", auto: true })
+  items.push({ id: `review:${wk}`, group: "Review", tag: "Review", short: due ? `Review ${due} due` : "Review pile", label: due ? `Clear the review pile — ${due} due now` : q.scheduled.length ? `Review pile clear — ${q.scheduled.length} scheduled for later` : "Review pile is empty", sub: "due review comes before new work", done: due === 0, path: "/review", auto: true })
+  if (wk !== "W1") items.push({ id: `mixed:${wk}`, group: "Mixed practice", tag: "Mixed", short: "Mixed set", label: "One mixed set — 12 questions across all four subjects", sub: "promotes Proficient skills to Mastered", done: mixedThisWeek([a, b]), path: "/mixed", auto: true })
   for (const m of D.mocks) {
     if (m.start >= a && m.start <= b) {
       const sm = mockSummary(m.id)
-      items.push({ id: `mock:${m.id}`, group: "Mock exam", tag: "Mock", label: `${m.name} — ${m.blurb}`, sub: sm.complete ? `${sm.right}/${sm.n} raw` : `${sm.done}/${sm.total} sections`, done: sm.complete, path: `/mock/${m.id}`, auto: true })
+      items.push({ id: `mock:${m.id}`, group: "Mock exam", tag: "Mock", short: m.name, label: `${m.name} — ${m.blurb}`, sub: sm.complete ? `${sm.right}/${sm.n} raw` : `${sm.done}/${sm.total} sections`, done: sm.complete, path: `/mock/${m.id}`, auto: true })
     }
     // follow-up steps in the week of the mock and the week after
     const fin = (Store.s.mocks[m.id] || {}).finishedAt
@@ -72,6 +72,29 @@ export function weekItems(wk) {
     if (e.date >= a && e.date <= b) items.push({ id: `ev:${e.id}`, group: "Calendar", tag: "Date", label: `${fmt(e.date)} · ${e.title}`, sub: e.detail || "", done: null, path: e.path || "/calendar", auto: false })
   }
   return items
+}
+
+/** How much of this week is still outstanding. */
+export function weekLeft(wk = currentWeek()) {
+  const auto = weekItems(wk).filter((x) => x.auto)
+  const left = auto.filter((x) => !x.done)
+  return { left: left.length, total: auto.length, done: auto.length - left.length, items: left }
+}
+/** The next thing to do, in the order the plan expects it. Due review comes before
+ *  new work; after that it is this week's own list, top to bottom; when the week is
+ *  clear it points at the first set of the next week. */
+export function nextUp() {
+  const cur = currentWeek()
+  const q = reviewQueue()
+  if (q.due.length) return { label: `Review ${q.due.length} due`, note: "due work comes before new work", path: "/review", kind: "review" }
+  const left = weekLeft(cur).items.filter((x) => x.path)
+  if (left.length) { const it = left[0]; return { label: `${it.tag} · ${it.short || it.label}`, note: it.sub || "", path: it.path, kind: "week", wk: cur } }
+  const i = D.weeks.findIndex((w) => w.w === cur)
+  for (const w of D.weeks.slice(i + 1)) {
+    const nx = weekLeft(w.w).items.filter((x) => x.path)[0]
+    if (nx) return { label: `${nx.tag} · ${nx.short || nx.label}`, note: `${w.w} — ahead of the plan`, path: nx.path, kind: "ahead", wk: w.w }
+  }
+  return null
 }
 
 /** Parent to-dos for a month that have not been ticked yet. */

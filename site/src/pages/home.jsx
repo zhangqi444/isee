@@ -1,11 +1,10 @@
 import * as React from "react"
-import { ArrowRight, BookMarked, CheckCircle2, Flame, ListChecks, PenLine, Play, RotateCcw, Sparkles } from "lucide-react"
-import { effortPoints, reviewQueue, streakInfo, thisWeekRange } from "@/lib/engine"
+import { ArrowRight, BookMarked, CheckCircle2, Flame, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sparkles } from "lucide-react"
+import { effortPoints, streakInfo, thisWeekRange } from "@/lib/engine"
 import { currentBook, readToday } from "@/lib/books"
 import { ReadinessCard } from "@/pages/score"
 import { RewardsCard } from "@/pages/rewards"
 import { ReadingCard } from "@/pages/books"
-import { precisionSummary } from "@/pages/precision"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { D, ORDER, SUBJ, accuracyByWeek, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
@@ -14,7 +13,7 @@ import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { upcoming } from "@/pages/calendar"
 import { essayStatus } from "@/pages/essay"
-import { WeekChecklistCard } from "@/pages/checklist"
+import { WeekChecklistCard, nextUp, weekLeft } from "@/pages/checklist"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -38,41 +37,42 @@ function ScoreBadge({ pct }) {
 export function TodayCard() {
   useStore()
   const o = overall()
-  const q = reviewQueue()
   const cur = currentWeek()
   const st = streakInfo()
   const pts = effortPoints(thisWeekRange())
   const book = currentBook()
 
-  // the next unfinished set, preferring this week
-  let next = null
-  for (const s of ORDER) { const n = nextSet(s); if (n && (!next || (n.wk === cur && next.wk !== cur))) next = { ...n, sub: s } }
+  const next = nextUp()
+  const week = weekLeft(cur)
 
-  const jobs = []
-  if (q.due.length) jobs.push({ id: "review", icon: RotateCcw, label: `${q.due.length} question${q.due.length === 1 ? "" : "s"} due for review`, sub: "due work comes before new work", path: "/review" })
-  if (D.precision && D.precision[cur] && !precisionSummary(cur).submitted) jobs.push({ id: "precision", icon: ListChecks, label: "Precision review — 20 words in her own words", sub: "20–25 min", path: `/precision/${cur}` })
-  if (D.essay && D.essay.weeks[cur] && essayStatus(cur) !== "complete") jobs.push({ id: "essay", icon: PenLine, label: `Weekly essay — ${D.essay.weeks[cur].focus}`, sub: essayStatus(cur) === "in progress" ? "in progress" : "30 minutes", path: `/essay/${cur}` })
-  if (book && !readToday()) jobs.push({ id: "read", icon: BookMarked, label: `Read ${book.title}`, sub: "reading days count too", path: "/books" })
+  // everything the week still expects, straight from the checklist so the two agree
+  const jobs = week.items.filter((x) => x.path).slice(0, 5).map((x) => ({
+    id: x.id, icon: x.id.startsWith("review") ? RotateCcw : x.id.startsWith("essay") ? PenLine : x.id.startsWith("mixed") ? Shuffle : ListChecks,
+    label: `${x.tag} · ${x.short || x.label}`, sub: x.sub || "", path: x.path,
+  }))
+  if (book && !readToday()) jobs.push({ id: "read", icon: BookMarked, label: `Reading · ${book.title}`, sub: "reading days count too", path: "/books" })
+
+  const rest = jobs.filter((j) => !next || j.path !== next.path)
 
   return (
     <Card className="from-primary/5 to-card bg-gradient-to-t gap-4" data-testid="today">
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><Play className="size-4" /> Today</CardDescription>
-        <CardTitle className="text-xl">{next ? `${SUBJ[next.sub].name} · ${next.wk} · Set ${next.n + 1}` : "Every set in the plan is done"}</CardTitle>
-        <CardDescription>{weekLabel(cur)} · {cur} · {o.done} of {o.total} sets done ({o.pct}% of the plan)</CardDescription>
+        <CardTitle className="text-xl">{next ? next.label : "Everything in the plan is done"}</CardTitle>
+        <CardDescription>
+          {cur} · {weekLabel(cur)} · {week.left ? `${week.left} of ${week.total} left this week` : "this week is clear"}
+          {next && next.note ? ` · ${next.note}` : ""}
+        </CardDescription>
         <CardAction>
-          {next ? (
-            <Button onClick={() => go(`/run/${next.sub}/${next.wk}/${next.n}`)} data-testid="continue"><Play /> Continue</Button>
-          ) : q.due.length ? (
-            <Button onClick={() => go("/review")}><RotateCcw /> Review</Button>
-          ) : null}
+          {next ? <Button onClick={() => go(next.path)} data-testid="continue"><Play /> Continue</Button> : null}
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Progress value={o.pct} className="h-1.5" />
-        {jobs.length ? (
+        <div className="text-muted-foreground text-xs tabular-nums">{o.done} of {o.total} sets done · {o.pct}% of the plan</div>
+        {rest.length ? (
           <ul className="divide-y rounded-md border" data-testid="today-jobs">
-            {jobs.map((j) => (
+            {rest.map((j) => (
               <li key={j.id} className="flex items-center gap-3 px-3 py-2">
                 <j.icon className="text-muted-foreground size-4 shrink-0" />
                 <button type="button" className="min-w-0 flex-1 text-left text-sm font-medium hover:underline" onClick={() => go(j.path)}>{j.label}</button>

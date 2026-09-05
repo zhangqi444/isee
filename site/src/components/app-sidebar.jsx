@@ -1,10 +1,11 @@
 import * as React from "react"
 import { Award, BookA, BookMarked, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sigma, Timer, Trophy } from "lucide-react"
 
-import { D, ORDER, SUBJ, nextSet, subjProgress } from "@/lib/content"
+import { D, ORDER, SUBJ, subjProgress } from "@/lib/content"
 import { reviewQueue } from "@/lib/engine"
-import { badgeCounts, recentBadges } from "@/lib/rewards"
+import { recentBadges } from "@/lib/rewards"
 import { currentBook, finishedBooks } from "@/lib/books"
+import { nextUp, weekLeft } from "@/pages/checklist"
 import { essayStatus } from "@/pages/essay"
 import { go } from "@/lib/router"
 import { useStore } from "@/lib/store"
@@ -36,17 +37,12 @@ export function AppSidebar({ route, ...props }) {
   useStore()
   const nav = useNav()
   const misses = reviewQueue().due.length
-  const fresh = recentBadges(3).length, badges = badgeCounts()
+  const fresh = recentBadges(3).length
+  const week = weekLeft()
+  const next = nextUp()
   const essayDone = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
   const top = route[0] || ""
   const activeSub = top === "s" || top === "run" ? route[1] : top === "precision" ? "vr" : null
-
-  // "Continue" jumps to the first unfinished set, preferring this week and the subject she's on.
-  function continuePractice() {
-    const order = activeSub ? [activeSub, ...ORDER.filter((s) => s !== activeSub)] : ORDER
-    for (const s of order) { const n = nextSet(s); if (n) return nav(`/run/${s}/${n.wk}/${n.n}`) }
-    nav("/")
-  }
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -69,12 +65,17 @@ export function AppSidebar({ route, ...props }) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  tooltip="Continue practice"
-                  onClick={continuePractice}
+                  size="lg"
+                  tooltip={next ? "Next: " + next.label : "Everything in the plan is done"}
+                  onClick={() => nav(next ? next.path : "/")}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+                  data-testid="continue-practice"
                 >
-                  <Play />
-                  <span>Continue practice</span>
+                  <Play className="shrink-0" />
+                  <span className="flex min-w-0 flex-col leading-tight">
+                    <span className="font-medium">{next ? "Continue" : "All done"}</span>
+                    <span className="truncate text-xs opacity-80">{next ? next.label : "nothing left in the plan"}</span>
+                  </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -86,10 +87,11 @@ export function AppSidebar({ route, ...props }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Checklist" isActive={top === "checklist"} onClick={() => nav("/checklist")}>
+                <SidebarMenuButton tooltip={week.left ? `${week.left} of ${week.total} still to do this week` : "This week is clear"} isActive={top === "checklist"} onClick={() => nav("/checklist")}>
                   <ListChecks />
                   <span>Checklist</span>
                 </SidebarMenuButton>
+                {week.left ? <SidebarMenuBadge className="bg-warning-soft text-warning rounded-full h-5 min-w-5 px-1.5" data-testid="week-left">{week.left}</SidebarMenuBadge> : null}
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Review" isActive={top === "review"} onClick={() => nav("/review")}>
@@ -117,7 +119,7 @@ export function AppSidebar({ route, ...props }) {
                   <Award />
                   <span>Rewards</span>
                 </SidebarMenuButton>
-                {fresh ? <SidebarMenuBadge className="bg-primary text-primary-foreground rounded-full h-5 min-w-5 px-1.5">{fresh}</SidebarMenuBadge> : <SidebarMenuBadge className="text-muted-foreground">{badges.earned}</SidebarMenuBadge>}
+                {fresh ? <SidebarMenuBadge className="pointer-events-none" data-testid="rewards-new"><span className="bg-primary size-2 rounded-full" title={`${fresh} new badge${fresh === 1 ? "" : "s"}`} /></SidebarMenuBadge> : null}
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Mock exams" isActive={top === "mock"} onClick={() => nav("/mock")}>
@@ -164,7 +166,7 @@ export function AppSidebar({ route, ...props }) {
                   <BookMarked />
                   <span>Reading</span>
                 </SidebarMenuButton>
-                <SidebarMenuBadge className="text-muted-foreground">{finishedBooks().length}</SidebarMenuBadge>
+                {finishedBooks().length ? <SidebarMenuBadge className="text-muted-foreground">{finishedBooks().length}</SidebarMenuBadge> : null}
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
