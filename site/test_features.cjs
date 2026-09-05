@@ -23,6 +23,8 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   pg.on('dialog', (d) => d.accept());
   await pg.goto('http://localhost:8143/isee/', { waitUntil: 'networkidle' });
   await pg.waitForSelector('[data-testid=today]');
+  // not an auth test: take the "this device only" path once
+  await pg.click('[data-testid=signin-skip]').catch(() => {});
 
   console.log('== sidebar + dashboard');
   const side = await pg.$$eval('[data-slot=sidebar-menu-button]', (n) => n.map((x) => x.textContent.trim()));

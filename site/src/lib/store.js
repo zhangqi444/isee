@@ -7,6 +7,8 @@ const KEY = "isee.v1"
 const FOLDER = "Sheila ISEE Practice"
 const FILE = "progress.json"
 const CLIENT_ID = (typeof window !== "undefined" && window.__OAUTH_CLIENT_ID__) || ""
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file"
+const SCOPE = DRIVE_SCOPE + " openid email profile"
 export const DRIVE_ENABLED = typeof window !== "undefined" && !!window.__ENABLE_DRIVE__
 
 function lsLoad() { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch { return {} } }
@@ -22,6 +24,8 @@ function emit() { version++; listeners.forEach((f) => f()) }
 export const Store = {
   s: null,
   token: null, tokenExp: 0, folderId: null, fileId: null, pushTimer: null, tc: null,
+  waiter: null, pending: null, name: null, picture: null,
+  dirty: false, flushing: false, reconnectNeeded: false, reconnectDismissed: false,
   status: "local",          // local | connecting | syncing | live | expired | error | unavailable
   email: null,
   lastSync: null,
@@ -40,13 +44,18 @@ export const Store = {
     }
     // Resume a Drive session that is still inside its one-hour token window.
     const d = this.s.drive
-    if (d && d.token && d.exp > Date.now()) { this.token = d.token; this.tokenExp = d.exp; this.email = d.email || null }
+    if (d && d.token) { this.token = d.token; this.tokenExp = d.exp || 0; this.email = d.email || null; this.name = d.name || null; this.picture = d.picture || null }
     else if (this.s.driveOptIn && DRIVE_ENABLED) this.status = "expired"
     return this.s
   },
-  /** Called once at boot: silently reconnect if the stored token is still good. */
+  /** Called once at boot. A live token resumes straight away; a stale one is
+   *  refreshed silently, the way zhangqi444/volunteer does it, so an overnight
+   *  gap does not greet her with a sign-in prompt. If even that needs a click,
+   *  we fall back to the Reconnect chip and say nothing until a save fails. */
   resume() {
-    if (this.valid()) this.afterAuth()
+    if (!DRIVE_ENABLED || !this.s.driveGranted) return
+    if (this.valid()) return this.afterAuth()
+    this.ensureToken().then(() => this.afterAuth()).catch(() => this.setStatus("expired"))
   },
   subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn) },
   snapshot() { return version },
@@ -112,67 +121,114 @@ export const Store = {
   setDark(d) { if (this.dark !== d) { this.dark = d; emit() } },
   setDriveOptIn(v) { this.s.driveOptIn = v; lsSave(this.s) },
 
-  /* ---- Google Drive ---- */
-  /* Must be called from a click: Google opens a popup, and browsers block popups
-   * that no gesture started. The consent screen is shown only the first time;
-   * later reconnects use prompt:'' and the popup closes itself. */
+  /* ---- Google Drive ----
+   * Auth follows the pattern in zhangqi444/volunteer (js/drive.js): one token
+   * client, a waiter promise per request, and a SILENT refresh before any call
+   * whose token has gone stale — so the one-hour expiry never reaches the user.
+   * The interactive grant still needs a click; browsers block popups without one. */
+  client() {
+    if (this.tc) return this.tc
+    if (!DRIVE_ENABLED || !window.google || !google.accounts || !google.accounts.oauth2) return null
+    this.tc = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPE,
+      callback: (resp) => {
+        const w = this.waiter; this.waiter = null
+        if (!resp || !resp.access_token) {
+          const msg = resp && resp.error ? `Google said: ${resp.error_description || resp.error}` : "Sign-in was cancelled."
+          this.lastError = msg
+          return w ? w.reject(new Error(msg)) : null
+        }
+        // A user can untick the Drive permission on the consent screen; catch it here
+        // rather than failing later with a confusing 403.
+        if (google.accounts.oauth2.hasGrantedAllScopes && !google.accounts.oauth2.hasGrantedAllScopes(resp, DRIVE_SCOPE)) {
+          this.lastError = "Google Drive access was not granted, so nothing can be saved there."
+          return w ? w.reject(new Error(this.lastError)) : null
+        }
+        this.token = resp.access_token
+        this.tokenExp = Date.now() + (resp.expires_in || 3600) * 1000 - 60000
+        this.s.driveGranted = true
+        this.saveSession()
+        if (w) w.resolve(this.token)
+      },
+      error_callback: (err) => {
+        const w = this.waiter; this.waiter = null
+        console.warn("oauth", err)
+        this.lastError = err && err.type === "popup_failed_to_open"
+          ? "Your browser blocked the sign-in window. Allow pop-ups for this site and try again."
+          : err && err.type === "popup_closed" ? "The sign-in window was closed before finishing."
+          : (err && (err.message || err.type)) || "Sign-in failed."
+        if (w) w.reject(new Error(this.lastError))
+      },
+    })
+    return this.tc
+  },
+  /** One in-flight token request at a time. `prompt` is "" for a silent refresh. */
+  requestToken(prompt) {
+    const tc = this.client()
+    if (!tc) { this.setStatus("unavailable"); return Promise.reject(new Error("Google Sign-In is not available here.")) }
+    if (this.waiter) return this.pending
+    this.pending = new Promise((resolve, reject) => { this.waiter = { resolve, reject } })
+    const req = {}
+    if (prompt !== undefined) req.prompt = prompt
+    if (this.email) req.hint = this.email
+    try { tc.requestAccessToken(req) } catch (e) { this.waiter = null; return Promise.reject(e) }
+    return this.pending
+  },
+  /** A usable token, refreshed silently when it has aged out. */
+  ensureToken() {
+    if (this.valid()) return Promise.resolve(this.token)
+    if (!this.s.driveGranted) return Promise.reject(new Error("Not connected to Google Drive."))
+    this.token = null
+    return this.requestToken("").catch((e) => {
+      // Silent refresh needs a real click sometimes (session gone, popup blocked).
+      this.setStatus("expired")
+      throw e
+    })
+  },
+  /** Interactive sign-in. Must be called from a click. */
   signIn() {
     this.setDriveOptIn(true)
-    if (!DRIVE_ENABLED || !window.google || !google.accounts || !google.accounts.oauth2) {
-      this.setStatus("unavailable"); return
-    }
-    if (!this.tc) {
-      this.tc = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: "https://www.googleapis.com/auth/drive.file openid email profile",
-        callback: (resp) => {
-          if (resp && resp.access_token) {
-            this.token = resp.access_token
-            this.tokenExp = Date.now() + (resp.expires_in || 3600) * 1000 - 60000
-            this.s.driveGranted = true
-            this.saveSession()
-            this.afterAuth()
-          } else {
-            this.lastError = resp && resp.error ? `Google said: ${resp.error_description || resp.error}` : "Sign-in was cancelled."
-            this.setStatus(resp && resp.error === "access_denied" ? "error" : "local")
-          }
-        },
-        error_callback: (err) => {
-          console.warn("oauth", err)
-          this.lastError = err && err.type === "popup_failed_to_open"
-            ? "Your browser blocked the sign-in window. Allow pop-ups for this site and try again."
-            : err && err.type === "popup_closed" ? "The sign-in window was closed before finishing."
-            : (err && (err.message || err.type)) || "Sign-in failed."
-          this.setStatus(err && err.type === "popup_closed" ? (this.s.driveGranted ? "expired" : "local") : "error")
-        },
-      })
-    }
     this.setStatus("connecting")
-    this.tc.requestAccessToken({ prompt: this.s.driveGranted ? "" : "consent" })
+    this.reconnectNeeded = false
+    return this.requestToken(this.s.driveGranted ? "" : "consent")
+      .then(() => this.afterAuth())
+      .catch((e) => {
+        this.setStatus(this.s.driveGranted ? "expired" : "local")
+        throw e
+      })
   },
   saveSession() {
-    this.s.drive = { token: this.token, exp: this.tokenExp, email: this.email }
+    this.s.drive = { token: this.token, exp: this.tokenExp, email: this.email, name: this.name, picture: this.picture }
     lsSave(this.s)
   },
   signOut() {
     const t = this.token
-    this.token = null; this.tokenExp = 0; this.folderId = null; this.fileId = null; this.email = null
+    this.token = null; this.tokenExp = 0; this.folderId = null; this.fileId = null
+    this.email = null; this.name = null; this.picture = null
     delete this.s.drive; delete this.s.driveGranted
     this.setDriveOptIn(false); this.setStatus("local")
     if (t && window.google && google.accounts && google.accounts.oauth2) { try { google.accounts.oauth2.revoke(t) } catch { /* ignore */ } }
   },
+  /** She chose "not now" on the welcome dialog; do not ask again unprompted. */
+  dismissSignIn() { this.setPref("signInAsked", true) },
   valid() { return this.token && Date.now() < this.tokenExp },
-  api(url, opts = {}) {
-    opts.headers = Object.assign({}, opts.headers, { Authorization: "Bearer " + this.token })
-    return fetch(url, opts).then((r) => {
-      if (!r.ok) throw new Error("Drive " + r.status + " " + url.split("?")[0])
-      return r
-    })
+  /** Every Drive call goes through here: fresh token first, one retry on a 401. */
+  api(url, opts = {}, retry = true) {
+    return this.ensureToken().then((tok) =>
+      fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: "Bearer " + tok } }).then((r) => {
+        if (r.status === 401 && retry) { this.token = null; this.tokenExp = 0; return this.api(url, opts, false) }
+        if (!r.ok) throw new Error("Drive " + r.status + " " + url.split("?")[0])
+        return r
+      })
+    )
   },
   afterAuth() {
     this.setStatus("syncing")
-    this.api("https://www.googleapis.com/oauth2/v3/userinfo").then((r) => r.json())
-      .then((u) => { this.email = u && u.email; this.saveSession() }).catch(() => {})
+    if (!this.s.driveOptIn) this.setDriveOptIn(true)
+    // returned, so signIn() resolves only once the first sync is actually done
+    return this.api("https://www.googleapis.com/oauth2/v3/userinfo").then((r) => r.json())
+      .then((u) => { if (u) { this.email = u.email || null; this.name = u.name || null; this.picture = u.picture || null } this.saveSession() }).catch(() => {})
       .then(() => this.ensureFolder())
       .then(() => this.pull())
       .then(() => { this.lastSync = new Date(); this.setStatus("live") })
@@ -250,17 +306,42 @@ export const Store = {
     if (this.afterMerge) this.afterMerge()
   },
   schedulePush() {
-    if (!this.valid()) { if (this.s.driveOptIn && DRIVE_ENABLED && this.status !== "expired") this.setStatus("expired"); return }
-    if (!this.folderId) return
+    if (!DRIVE_ENABLED || !this.s.driveGranted) return
+    this.dirty = true
     clearTimeout(this.pushTimer)
-    this.pushTimer = setTimeout(() => this.push().then(() => { this.lastSync = new Date(); this.setStatus("live") }).catch(() => this.setStatus("error")), 1200)
+    this.pushTimer = setTimeout(() => this.flush(), 1200)
   },
-  push() {
-    if (!this.valid() || !this.folderId) return Promise.resolve()
-    const body = JSON.stringify({ schema: 4, savedAt: new Date().toISOString(), results: this.s.results,
+  /** Write the pending state out. Keeps `dirty` set if it fails, so a later
+   *  save, coming back online, or closing the tab tries again. */
+  flush() {
+    clearTimeout(this.pushTimer)
+    if (!this.dirty || this.flushing) return Promise.resolve()
+    this.flushing = true
+    this.setStatus("syncing")
+    // No folder yet means the session lapsed before it was set up: take the whole
+    // path (token, folder, pull, push) so a save can still land.
+    const run = this.folderId ? this.push() : this.ensureToken().then(() => this.ensureFolder()).then(() => this.pull())
+    return run
+      .then(() => { this.dirty = false; this.lastSync = new Date(); this.setStatus("live") })
+      .catch((e) => {
+        this.lastError = String(e.message || e)
+        const auth = /Not connected|sign-in|popup|Drive 401/i.test(this.lastError)
+        // Only now is it worth interrupting her: a save actually could not happen.
+        if (auth) this.reconnectNeeded = true
+        this.setStatus(auth ? "expired" : "error")
+      })
+      .finally(() => { this.flushing = false })
+  },
+  /** The Drive payload. Schema 4: bump it, and update init/merge/push, when a slice is added. */
+  body() {
+    return JSON.stringify({ schema: 4, savedAt: new Date().toISOString(), results: this.s.results,
       precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, checklists: this.s.checklists, items: this.s.items, mixed: this.s.mixed,
       badges: this.s.badges, rewards: this.s.rewards, books: this.s.books, booksSeeded: !!this.s.booksSeeded,
       testDate: this.s.testDate || null, testFormat: this.s.testFormat || null, pacing: !!this.s.pacing })
+  },
+  push() {
+    if (!this.folderId) return Promise.resolve()
+    const body = this.body()
     if (this.fileId) {
       return this.api(`https://www.googleapis.com/upload/drive/v3/files/${this.fileId}?uploadType=media`,
         { method: "PATCH", headers: { "Content-Type": "application/json" }, body })
@@ -272,6 +353,22 @@ export const Store = {
       { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${boundary}` }, body: multipart })
       .then((r) => r.json()).then((f) => { this.fileId = f.id })
   },
+}
+
+if (typeof window !== "undefined") {
+  // Come back online with something unsaved: try again.
+  addEventListener("online", () => { if (Store.dirty) Store.flush() })
+  // Closing the tab inside the debounce window used to lose the last answer.
+  addEventListener("pagehide", () => {
+    if (!Store.dirty || !Store.fileId || !Store.valid()) return
+    try {
+      fetch(`https://www.googleapis.com/upload/drive/v3/files/${Store.fileId}?uploadType=media`, {
+        method: "PATCH", keepalive: true,
+        headers: { Authorization: "Bearer " + Store.token, "Content-Type": "application/json" },
+        body: Store.body(),
+      })
+    } catch { /* best effort */ }
+  })
 }
 
 /** Re-render on any store change. Returns the store itself. */

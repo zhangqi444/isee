@@ -117,7 +117,7 @@ export function SiteHeader({ route }) {
                   size="sm"
                   className="hidden gap-2 sm:inline-flex"
                   disabled={status === "connecting" || status === "syncing"}
-                  onClick={() => (status === "live" ? store.signOut() : store.signIn())}
+                  onClick={() => (status === "live" ? store.signOut() : store.signIn().catch(() => {}))}
                 >
                   {status === "connecting" || status === "syncing" ? (
                     <Loader2 className="animate-spin" />
@@ -147,7 +147,7 @@ export function SiteHeader({ route }) {
               className="size-8 sm:hidden"
               aria-label={STATUS_LABEL[status]}
               disabled={status === "connecting" || status === "syncing"}
-              onClick={() => (status === "live" ? store.signOut() : store.signIn())}
+              onClick={() => (status === "live" ? store.signOut() : store.signIn().catch(() => {}))}
             >
               {status === "connecting" || status === "syncing" ? <Loader2 className="animate-spin" /> : status === "error" ? <CloudOff className="text-destructive" /> : <Cloud className={cn(status === "live" && "text-success", status === "expired" && "text-warning")} />}
             </Button>

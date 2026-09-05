@@ -78,12 +78,17 @@ The app is a static page that keeps the learner's data **in her own Google Drive
 - **Popups**: never call `requestAccessToken` without a click behind it; browsers
   block it. First grant uses `prompt: "consent"`, later ones `prompt: ""`.
 
-**The login pattern to follow is `zhangqi444/volunteer` (`js/drive.js`)** — same
-architecture, better session handling. Worth copying when touching auth: a silent
-`ensureToken()` before every API call so the hourly expiry never reaches the user,
-a single 401 retry, `hasGrantedAllScopes` so an unticked permission is caught, a
-`pagehide` keepalive flush so the last edit is never lost, and an offline queue
-that retries on `online`.
+**Sign-in follows `zhangqi444/volunteer` (`js/drive.js`).** Ported in full:
+`ensureToken()` silently refreshes a stale token before every API call, so the
+hourly expiry never reaches the user; `api()` retries once on a 401;
+`hasGrantedAllScopes` catches an unticked Drive permission at the source; a
+`pagehide` keepalive write saves an edit still inside the debounce; and `dirty`
+state plus an `online` listener retries a save that failed.
+
+`SignInDialog` is the welcome screen — an **invitation, not a gate**. The site
+works signed out, so "Not now — this device only" is a real answer and is
+remembered (`signInAsked`). It returns only when a save has actually failed for
+auth reasons (`reconnectNeeded`), never merely because a token aged out.
 
 ## Data model
 

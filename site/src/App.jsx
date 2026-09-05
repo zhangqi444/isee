@@ -7,6 +7,7 @@ import { Store, useStore } from "@/lib/store"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
+import { SignInDialog } from "@/components/sign-in-dialog"
 import { Home } from "@/pages/home"
 import { Subject } from "@/pages/subject"
 import { Runner } from "@/pages/runner"
@@ -105,6 +106,7 @@ export default function App() {
     <SidebarProvider style={{ "--sidebar-width": "calc(var(--spacing) * 68)", "--header-height": "calc(var(--spacing) * 12)" }}>
       <AppSidebar variant="inset" route={route} />
       <SidebarInset>
+        <SignInDialog />
         <SiteHeader route={route} />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">

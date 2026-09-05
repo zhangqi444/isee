@@ -16,8 +16,12 @@ const FAKE_GIS = `
   window.google = { accounts: { oauth2: {
     initTokenClient: (cfg) => ({ requestAccessToken: (o) => {
       window.__gisCalls.push(o.prompt); sessionStorage.setItem('gisCalls', JSON.stringify(window.__gisCalls));
-      setTimeout(() => cfg.callback({ access_token: 'tok-' + Date.now(), expires_in: 3600 }), 50);
+      // sessionStorage flag lets a test make the silent refresh fail, the way a
+      // lapsed Google session or a blocked popup does in real life
+      if (sessionStorage.getItem('gisFail')) return setTimeout(() => cfg.error_callback({ type: 'popup_failed_to_open' }), 30);
+      setTimeout(() => cfg.callback({ access_token: 'tok-' + Date.now(), expires_in: 3600, scope: 'https://www.googleapis.com/auth/drive.file openid email profile' }), 50);
     } }),
+    hasGrantedAllScopes: (resp, s) => String(resp.scope || '').includes(s),
     revoke: () => {}
   } } };`;
 (async () => {
@@ -44,18 +48,23 @@ const FAKE_GIS = `
   const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
   await pg.goto('http://localhost:8142/', { waitUntil: 'networkidle' });
   await pg.waitForSelector('[data-testid=today]');
-  check('fresh visit shows Save to Drive, no popup on load', (await pg.$('button:has-text("Save to Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
+  await pg.waitForSelector('[data-testid=signin-dialog]');
+  check('first visit opens the sign-in dialog, with no popup on load', (await pg.$eval('[data-testid=signin-dialog]', (e) => e.dataset.reason)) === 'welcome' && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
+  check('the dialog offers a way to skip', (await pg.$('[data-testid=signin-skip]')) !== null && /this device only/.test(await pg.textContent('[data-testid=signin-skip]')));
 
-  await pg.click('button:has-text("Save to Drive")');
+  await pg.click('[data-testid=signin-google]');
   try { await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 }); }
   catch (e) { console.log('DEBUG status button:', await pg.$eval('[data-slot=sidebar-footer]', (x) => x.textContent), '| calls:', JSON.stringify(drive.calls), '| gis:', JSON.stringify(await pg.evaluate(() => window.__gisCalls)), '| errs:', errs.join(' | ')); throw e; }
   check('first sign-in asks for consent once', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent"]');
+  await pg.waitForSelector('[data-testid=signin-dialog]', { state: 'detached', timeout: 5000 });
+  check('the dialog closes itself once connected', true);
   check('folder + progress.json created', drive.folder === 'folder1' && drive.file === 'file1' && /"results"/.test(drive.body));
   check('email shown in sidebar', /qi@example\.com/.test(await pg.textContent('[data-slot=sidebar-footer]')));
 
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   check('reload: still Saved to Drive with NO new Google prompt', (await pg.evaluate(() => window.__gisCalls.length)) === 1);
+  check('and no dialog once she has signed in', (await pg.$('[data-testid=signin-dialog]')) === null);
 
   // finish a set -> pushed to Drive
   await pg.evaluate(() => { location.hash = '#/run/ma/W2/0'; }); await pg.waitForSelector('[data-testid=choice]');
@@ -64,13 +73,32 @@ const FAKE_GIS = `
   check('finished set pushed to Drive', /"ma:W2:0"/.test(drive.body));
   check('learning records travel with it (schema 4, items, mixed)', /"schema":4/.test(drive.body) && /"items":\{"/.test(drive.body) && /"mixed"/.test(drive.body));
 
-  // expire the stored token -> reconnect chip, click -> prompt '' (no consent screen)
+  // The hour expiry should be invisible: the next Drive call refreshes silently.
   await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
-  check('expired token: shows Reconnect Drive, no popup on load', (await pg.$('button:has-text("Reconnect Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 1);
-  await pg.click('button:has-text("Reconnect Drive")');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
-  check('reconnect uses prompt:"" (silent), then live', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent",""]');
+  check('an aged-out token refreshes itself with prompt:"" — no Reconnect button, no dialog',
+    JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent",""]'
+    && (await pg.$('button:has-text("Reconnect Drive")')) === null
+    && (await pg.$('[data-testid=signin-dialog]')) === null);
+
+  // When the silent refresh cannot succeed, THEN she is asked — once, in the dialog.
+  await pg.evaluate(() => {
+    sessionStorage.setItem('gisFail', '1');
+    const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s));
+  });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
+  await pg.evaluate(() => { location.hash = '#/run/rc/W2/0'; });
+  await pg.waitForSelector('[data-testid=pacing-toggle]');
+  await pg.click('[data-testid=pacing-toggle]');            // any saved change tries to reach Drive
+  await pg.waitForSelector('[data-testid=signin-dialog][data-reason=reconnect]', { timeout: 8000 });
+  check('a failed silent refresh brings back the dialog, asking to reconnect', true);
+  await pg.evaluate(() => sessionStorage.removeItem('gisFail'));
+  await pg.click('[data-testid=signin-google]');
+  await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
+  check('reconnecting from the dialog goes straight back to live, still no consent screen',
+    !(await pg.evaluate(() => window.__gisCalls)).slice(1).includes('consent'));
+  await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=today]');
 
   // A remote copy of the same attempt without per-item picks must not erase local picks (seed v3 upgrade case)
   drive.body = drive.body.replace(/"picks":\{[^}]*\}/g, '"picks":{}');

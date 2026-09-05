@@ -32,6 +32,8 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     // A result saved by the very first site version (numeric `at`) must not break rendering.
     await pg.addInitScript(() => { if (!localStorage.getItem('isee.v1')) localStorage.setItem('isee.v1', JSON.stringify({ results: { 'rc:W5:0': { n: 12, right: 3, at: 1788395637217, wrong: [] } } })); });
     await pg.goto('http://localhost:8140/isee/', { waitUntil: 'networkidle' });
+    // not an auth test: dismiss the welcome dialog if it is showing
+    await pg.click('[data-testid=signin-skip]', { timeout: 4000 }).catch(() => {});
 
     // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)
     await pg.waitForSelector('[data-slot=card]', { timeout: 10000 });
