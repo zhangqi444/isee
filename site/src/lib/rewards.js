@@ -8,6 +8,7 @@ import {
   activityDays, allWordEntries, effortPoints, masteryOf, mixedResults,
   mockBand, pacingFor, reviewQueue, streakInfo, wordStatus,
 } from "./engine"
+import { finishedBooks, readingDays, wordsCollected } from "./books"
 
 /* ---------- levels ---------- */
 export const LEVELS = [
@@ -93,6 +94,13 @@ export const BADGES = [
   T("words-120", "Vocabulary vault", "A hundred and twenty words known", "Library", "Words", 120, knownWords, "words"),
   T("precision-1", "In her own words", "Submit a precision review", "PenLine", "Words", 1, precisionSubmitted, "week"),
   T("precision-8", "All eight weeks", "Submit every precision review", "PenLine", "Words", 8, precisionSubmitted, "weeks"),
+  // Reading (books)
+  T("book-1", "Cover to cover", "Finish a book", "BookOpen", "Reading", 1, () => finishedBooks().length, "book"),
+  T("book-3", "Three books", "Finish three books", "BookOpen", "Reading", 3, () => finishedBooks().length, "books"),
+  T("book-6", "Six books", "Finish six books", "Library", "Reading", 6, () => finishedBooks().length, "books"),
+  T("read-10", "Page turner", "Read on ten different days", "BookMarked", "Reading", 10, () => readingDays().size, "days"),
+  T("read-30", "Reading habit", "Read on thirty different days", "BookMarked", "Reading", 30, () => readingDays().size, "days"),
+  T("book-words-15", "Word catcher", "Collect fifteen words from books", "Highlighter", "Reading", 15, wordsCollected, "words"),
   // Writing
   T("essay-1", "First draft", "Finish a weekly essay", "PenLine", "Writing", 1, essaysDone, "essay"),
   T("essay-4", "Four essays", "Finish four weekly essays", "PenLine", "Writing", 4, essaysDone, "essays"),
@@ -116,7 +124,7 @@ export const BADGES = [
   T("mastery-15", "Fifteen mastered", "Fifteen skills at Mastered", "Crown", "Habits", 15, masteredSkills, "skills"),
   T("pace-80", "On the clock", "Keep 80% of 30+ timed answers inside the budget", "Gauge", "Habits", 80, () => { const p = pacingShare(); return p.n >= 30 ? p.pct : 0 }, "%"),
 ]
-export const BADGE_GROUPS = ["Practice", "Accuracy", "Review", "Words", "Writing", "Mocks", "Habits"]
+export const BADGE_GROUPS = ["Practice", "Accuracy", "Review", "Words", "Reading", "Writing", "Mocks", "Habits"]
 const BY_ID = Object.fromEntries(BADGES.map((b) => [b.id, b]))
 
 /** Live state of every badge: earned (with the date it was pinned) and progress toward the rest. */

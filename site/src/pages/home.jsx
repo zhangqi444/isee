@@ -1,16 +1,20 @@
 import * as React from "react"
-import { ArrowRight, CalendarDays, CheckCircle2, ListChecks, PenLine, RotateCcw, Target } from "lucide-react"
-import { reviewQueue } from "@/lib/engine"
+import { ArrowRight, BookMarked, CheckCircle2, Flame, ListChecks, PenLine, Play, RotateCcw, Sparkles } from "lucide-react"
+import { effortPoints, reviewQueue, streakInfo, thisWeekRange } from "@/lib/engine"
+import { currentBook, readToday } from "@/lib/books"
 import { ReadinessCard } from "@/pages/score"
 import { RewardsCard } from "@/pages/rewards"
+import { ReadingCard } from "@/pages/books"
+import { precisionSummary } from "@/pages/precision"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { D, ORDER, SUBJ, accuracyByWeek, currentWeek, fmtDate, nextSet, overall, recentSets, subjProgress, weekLabel } from "@/lib/content"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
+import { cn } from "@/lib/utils"
 import { upcoming } from "@/pages/calendar"
 import { essayStatus } from "@/pages/essay"
-import { WeekChecklistCard, weekItems } from "@/pages/checklist"
+import { WeekChecklistCard } from "@/pages/checklist"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,86 +29,76 @@ const chartConfig = {
   rc: { label: "Reading", color: "var(--chart-4)" },
 }
 
-/** "2 subjects still have sets this week" / "Week done — next up W2 · Sep 7 – 13". */
-function weekStatus(cur) {
-  const left = ORDER.filter((s) => { const x = nextSet(s); return x && x.wk === cur }).length
-  if (left) return `${left} subject${left === 1 ? "" : "s"} still ha${left === 1 ? "s" : "ve"} sets this week`
-  const i = D.weeks.findIndex((w) => w.w === cur)
-  const nx = D.weeks[i + 1]
-  return nx ? `Week done — next up ${nx.w} · ${nx.label}` : "Every week of the plan is done"
-}
-
 function ScoreBadge({ pct }) {
   if (pct == null) return <Badge variant="outline">—</Badge>
   return <Badge variant={pct >= 75 ? "success" : pct >= 50 ? "warning" : "destructive"} className="tabular-nums">{pct}%</Badge>
 }
 
-export function SectionCards() {
+/** What to do now. The dashboard's only job at the top of the page. */
+export function TodayCard() {
+  useStore()
   const o = overall()
   const q = reviewQueue()
-  const misses = q.due.length
   const cur = currentWeek()
+  const st = streakInfo()
+  const pts = effortPoints(thisWeekRange())
+  const book = currentBook()
+
+  // the next unfinished set, preferring this week
+  let next = null
+  for (const s of ORDER) { const n = nextSet(s); if (n && (!next || (n.wk === cur && next.wk !== cur))) next = { ...n, sub: s } }
+
+  const jobs = []
+  if (q.due.length) jobs.push({ id: "review", icon: RotateCcw, label: `${q.due.length} question${q.due.length === 1 ? "" : "s"} due for review`, sub: "due work comes before new work", path: "/review" })
+  if (D.precision && D.precision[cur] && !precisionSummary(cur).submitted) jobs.push({ id: "precision", icon: ListChecks, label: "Precision review — 20 words in her own words", sub: "20–25 min", path: `/precision/${cur}` })
+  if (D.essay && D.essay.weeks[cur] && essayStatus(cur) !== "complete") jobs.push({ id: "essay", icon: PenLine, label: `Weekly essay — ${D.essay.weeks[cur].focus}`, sub: essayStatus(cur) === "in progress" ? "in progress" : "30 minutes", path: `/essay/${cur}` })
+  if (book && !readToday()) jobs.push({ id: "read", icon: BookMarked, label: `Read ${book.title}`, sub: "reading days count too", path: "/books" })
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @4xl/main:grid-cols-4">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Sets completed</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {o.done} <span className="text-muted-foreground text-base font-normal">of {o.total}</span>
-          </CardTitle>
-          <CardAction><ListChecks className="text-muted-foreground size-5" /></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-2 text-sm">
-          <Progress value={o.pct} className="h-1.5" />
-          <div className="text-muted-foreground">{o.pct}% of the eight-week plan</div>
-        </CardFooter>
-      </Card>
-
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Accuracy</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{o.acc == null ? "—" : o.acc + "%"}</CardTitle>
-          <CardAction><Target className="text-muted-foreground size-5" /></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">{o.right} right out of {o.answered} answered</div>
-          <div className="text-muted-foreground">Across every finished set</div>
-        </CardFooter>
-      </Card>
-
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Due for review</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{misses}</CardTitle>
-          <CardAction><RotateCcw className="text-muted-foreground size-5" /></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="text-muted-foreground">{misses ? `Spaced review due today${q.scheduled.length ? ` · ${q.scheduled.length} more scheduled` : ""}` : q.scheduled.length ? `Nothing due today · ${q.scheduled.length} scheduled` : "Nothing waiting — finish a set to add some"}</div>
-          {misses ? (
-            <Button size="sm" variant="outline" onClick={() => go("/review")}>Start review <ArrowRight /></Button>
+    <Card className="from-primary/5 to-card bg-gradient-to-t gap-4" data-testid="today">
+      <CardHeader>
+        <CardDescription className="flex items-center gap-2"><Play className="size-4" /> Today</CardDescription>
+        <CardTitle className="text-xl">{next ? `${SUBJ[next.sub].name} · ${next.wk} · Set ${next.n + 1}` : "Every set in the plan is done"}</CardTitle>
+        <CardDescription>{weekLabel(cur)} · {cur} · {o.done} of {o.total} sets done ({o.pct}% of the plan)</CardDescription>
+        <CardAction>
+          {next ? (
+            <Button onClick={() => go(`/run/${next.sub}/${next.wk}/${next.n}`)} data-testid="continue"><Play /> Continue</Button>
+          ) : q.due.length ? (
+            <Button onClick={() => go("/review")}><RotateCcw /> Review</Button>
           ) : null}
-        </CardFooter>
-      </Card>
-
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>This week</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{cur}</CardTitle>
-          <CardAction><CalendarDays className="text-muted-foreground size-5" /></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">{weekLabel(cur)}</div>
-          <div className="text-muted-foreground">{(() => { const w = weekItems(cur).filter((x) => x.auto); const d = w.filter((x) => x.done).length; return `${d} of ${w.length} plan tasks done` })()}</div>
-          <Button size="sm" variant="outline" onClick={() => document.querySelector("[data-testid=home-checklist]")?.scrollIntoView({ behavior: "smooth", block: "start" })}>See the list <ArrowRight /></Button>
-        </CardFooter>
-      </Card>
-    </div>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <Progress value={o.pct} className="h-1.5" />
+        {jobs.length ? (
+          <ul className="divide-y rounded-md border" data-testid="today-jobs">
+            {jobs.map((j) => (
+              <li key={j.id} className="flex items-center gap-3 px-3 py-2">
+                <j.icon className="text-muted-foreground size-4 shrink-0" />
+                <button type="button" className="min-w-0 flex-1 text-left text-sm font-medium hover:underline" onClick={() => go(j.path)}>{j.label}</button>
+                <span className="text-muted-foreground hidden shrink-0 text-xs @md/main:block">{j.sub}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-success flex items-center gap-2 rounded-md border px-3 py-2.5 text-sm font-medium"><CheckCircle2 className="size-4" /> Nothing hanging over today — anything now is ahead of the plan.</div>
+        )}
+      </CardContent>
+      <CardFooter className="text-muted-foreground flex-wrap gap-x-4 gap-y-1 text-xs">
+        <span className="flex items-center gap-1.5"><Flame className={cn("size-3.5", st.current ? "text-warning" : "")} />{st.current ? `${st.current}-day streak` : "No streak yet"}{st.activeToday ? " · something done today" : ""}</span>
+        <span className="flex items-center gap-1.5"><Sparkles className="text-primary size-3.5" />{pts} effort points this week</span>
+        <span>{o.acc == null ? "No accuracy yet" : `${o.acc}% correct across every finished set`}</span>
+      </CardFooter>
+    </Card>
   )
 }
 
 export function AccuracyChart() {
   const data = accuracyByWeek()
-  const any = data.some((r) => ORDER.some((s) => r[s] != null))
+  const weeksWithData = data.filter((r) => ORDER.some((s) => r[s] != null)).length
+  const any = weeksWithData > 0
+  // one lonely bar in eight empty slots says nothing; the table below says it better
+  if (weeksWithData < 2) return null
   return (
     <Card className="@container/card">
       <CardHeader>
@@ -133,64 +127,53 @@ export function AccuracyChart() {
   )
 }
 
-function EssayCard() {
-  const done = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
-  const cur = currentWeek()
-  const next = D.weeks.find((w) => essayStatus(w.w) !== "complete" && w.w >= cur) || D.weeks.find((w) => essayStatus(w.w) !== "complete")
-  return (
-    <Card className="gap-4">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2"><PenLine className="text-muted-foreground size-4" /> Essay</CardTitle>
-        <CardDescription>One 30-minute prompt a week</CardDescription>
-        <CardAction><Badge variant={done ? "success" : "outline"} className="tabular-nums">{done}/{D.weeks.length}</Badge></CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        <Progress value={(done / D.weeks.length) * 100} className="h-1.5" />
-        <div className="text-muted-foreground text-sm tabular-nums">{done} of {D.weeks.length} weeks written</div>
-      </CardContent>
-      <CardFooter className="gap-2">
-        {next ? <Button size="sm" onClick={() => go("/essay/" + next.w)}>{essayStatus(next.w) === "in progress" ? "Continue" : "Write"} <span className="text-primary-foreground/80 font-normal">{next.w}</span></Button> : <Button size="sm" variant="secondary" disabled><CheckCircle2 /> All done</Button>}
-        <Button size="sm" variant="ghost" onClick={() => go("/essay")}>All weeks</Button>
-      </CardFooter>
-    </Card>
-  )
-}
-
+/** One row per subject: where she is, how she is doing, and the way in. */
 export function SubjectCards() {
+  useStore()
+  const cur = currentWeek()
+  const essayDone = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
+  const nextEssay = D.weeks.find((w) => essayStatus(w.w) !== "complete" && w.w >= cur) || D.weeks.find((w) => essayStatus(w.w) !== "complete")
   return (
-    <div className="grid grid-cols-1 gap-4 @2xl/main:grid-cols-2 @5xl/main:grid-cols-5">
-      {ORDER.map((s) => {
-        const p = subjProgress(s)
-        const nx = nextSet(s)
-        return (
-          <Card key={s} className="gap-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="inline-block size-2.5 rounded-full" style={{ background: SUBJ[s].color }} />
-                {SUBJ[s].name}
-              </CardTitle>
-              <CardDescription>{SUBJ[s].blurb}</CardDescription>
-              <CardAction><ScoreBadge pct={p.acc} /></CardAction>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <Progress value={p.pct} className="h-1.5" />
-              <div className="text-muted-foreground text-sm tabular-nums">{p.done} of {p.total} sets done</div>
-            </CardContent>
-            <CardFooter className="gap-2">
-              {nx ? (
-                <Button size="sm" onClick={() => go(`/run/${s}/${nx.wk}/${nx.n}`)}>
-                  Continue <span className="text-primary-foreground/80 font-normal">{nx.wk} · Set {nx.n + 1}</span>
-                </Button>
-              ) : (
-                <Button size="sm" variant="secondary" disabled><CheckCircle2 /> All done</Button>
-              )}
-              <Button size="sm" variant="ghost" onClick={() => go("/s/" + s)}>All sets</Button>
-            </CardFooter>
-          </Card>
-        )
-      })}
-      <EssayCard />
-    </div>
+    <Card className="gap-2 py-4" data-testid="subjects">
+      <CardHeader className="px-4">
+        <CardTitle className="text-base">Subjects</CardTitle>
+        <CardDescription>Sets done, and how accurate she has been on them.</CardDescription>
+      </CardHeader>
+      <CardContent className="px-0">
+        <ul className="divide-y">
+          {ORDER.map((s) => {
+            const p = subjProgress(s)
+            const nx = nextSet(s)
+            return (
+              <li key={s} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5" data-testid="subject-row">
+                <span className="inline-block size-2.5 shrink-0 rounded-full" style={{ background: SUBJ[s].color }} />
+                <button type="button" className="w-full text-left text-sm font-medium hover:underline @md/main:w-44 @md/main:shrink-0" onClick={() => go("/s/" + s)}>{SUBJ[s].name}</button>
+                <span className="flex w-full items-center gap-3 @md/main:w-auto @md/main:min-w-32 @md/main:flex-1">
+                  <Progress value={p.pct} className="h-1.5 flex-1" />
+                  <span className="text-muted-foreground w-24 shrink-0 text-xs tabular-nums">{p.done} of {p.total} sets</span>
+                </span>
+                <ScoreBadge pct={p.acc} />
+                {nx ? (
+                  <Button size="sm" variant="outline" onClick={() => go(`/run/${s}/${nx.wk}/${nx.n}`)}>{nx.wk} · Set {nx.n + 1}</Button>
+                ) : (
+                  <Button size="sm" variant="ghost" disabled><CheckCircle2 /> Done</Button>
+                )}
+              </li>
+            )
+          })}
+          <li className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5" data-testid="subject-row">
+            <PenLine className="text-muted-foreground size-3.5 shrink-0" />
+            <button type="button" className="w-full text-left text-sm font-medium hover:underline @md/main:w-44 @md/main:shrink-0" onClick={() => go("/essay")}>Essay</button>
+            <span className="flex w-full items-center gap-3 @md/main:w-auto @md/main:min-w-32 @md/main:flex-1">
+              <Progress value={(essayDone / D.weeks.length) * 100} className="h-1.5 flex-1" />
+              <span className="text-muted-foreground w-24 shrink-0 text-xs tabular-nums">{essayDone} of {D.weeks.length} weeks</span>
+            </span>
+            <Badge variant="outline" className="text-muted-foreground">30 min</Badge>
+            {nextEssay ? <Button size="sm" variant="outline" onClick={() => go("/essay/" + nextEssay.w)}>Write {nextEssay.w}</Button> : <Button size="sm" variant="ghost" disabled><CheckCircle2 /> Done</Button>}
+          </li>
+        </ul>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -218,7 +201,7 @@ export function RecentSets() {
           <TableBody>
             {rows.map((r) => (
               <TableRow key={r.id} className="cursor-pointer" onClick={() => go(`/s/${r.sub}/${r.wk}`)}>
-                <TableCell className="font-medium">{SUBJ[r.sub]?.name || r.sub}</TableCell>
+                <TableCell className="font-medium">{SUBJ[r.sub]?.short || r.sub}</TableCell>
                 <TableCell>{r.wk}</TableCell>
                 <TableCell>Set {r.set + 1}</TableCell>
                 <TableCell className="text-right tabular-nums">{r.right}/{r.n}</TableCell>
@@ -260,12 +243,15 @@ export function Home() {
   useStore()
   return (
     <div className="flex flex-col gap-4 md:gap-6">
-      <ReadinessCard />
-      <SectionCards />
+      <div className="grid grid-cols-1 gap-4 @4xl/main:grid-cols-[3fr_2fr] md:gap-6">
+        <TodayCard />
+        <ReadinessCard />
+      </div>
       <div className="grid grid-cols-1 items-start gap-4 @4xl/main:grid-cols-[3fr_2fr] md:gap-6">
         <WeekChecklistCard />
         <div className="flex flex-col gap-4 md:gap-6">
           <RewardsCard />
+          <ReadingCard />
           <Breaks />
         </div>
       </div>

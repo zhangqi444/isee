@@ -43,7 +43,7 @@ const FAKE_GIS = `
   await ctx.addInitScript(FAKE_GIS);
   const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
   await pg.goto('http://localhost:8142/', { waitUntil: 'networkidle' });
-  await pg.waitForSelector('text=Sets completed');
+  await pg.waitForSelector('[data-testid=today]');
   check('fresh visit shows Save to Drive, no popup on load', (await pg.$('button:has-text("Save to Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
 
   await pg.click('button:has-text("Save to Drive")');
@@ -53,7 +53,7 @@ const FAKE_GIS = `
   check('folder + progress.json created', drive.folder === 'folder1' && drive.file === 'file1' && /"results"/.test(drive.body));
   check('email shown in sidebar', /qi@example\.com/.test(await pg.textContent('[data-slot=sidebar-footer]')));
 
-  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('text=Sets completed');
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   check('reload: still Saved to Drive with NO new Google prompt', (await pg.evaluate(() => window.__gisCalls.length)) === 1);
 
@@ -66,7 +66,7 @@ const FAKE_GIS = `
 
   // expire the stored token -> reconnect chip, click -> prompt '' (no consent screen)
   await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
-  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('text=Sets completed');
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   check('expired token: shows Reconnect Drive, no popup on load', (await pg.$('button:has-text("Reconnect Drive")')) !== null && (await pg.evaluate(() => window.__gisCalls.length)) === 1);
   await pg.click('button:has-text("Reconnect Drive")');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });

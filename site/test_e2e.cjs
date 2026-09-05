@@ -36,7 +36,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)
     await pg.waitForSelector('[data-slot=card]', { timeout: 10000 });
     const cards = await pg.$$eval('[data-slot=card-description]', (n) => n.map((x) => x.textContent.trim()));
-    check('dashboard stat cards', cards.includes('Sets completed') && cards.includes('Accuracy') && cards.includes('Due for review'));
+    check('dashboard leads with Today, then Readiness', cards.includes('Today') && cards.includes('Readiness') && (await pg.$('[data-testid=continue]')) !== null, cards.slice(0, 4).join(','));
     const body = await pg.textContent('body');
     check('seed applied + legacy set (11 of 82 sets)', /11\s*of\s*82/.test(body), body.match(/\d+\s*of\s*82/)?.[0]);
     check('legacy numeric timestamp renders as a date', /Sep 2/.test(body));
@@ -70,8 +70,8 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     check('breadcrumb trail inside review', crumbs[0] === 'Dashboard' && crumbs.includes('Review'), crumbs.join(' > '));
     await pg.click(isPhone ? '[data-testid=crumb-home]' : '[data-slot=breadcrumb-link]:has-text("Dashboard")');
     await pg.waitForFunction(() => location.hash === '#/' || location.hash === '');
-    await pg.waitForSelector('text=Sets completed');
-    check('exited review via breadcrumb', /Sets completed/.test(await pg.textContent('body')));
+    await pg.waitForSelector('[data-testid=today]');
+    check('exited review via breadcrumb', (await pg.$('[data-testid=today]')) !== null);
 
     // Run a full set: no answer leak before submit; all-A yields a plausible score; result persists
     await pg.evaluate(() => { location.hash = '#/run/rc/W2/0'; });
@@ -128,7 +128,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     check('theme toggle flips', wasDark !== nowDark);
     await pg.evaluate(() => { location.hash = '#/'; });
     await pg.reload({ waitUntil: 'networkidle' });
-    await pg.waitForSelector('text=Sets completed');
+    await pg.waitForSelector('[data-testid=today]');
     check('theme persists after reload', (await pg.evaluate(() => document.documentElement.classList.contains('dark'))) === nowDark);
     check('progress persists after reload', /12\s*of\s*82/.test(await pg.textContent('body')));
     await pg.click('button[aria-label="Toggle theme"]');   // back to light for the screenshot

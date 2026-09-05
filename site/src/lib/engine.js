@@ -500,6 +500,12 @@ function eachTimestamp(fn) {
   for (const id of Object.keys(s.items || {})) for (const h of (s.items[id].hist || [])) if (h.ctx === "review" || h.ctx === "vocab") fn(h.at, h.ctx, h)
   for (const wk of Object.keys(s.precision || {})) { const st = s.precision[wk]; for (const w of Object.keys(st.words || {})) { const e = st.words[w]; if (e && e.text && e.at) fn(e.at, "word", e) } }
   for (const wk of Object.keys(s.essays || {})) { const e = s.essays[wk]; if (e && e.at) fn(e.at, "essay", e); if (e && e.completedAt) fn(e.completedAt, "essay-done", e) }
+  for (const id of Object.keys(s.books || {})) {
+    const b = s.books[id]
+    if (!b || b.removed) continue
+    for (const ses of b.sessions || []) if (ses.at) fn(ses.at, "read", ses)
+    if (b.finishedAt) fn(b.finishedAt, "book", b)
+  }
   for (const f of Object.keys(s.mocks || {})) { const st = s.mocks[f]; for (const sec of Object.keys(st.sections || {})) { const r = st.sections[sec]; if (r && r.submittedAt) fn(r.submittedAt, "mock", r) } if (st.essay && st.essay.submittedAt) fn(st.essay.submittedAt, "mock-essay", st.essay) }
 }
 export function activityDays() { const days = new Set(); eachTimestamp((at) => { const t = ts(at); if (t) days.add(dayKey(t)) }); return days }
@@ -534,7 +540,7 @@ export function streakInfo() {
   }
   return { current, frozen, activeToday, best: Math.max(best, current), activeDays: days.size }
 }
-const POINTS = { set: 10, mixed: 12, review: 1, vocab: 1, word: 2, "essay-done": 15, mock: 25, "mock-essay": 15 }
+const POINTS = { set: 10, mixed: 12, review: 1, vocab: 1, word: 2, "essay-done": 15, mock: 25, "mock-essay": 15, read: 4, book: 40 }
 /** Effort points, for attempts not accuracy. range: [fromKey, toKey] inclusive day keys. */
 export function effortPoints(range) {
   let total = 0

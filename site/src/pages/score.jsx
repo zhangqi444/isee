@@ -48,8 +48,9 @@ function PartBars({ parts, compact }) {
   )
 }
 
-/** Dashboard hero. */
-export function ReadinessCard() {
+/** Dashboard hero: the number, what would move it, and the subjects behind it.
+ *  The six part bars live on /score — repeating them here just crowded the page. */
+export function ReadinessCard({ full }) {
   useStore()
   const R = readiness()
   const pts = effortPoints(thisWeekRange())
@@ -58,50 +59,82 @@ export function ReadinessCard() {
       <CardHeader>
         <CardDescription className="flex items-center gap-2"><Trophy className="size-4" /> Readiness</CardDescription>
         <CardTitle className="text-xl">{R.label}</CardTitle>
-        <CardDescription>{R.advice ? R.advice.text : "One number for how ready Sheila is, from accuracy, mocks, mastery, pacing, the review pile and consistency."}</CardDescription>
+        <CardDescription>Accuracy, mocks, mastery, pacing, review and consistency, in one number.</CardDescription>
         <CardAction><Button size="sm" variant="ghost" onClick={() => go("/score")}>How it's scored <ArrowRight /></Button></CardAction>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-5 @2xl/main:grid-cols-[auto_1fr_1fr] @2xl/main:items-center">
+      <CardContent className={cn(full ? "grid grid-cols-1 gap-5 @2xl/main:grid-cols-[auto_1fr_1fr] @2xl/main:items-center" : "flex flex-col gap-4")}>
         <div className="flex items-center gap-4">
-          <Ring value={R.score} size={120}>
+          <Ring value={R.score} size={112}>
             <span className={cn("text-4xl font-semibold tabular-nums", tone(R.score))} data-testid="readiness-score">{R.score == null ? "—" : R.score}</span>
             <span className="text-muted-foreground text-[11px]">of 100</span>
           </Ring>
+          {full ? (
+            <div className="flex flex-col gap-2">
+              {R.streak ? (
+                <div className="flex items-center gap-1.5 text-sm" data-testid="streak">
+                  <Flame className={cn("size-4", R.streak.current ? "text-warning" : "text-muted-foreground")} />
+                  <span className="font-medium tabular-nums">{R.streak.current ? `${R.streak.current}-day streak` : "No streak yet"}</span>
+                  {R.streak.frozen ? <span className="text-muted-foreground text-xs">({R.streak.frozen} frozen)</span> : null}
+                </div>
+              ) : null}
+              <div className="text-muted-foreground text-xs">{R.streak && R.streak.activeToday ? "Something done today ✓" : "Nothing yet today — any set, review or word keeps the streak"}</div>
+              <div className="text-muted-foreground text-xs">Best {plural(R.streak ? R.streak.best : 0, "day")} · {plural(R.streak ? R.streak.activeDays : 0, "active day")}</div>
+              <div className="flex items-baseline gap-1.5 text-sm" data-testid="effort"><Sparkles className="text-primary size-3.5 self-center" /> <span className="font-medium tabular-nums">{pts} effort points</span> <span className="text-muted-foreground text-xs">this week</span></div>
+            </div>
+          ) : (
+            <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+              <div className="text-muted-foreground text-xs">By subject</div>
+              <SubjectBars R={R} />
+            </div>
+          )}
+        </div>
+        {full ? <PartBars parts={R.parts} compact /> : null}
+        {full ? (
           <div className="flex flex-col gap-2">
-            {R.streak ? (
-              <div className="flex items-center gap-1.5 text-sm" data-testid="streak">
-                <Flame className={cn("size-4", R.streak.current ? "text-warning" : "text-muted-foreground")} />
-                <span className="font-medium tabular-nums">{R.streak.current ? `${R.streak.current}-day streak` : "No streak yet"}</span>
-                {R.streak.frozen ? <span className="text-muted-foreground text-xs">({R.streak.frozen} frozen)</span> : null}
+            <div className="text-muted-foreground text-xs">By subject</div>
+            <SubjectBars R={R} />
+            <Band R={R} />
+          </div>
+        ) : (
+          <>
+            {R.advice ? (
+              <div className="flex flex-wrap items-center gap-3 rounded-md border px-3 py-2.5" data-testid="readiness-advice">
+                <p className="min-w-40 flex-1 text-sm font-medium">{R.advice.text}</p>
+                <Button size="sm" variant="outline" onClick={() => go(R.advice.path)}>Go there <ArrowRight /></Button>
               </div>
             ) : null}
-            <div className="text-muted-foreground text-xs">{R.streak && R.streak.activeToday ? "Something done today ✓" : "Nothing yet today — any set, review or word keeps the streak"}</div>
-            <div className="text-muted-foreground text-xs">Best {plural(R.streak ? R.streak.best : 0, "day")} · {plural(R.streak ? R.streak.activeDays : 0, "active day")}</div>
-            <div className="flex items-baseline gap-1.5 text-sm" data-testid="effort"><Sparkles className="text-primary size-3.5 self-center" /> <span className="font-medium tabular-nums">{pts} effort points</span> <span className="text-muted-foreground text-xs">this week</span></div>
-          </div>
-        </div>
-        <PartBars parts={R.parts} compact />
-        <div className="flex flex-col gap-2">
-          <div className="text-muted-foreground text-xs">By subject</div>
-          {ORDER.map((s) => {
-            const x = R.subjects[s]
-            return (
-              <button key={s} type="button" className="hover:bg-accent/60 flex items-center gap-2 rounded-md px-1 py-0.5 text-left text-sm" onClick={() => go("/s/" + s)}>
-                <span className="inline-block size-2.5 rounded-full" style={{ background: SUBJ[s].color }} />
-                <span className="w-24 shrink-0">{SUBJ[s].short}</span>
-                <span className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full"><span className="bg-primary block h-full rounded-full" style={{ width: `${x.score || 0}%` }} /></span>
-                <span className={cn("w-8 text-right tabular-nums", tone(x.score))}>{x.score == null ? "—" : x.score}</span>
-              </button>
-            )
-          })}
-          {R.band.latest ? (
-            <div className="text-muted-foreground mt-1 text-xs" data-testid="band">
-              {R.band.lo != null ? `Estimated stanine ${R.band.lo === R.band.hi ? R.band.lo : `${R.band.lo}–${R.band.hi}`} from ${R.band.n} mocks` : `Latest mock ≈ stanine ${R.band.latest.st} — a band appears after the second mock`}
-            </div>
-          ) : null}
-        </div>
+            <Band R={R} />
+          </>
+        )}
       </CardContent>
     </Card>
+  )
+}
+
+function SubjectBars({ R }) {
+  return (
+    <>
+      {ORDER.map((s) => {
+        const x = R.subjects[s]
+        return (
+          <button key={s} type="button" className="hover:bg-accent/60 flex items-center gap-2 rounded-md px-1 py-0.5 text-left text-sm" onClick={() => go("/s/" + s)}>
+            <span className="inline-block size-2.5 shrink-0 rounded-full" style={{ background: SUBJ[s].color }} />
+            <span className="w-24 shrink-0 truncate">{SUBJ[s].short}</span>
+            <span className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full"><span className="bg-primary block h-full rounded-full" style={{ width: `${x.score || 0}%` }} /></span>
+            <span className={cn("w-8 shrink-0 text-right tabular-nums", tone(x.score))}>{x.score == null ? "—" : x.score}</span>
+          </button>
+        )
+      })}
+    </>
+  )
+}
+
+function Band({ R }) {
+  if (!R.band.latest) return null
+  return (
+    <div className="text-muted-foreground text-xs" data-testid="band">
+      {R.band.lo != null ? `Estimated stanine ${R.band.lo === R.band.hi ? R.band.lo : `${R.band.lo}–${R.band.hi}`} from ${R.band.n} mocks` : `Latest mock ≈ stanine ${R.band.latest.st} — a band appears after the second mock`}
+    </div>
   )
 }
 
@@ -114,7 +147,7 @@ export function Score() {
   const pts = effortPoints(thisWeekRange()), total = effortPoints()
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 md:gap-6">
-      <ReadinessCard />
+      <ReadinessCard full />
 
       <div className="grid grid-cols-1 gap-4 @3xl/main:grid-cols-[3fr_2fr] md:gap-6">
         <Card>

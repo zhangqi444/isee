@@ -10,7 +10,7 @@ const exe = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') 
   await ctx.route(/fonts\.g/, (r) => r.abort());
   const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
   await pg.goto('http://localhost:8141/', { waitUntil: 'networkidle' });
-  await pg.waitForSelector('text=Sets completed', { timeout: 10000 });
+  await pg.waitForSelector('[data-testid=today]', { timeout: 10000 });
   const body = await pg.textContent('body');
   console.log('dashboard from inlined bundle:', /10\s*of\s*82/.test(body) ? 'ok' : 'FAIL');
   console.log('no Drive button in artifact:', (await pg.$('button:has-text("Save to Drive")')) === null ? 'ok' : 'FAIL');

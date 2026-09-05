@@ -47,6 +47,8 @@ function crumbs(route) {
     out.push({ label: "Score", path: "/score" })
   } else if (top === "rewards") {
     out.push({ label: "Rewards", path: "/rewards" })
+  } else if (top === "books") {
+    out.push({ label: "Reading", path: "/books" })
   } else if (top === "essay") {
     out.push({ label: "Essay", path: "/essay" })
     if (a) out.push({ label: a, path: "/essay/" + a })

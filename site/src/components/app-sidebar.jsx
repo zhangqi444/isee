@@ -1,9 +1,10 @@
 import * as React from "react"
-import { Award, BookA, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sigma, Timer, Trophy } from "lucide-react"
+import { Award, BookA, BookMarked, BookOpen, Calculator, CalendarDays, GraduationCap, LayoutDashboard, ListChecks, PenLine, Play, RotateCcw, Shuffle, Sigma, Timer, Trophy } from "lucide-react"
 
 import { D, ORDER, SUBJ, nextSet, subjProgress } from "@/lib/content"
 import { reviewQueue } from "@/lib/engine"
 import { badgeCounts, recentBadges } from "@/lib/rewards"
+import { currentBook, finishedBooks } from "@/lib/books"
 import { essayStatus } from "@/pages/essay"
 import { go } from "@/lib/router"
 import { useStore } from "@/lib/store"
@@ -157,6 +158,13 @@ export function AppSidebar({ route, ...props }) {
                   <span>Essay</span>
                 </SidebarMenuButton>
                 <SidebarMenuBadge className="text-muted-foreground">{essayDone}/{D.weeks.length}</SidebarMenuBadge>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip={currentBook() ? "Reading · " + currentBook().title : "Reading"} isActive={top === "books"} onClick={() => nav("/books")}>
+                  <BookMarked />
+                  <span>Reading</span>
+                </SidebarMenuButton>
+                <SidebarMenuBadge className="text-muted-foreground">{finishedBooks().length}</SidebarMenuBadge>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

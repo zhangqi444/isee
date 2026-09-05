@@ -19,6 +19,7 @@ import { Checklist } from "@/pages/checklist"
 import { Mixed, MixedRun } from "@/pages/mixed"
 import { Score } from "@/pages/score"
 import { Rewards } from "@/pages/rewards"
+import { Books } from "@/pages/books"
 
 /** The queue is read once on mount, so finishing the run (which reschedules every item) keeps the score screen up. */
 function ReviewRun({ sub, mode }) {
@@ -63,6 +64,7 @@ function Screen({ route }) {
   if (top === "mixed") return b === undefined && a === "run" ? <MixedRun key="mixed-run" /> : <Mixed />
   if (top === "score") return <Score />
   if (top === "rewards") return <Rewards />
+  if (top === "books") return <Books />
   if (top === "essay" && a && D.essay.weeks[a]) return <EssayWeek key={a} wk={a} />
   if (top === "essay") return <EssayList />
   if (top === "mock" && a && D.mocks.some((m) => m.id === a)) {
