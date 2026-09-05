@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { precisionSummary } from "@/pages/precision"
-import { essayStatus } from "@/pages/essay"
+import { essayStatus, essayTime } from "@/pages/essay"
 import { mockSummary } from "@/pages/mock"
 import { allEvents } from "@/pages/calendar"
 
@@ -52,8 +52,8 @@ export function weekItems(wk) {
     })
   }
   if (D.essay && D.essay.weeks[wk]) {
-    const st = essayStatus(wk)
-    items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", short: "Weekly essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
+    const st = essayStatus(wk), t = essayTime(wk)
+    items.push({ id: `essay:${wk}`, group: "Essay", tag: "Essay", short: "Weekly essay", label: `Weekly essay — ${D.essay.weeks[wk].focus}`, sub: t.total != null ? `${t.total} min logged` : "5 plan · 20 draft · 5 revise", done: st === "complete", path: `/essay/${wk}`, auto: true })
   }
   const q = reviewQueue(), due = q.due.length
   items.push({ id: `review:${wk}`, group: "Review", tag: "Review", short: due ? `Review ${due} due` : "Review pile", label: due ? `Clear the review pile — ${due} due now` : q.scheduled.length ? `Review pile clear — ${q.scheduled.length} scheduled for later` : "Review pile is empty", sub: "due review comes before new work", done: due === 0, path: "/review", auto: true })

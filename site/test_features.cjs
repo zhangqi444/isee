@@ -82,6 +82,25 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   const completeBadge = /Complete/.test(await pg.textContent('[data-slot=card-action]'));
   await pg.click('text=Plan · 5'); await pg.waitForSelector('#W2-plan-focus');
   check('essay draft + completion persist', completeBadge && (await pg.$eval('#W2-plan-focus', (t) => t.value)).includes('listening'));
+  // time log: typed by hand, totalled, kept
+  await pg.fill('[data-testid=essay-time-plan]', '6');
+  await pg.fill('[data-testid=essay-time-draft]', '19');
+  await pg.fill('[data-testid=essay-time-revise]', '4');
+  await pg.waitForTimeout(300);
+  check('time log totals the three phases against the 30-minute target', /29 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=essay-time-draft]');
+  check('time log persists', (await pg.$eval('[data-testid=essay-time-draft]', (i) => i.value)) === '19' && /29 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  await pg.click('text=Plan · 5'); await pg.click('[data-testid=timer-start-plan]');
+  await pg.waitForTimeout(700); await pg.click('[data-testid=timer-stop-plan]');
+  await pg.waitForTimeout(200);
+  check('stopping a phase timer writes its minutes into the log', (await pg.$eval('[data-testid=essay-time-plan]', (i) => i.value)) === '1' && /24 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  // the first site version kept a free-text "time at draft stop"; it still counts
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.essays.W3 = { meta: { minutes: '18 min' }, at: new Date().toISOString() }; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/essay/W3'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=essay-time-draft]');
+  check('the old free-text draft time still counts as draft minutes', (await pg.$eval('[data-testid=essay-time-draft]', (i) => i.value)) === '18' && /18 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  await pg.evaluate(() => { location.hash = '#/essay'; }); await pg.waitForSelector('[data-testid=essay-time-W2]');
+  check('the week list shows the minutes logged', /24 min logged/.test(await pg.textContent('[data-testid=essay-time-W2]')) && /18 min logged/.test(await pg.textContent('[data-testid=essay-time-W3]')));
+  await pg.click('[data-testid=essay-open-W2]'); await pg.waitForSelector('[data-testid=essay-prompt]');
   await pg.click('text=Guide');
   check('guide shows the eight lessons', /Read the prompt precisely/.test(await body(pg)) && /Revise, then edit/.test(await body(pg)));
 
