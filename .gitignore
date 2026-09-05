@@ -5,3 +5,4 @@ artifact.html
 site/node_modules/
 site/dist/
 site/dist-artifact/
+.DS_Store

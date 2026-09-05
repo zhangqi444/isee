@@ -3,6 +3,7 @@
  * The sandbox cannot reach Google Fonts or accounts.google.com; those requests are
  * aborted so the page behaves as it would offline. */
 const { chromium } = require('playwright');
+const { stubGoogle, signIn } = require('./test_google.cjs');
 const http = require('http'), fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
@@ -24,7 +25,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
   for (const [label, viewport] of [['desktop', { width: 1280, height: 860 }], ['phone', { width: 390, height: 844 }]]) {
     console.log('\n== ' + label + ' ==');
     const ctx = await b.newContext({ viewport });
-    await ctx.route(/fonts\.googleapis|fonts\.gstatic|accounts\.google/, (r) => r.abort());
+    await stubGoogle(ctx);
     const pg = await ctx.newPage();
     const errs = [];
     pg.on('pageerror', (e) => errs.push('PAGEERR ' + e.message));
@@ -32,8 +33,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     // A result saved by the very first site version (numeric `at`) must not break rendering.
     await pg.addInitScript(() => { if (!localStorage.getItem('isee.v1')) localStorage.setItem('isee.v1', JSON.stringify({ results: { 'rc:W5:0': { n: 12, right: 3, at: 1788395637217, wrong: [] } } })); });
     await pg.goto('http://localhost:8140/isee/', { waitUntil: 'networkidle' });
-    // not an auth test: dismiss the welcome dialog if it is showing
-    await pg.click('[data-testid=signin-skip]', { timeout: 4000 }).catch(() => {});
+    await signIn(pg);   // the site is gated: get through the door first
 
     // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)
     await pg.waitForSelector('[data-slot=card]', { timeout: 10000 });
@@ -135,12 +135,11 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     check('progress persists after reload', /12\s*of\s*82/.test(await pg.textContent('body')));
     await pg.click('button[aria-label="Toggle theme"]');   // back to light for the screenshot
 
-    // Drive chip: offline here, so the click must not crash; status becomes "unavailable"
+    // Signed in through the gate, so the chip and the account row both say so
     if (!isPhone) {
       await pg.evaluate(() => { location.hash = '#/'; });
-      await pg.click('button:has-text("Save to Drive")');
-      await pg.waitForTimeout(300);
-      check('Drive button degrades gracefully offline', !errs.length, await pg.$eval('[data-slot=sidebar-menu-button][data-size=lg]', (e) => e.textContent.trim()).catch(() => ''));
+      check('header chip shows the Drive session', (await pg.$('button:has-text("Saved to Drive")')) !== null);
+      check('account row shows who is signed in', /Qi Zhang/.test(await pg.textContent('[data-slot=sidebar-footer]')));
     }
 
     await pg.evaluate(() => { location.hash = '#/'; });

@@ -1,6 +1,7 @@
 /* Drive session behaviour, with Google stubbed: sign-in once, survive a reload
  * without a new prompt, reconnect after expiry with prompt:'' (no consent). */
 const { chromium } = require('playwright');
+const { stubGoogle } = require('./test_google.cjs');
 const http = require('http'), fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
@@ -11,60 +12,33 @@ const srv = http.createServer((req, res) => {
 });
 const exe = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined;
 let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : '  FAIL ') + n + (x ? '  ' + x : '')); if (!ok) failures++; };
-const FAKE_GIS = `
-  window.__gisCalls = JSON.parse(sessionStorage.getItem('gisCalls') || '[]');
-  window.google = { accounts: { oauth2: {
-    initTokenClient: (cfg) => ({ requestAccessToken: (o) => {
-      window.__gisCalls.push(o.prompt); sessionStorage.setItem('gisCalls', JSON.stringify(window.__gisCalls));
-      // sessionStorage flag lets a test make the silent refresh fail, the way a
-      // lapsed Google session or a blocked popup does in real life
-      if (sessionStorage.getItem('gisFail')) return setTimeout(() => cfg.error_callback({ type: 'popup_failed_to_open' }), 30);
-      setTimeout(() => cfg.callback({ access_token: 'tok-' + Date.now(), expires_in: 3600, scope: 'https://www.googleapis.com/auth/drive.file openid email profile' }), 50);
-    } }),
-    hasGrantedAllScopes: (resp, s) => String(resp.scope || '').includes(s),
-    revoke: () => {}
-  } } };`;
 (async () => {
   await new Promise((r) => srv.listen(8142, r));
   const b = await chromium.launch({ executablePath: exe });
   const ctx = await b.newContext({ viewport: { width: 1200, height: 800 } });
   await ctx.route(/fonts\.g|accounts\.google\.com\/gsi/, (r) => r.abort());
-  const drive = { folder: null, file: null, body: null, calls: [] };
-  await ctx.route(/googleapis\.com/, (r) => {
-    const u = r.request().url(), m = r.request().method(); drive.calls.push(m + ' ' + u.replace(/\?.*/, ''));
-    const json = (o) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(o) });
-    if (/userinfo/.test(u)) return json({ email: 'qi@example.com' });
-    if (/drive\/v3\/files\?/.test(u) && m === 'GET') {
-      if (/google-apps\.folder/.test(decodeURIComponent(u))) return json({ files: drive.folder ? [{ id: drive.folder, name: 'Sheila ISEE Practice' }] : [] });
-      return json({ files: drive.file ? [{ id: drive.file, name: 'progress.json' }] : [] });
-    }
-    if (/drive\/v3\/files$/.test(u) && m === 'POST') { drive.folder = 'folder1'; return json({ id: 'folder1' }); }
-    if (/upload\/drive\/v3\/files\?/.test(u) && m === 'POST') { drive.file = 'file1'; drive.body = r.request().postData(); return json({ id: 'file1' }); }
-    if (/upload\/drive\/v3\/files\/file1/.test(u) && m === 'PATCH') { drive.body = r.request().postData(); return json({ id: 'file1' }); }
-    if (/drive\/v3\/files\/file1\?alt=media/.test(u)) return json(JSON.parse(drive.body.split('\r\n\r\n').pop().split('\r\n--')[0]));
-    return r.fulfill({ status: 404, body: '{}' });
-  });
-  await ctx.addInitScript(FAKE_GIS);
+  const drive = await stubGoogle(ctx);
   const pg = await ctx.newPage(); const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
   await pg.goto('http://localhost:8142/', { waitUntil: 'networkidle' });
-  await pg.waitForSelector('[data-testid=today]');
-  await pg.waitForSelector('[data-testid=signin-dialog]');
-  check('first visit opens the sign-in dialog, with no popup on load', (await pg.$eval('[data-testid=signin-dialog]', (e) => e.dataset.reason)) === 'welcome' && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
-  check('the dialog offers a way to skip', (await pg.$('[data-testid=signin-skip]')) !== null && /this device only/.test(await pg.textContent('[data-testid=signin-skip]')));
+  await pg.waitForSelector('[data-testid=signin-page]');
+  check('a fresh visit is gated: the sign-in page, nothing else, no popup on load',
+    (await pg.$('[data-testid=today]')) === null && (await pg.$('[data-slot=sidebar]')) === null
+    && (await pg.evaluate(() => window.__gisCalls.length)) === 0);
+  check('the gate says where the data goes', /your own Google Drive/.test(await pg.textContent('[data-testid=signin-page]')));
 
   await pg.click('[data-testid=signin-google]');
   try { await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 }); }
   catch (e) { console.log('DEBUG status button:', await pg.$eval('[data-slot=sidebar-footer]', (x) => x.textContent), '| calls:', JSON.stringify(drive.calls), '| gis:', JSON.stringify(await pg.evaluate(() => window.__gisCalls)), '| errs:', errs.join(' | ')); throw e; }
   check('first sign-in asks for consent once', JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent"]');
-  await pg.waitForSelector('[data-testid=signin-dialog]', { state: 'detached', timeout: 5000 });
-  check('the dialog closes itself once connected', true);
+  await pg.waitForSelector('[data-testid=today]', { timeout: 8000 });
+  check('signing in opens the app', true);
   check('folder + progress.json created', drive.folder === 'folder1' && drive.file === 'file1' && /"results"/.test(drive.body));
   check('email shown in sidebar', /qi@example\.com/.test(await pg.textContent('[data-slot=sidebar-footer]')));
 
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   check('reload: still Saved to Drive with NO new Google prompt', (await pg.evaluate(() => window.__gisCalls.length)) === 1);
-  check('and no dialog once she has signed in', (await pg.$('[data-testid=signin-dialog]')) === null);
+  check('a returning visit is not asked again', (await pg.$('[data-testid=signin-page]')) === null);
 
   // finish a set -> pushed to Drive
   await pg.evaluate(() => { location.hash = '#/run/ma/W2/0'; }); await pg.waitForSelector('[data-testid=choice]');
@@ -80,25 +54,23 @@ const FAKE_GIS = `
   check('an aged-out token refreshes itself with prompt:"" — no Reconnect button, no dialog',
     JSON.stringify(await pg.evaluate(() => window.__gisCalls)) === '["consent",""]'
     && (await pg.$('button:has-text("Reconnect Drive")')) === null
-    && (await pg.$('[data-testid=signin-dialog]')) === null);
+    && (await pg.$('[data-testid=signin-page]')) === null);
 
-  // When the silent refresh cannot succeed, THEN she is asked — once, in the dialog.
+  // Only when the silent refresh cannot succeed is she asked — back at the gate.
   await pg.evaluate(() => {
     sessionStorage.setItem('gisFail', '1');
     const s = JSON.parse(localStorage.getItem('isee.v1')); s.drive.exp = Date.now() - 1000; localStorage.setItem('isee.v1', JSON.stringify(s));
   });
-  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
-  await pg.evaluate(() => { location.hash = '#/run/rc/W2/0'; });
-  await pg.waitForSelector('[data-testid=pacing-toggle]');
-  await pg.click('[data-testid=pacing-toggle]');            // any saved change tries to reach Drive
-  await pg.waitForSelector('[data-testid=signin-dialog][data-reason=reconnect]', { timeout: 8000 });
-  check('a failed silent refresh brings back the dialog, asking to reconnect', true);
+  await pg.reload({ waitUntil: 'networkidle' });
+  await pg.waitForSelector('[data-testid=signin-page]', { timeout: 8000 });
+  check('a refresh that needs a click sends her back to the gate, which knows she has been here',
+    /Welcome back/.test(await pg.textContent('[data-testid=signin-page]')) && (await pg.$('[data-testid=today]')) === null);
   await pg.evaluate(() => sessionStorage.removeItem('gisFail'));
   await pg.click('[data-testid=signin-google]');
-  await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
-  check('reconnecting from the dialog goes straight back to live, still no consent screen',
+  await pg.waitForSelector('[data-testid=today]', { timeout: 8000 });
+  check('signing in again returns her to the app with no consent screen',
     !(await pg.evaluate(() => window.__gisCalls)).slice(1).includes('consent'));
-  await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=today]');
+  check('and her work is still there', (await pg.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('isee.v1')).results).length)) > 10);
 
   // A remote copy of the same attempt without per-item picks must not erase local picks (seed v3 upgrade case)
   drive.body = drive.body.replace(/"picks":\{[^}]*\}/g, '"picks":{}');
@@ -123,8 +95,9 @@ const FAKE_GIS = `
 
   // disconnect clears everything
   await pg.click('button:has-text("Saved to Drive")');
-  await pg.waitForSelector('button:has-text("Save to Drive")');
-  check('disconnect forgets the session', (await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return !s.drive && !s.driveGranted && !s.driveOptIn; })));
+  await pg.waitForSelector('[data-testid=signin-page]', { timeout: 8000 });
+  check('disconnect forgets the session and locks the door again',
+    (await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return !s.drive && !s.driveGranted && !s.driveOptIn })));
   check('no page errors', !errs.length, errs.join(' | '));
   await b.close(); srv.close();
   console.log(failures ? `\n${failures} FAILURE(S)` : '\nall drive checks passed'); process.exit(failures ? 1 : 0);

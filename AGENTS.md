@@ -85,10 +85,19 @@ hourly expiry never reaches the user; `api()` retries once on a 401;
 `pagehide` keepalive write saves an edit still inside the debounce; and `dirty`
 state plus an `online` listener retries a save that failed.
 
-`SignInDialog` is the welcome screen — an **invitation, not a gate**. The site
-works signed out, so "Not now — this device only" is a real answer and is
-remembered (`signInAsked`). It returns only when a save has actually failed for
-auth reasons (`reconnectNeeded`), never merely because a token aged out.
+**The site is gated** (`src/pages/signin.jsx`, same shape as volunteer's auth
+screen): nothing renders until Google says who this is. `App` checks
+`Store.signedIn()`; a stored session is refreshed behind a splash first, so a
+returning visit is not a sign-in. Two deliberate exceptions:
+
+- the artifact build has no Drive at all (`DRIVE_ENABLED === false`) and is never
+  gated;
+- losing auth **mid-session** does not throw her out — the header chip says
+  "Reconnect Drive" and she keeps working. Only a fresh load gates.
+
+Because the app is gated, every browser suite has to sign in first:
+`test_google.cjs` holds the shared GIS stub, the in-memory Drive and a `signIn()`
+helper. `sessionStorage.gisFail` makes the next token request fail.
 
 ## Data model
 

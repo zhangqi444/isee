@@ -3,11 +3,11 @@ import * as React from "react"
 import { D, SUBJ, setId, setsFor } from "@/lib/content"
 import { reviewQueue, wordQuizItems } from "@/lib/engine"
 import { useRoute } from "@/lib/router"
-import { Store, useStore } from "@/lib/store"
+import { DRIVE_ENABLED, Store, useStore } from "@/lib/store"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import { SignInDialog } from "@/components/sign-in-dialog"
+import { SignIn, Splash } from "@/pages/signin"
 import { Home } from "@/pages/home"
 import { Subject } from "@/pages/subject"
 import { Runner } from "@/pages/runner"
@@ -101,12 +101,17 @@ class ErrorBoundary extends React.Component {
 
 export default function App() {
   const route = useRoute()
-  useStore()
+  const store = useStore()
+  // Nothing renders until Google has said who this is. The offline artifact build
+  // has no Drive at all, so it is never gated.
+  if (DRIVE_ENABLED) {
+    if (store.booting) return <Splash />
+    if (!store.signedIn()) return <SignIn />
+  }
   return (
     <SidebarProvider style={{ "--sidebar-width": "calc(var(--spacing) * 68)", "--header-height": "calc(var(--spacing) * 12)" }}>
       <AppSidebar variant="inset" route={route} />
       <SidebarInset>
-        <SignInDialog />
         <SiteHeader route={route} />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">

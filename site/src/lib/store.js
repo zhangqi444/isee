@@ -25,7 +25,7 @@ export const Store = {
   s: null,
   token: null, tokenExp: 0, folderId: null, fileId: null, pushTimer: null, tc: null,
   waiter: null, pending: null, name: null, picture: null,
-  dirty: false, flushing: false, reconnectNeeded: false, reconnectDismissed: false,
+  dirty: false, flushing: false, reconnectNeeded: false, booting: false,
   status: "local",          // local | connecting | syncing | live | expired | error | unavailable
   email: null,
   lastSync: null,
@@ -48,14 +48,19 @@ export const Store = {
     else if (this.s.driveOptIn && DRIVE_ENABLED) this.status = "expired"
     return this.s
   },
+  /** True once Google has said who this is. The app is gated on it. */
+  signedIn() { return !DRIVE_ENABLED || this.valid() },
   /** Called once at boot. A live token resumes straight away; a stale one is
-   *  refreshed silently, the way zhangqi444/volunteer does it, so an overnight
-   *  gap does not greet her with a sign-in prompt. If even that needs a click,
-   *  we fall back to the Reconnect chip and say nothing until a save fails. */
+   *  refreshed silently, the way zhangqi444/volunteer does it, so a returning
+   *  visit does not have to be a sign-in. Only when that fails is the gate shown. */
   resume() {
     if (!DRIVE_ENABLED || !this.s.driveGranted) return
-    if (this.valid()) return this.afterAuth()
-    this.ensureToken().then(() => this.afterAuth()).catch(() => this.setStatus("expired"))
+    if (this.valid()) { this.afterAuth(); return }
+    this.booting = true; emit()
+    this.ensureToken()
+      .then(() => this.afterAuth())
+      .catch(() => this.setStatus("expired"))
+      .finally(() => { this.booting = false; emit() })
   },
   subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn) },
   snapshot() { return version },

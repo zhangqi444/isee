@@ -1,5 +1,6 @@
 /* Essay, precision review, mock exams and calendar — against dist/ under /isee/. */
 const { chromium } = require('playwright');
+const { stubGoogle, signIn } = require('./test_google.cjs');
 const http = require('http'), fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
@@ -17,14 +18,12 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await new Promise((r) => srv.listen(8143, r));
   const b = await chromium.launch({ executablePath: exe });
   const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
-  await ctx.route(/fonts\.g|accounts\.google/, (r) => r.abort());
+  const drive = await stubGoogle(ctx);
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', (e) => errs.push('PAGEERR ' + e.message));
   pg.on('dialog', (d) => d.accept());
   await pg.goto('http://localhost:8143/isee/', { waitUntil: 'networkidle' });
-  await pg.waitForSelector('[data-testid=today]');
-  // not an auth test: take the "this device only" path once
-  await pg.click('[data-testid=signin-skip]').catch(() => {});
+  await signIn(pg);   // the site is gated: get through the door first
 
   console.log('== sidebar + dashboard');
   const side = await pg.$$eval('[data-slot=sidebar-menu-button]', (n) => n.map((x) => x.textContent.trim()));
@@ -317,9 +316,13 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=today]');
   check('checklist carries a count of what is left this week', /^\d+$/.test((await pg.textContent('[data-testid=week-left]')).trim()));
   check('rewards shows a dot for new badges, not a standing number', (await pg.$('[data-testid=rewards-new]')) !== null && !/\d/.test(await pg.textContent('[data-testid=rewards-new]')));
+  // Drive would merge the other weeks straight back in — which is the point of the
+  // merge — so the remote copy has to be emptied too for this one check.
+  const remoteWas = drive.body; drive.body = JSON.stringify({ schema: 4, results: {} });
   const oneWeek = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const keep = {}; for (const k of Object.keys(s.results)) if (k.includes(':W1:')) keep[k] = s.results[k]; const copy = { ...s, results: keep }; sessionStorage.setItem('stash', JSON.stringify(s)); localStorage.setItem('isee.v1', JSON.stringify(copy)); return Object.keys(keep).length });
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   check('with one week of data the chart is hidden instead of near-empty', !/Accuracy by week/.test(await body(pg)), oneWeek + ' W1 sets');
+  drive.body = remoteWas;
   await pg.evaluate(() => { localStorage.setItem('isee.v1', sessionStorage.getItem('stash')) });
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
 
