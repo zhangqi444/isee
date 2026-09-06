@@ -10,7 +10,7 @@ grade 6, autumn 2027 admissions cycle). Two halves:
 1. **Google Sheets workbooks** in a Drive folder — the original plan: one workbook
    per subject (VR, QR, MA, RC), plus Essay, Hub, Dashboard and Mock Exams.
    Authored and maintained with Apps Script (`build58.gs`, `RUN_ME.md`).
-2. **The practice website** — `site/`, deployed to <https://qizhang.top/isee/>.
+2. **The practice website** — `site/`, deployed to <https://learning.sheilazhang.org/>.
    This is where the work happens now. The Sheets are the archive.
 
 Her Week-1 answers were migrated from the Sheets into the site and must never be

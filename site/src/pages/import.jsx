@@ -76,7 +76,7 @@ export function Import({ payload }) {
             <CardDescription>{fromLink && fromLink.err ? <span className="text-destructive">{fromLink.err}</span> : "Paste the review link, or the review itself, as it came from the reviewer."}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <Textarea value={text} onChange={(e) => { setText(e.target.value); setErr(null) }} rows={6} placeholder="https://qizhang.top/isee/#/import/…  or  { &quot;target&quot;: … }" className="font-mono text-xs" data-testid="import-text" />
+            <Textarea value={text} onChange={(e) => { setText(e.target.value); setErr(null) }} rows={6} placeholder="https://learning.sheilazhang.org/#/import/…  or  { &quot;target&quot;: … }" className="font-mono text-xs" data-testid="import-text" />
             {err ? <p className="text-destructive text-sm">{err}</p> : null}
             <div><Button onClick={addPasted} disabled={!text.trim()} data-testid="import-paste-add"><Inbox /> Add</Button></div>
           </CardContent>

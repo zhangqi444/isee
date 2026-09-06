@@ -8,7 +8,7 @@ repo, read [AGENTS.md](../AGENTS.md).
 ## 1. The shape in one paragraph
 
 A **static single-page app** (React 19, Vite 8, Tailwind v4, shadcn/ui) served
-from GitHub Pages at `https://qizhang.top/isee/`. All teaching content is
+from GitHub Pages at `https://learning.sheilazhang.org/`. All teaching content is
 compiled from JSON in `content/` into one file, `site/content/bundle.json`, that
 the app fetches at boot. All learner data is one plain object kept in
 `localStorage` and mirrored to one file, `progress.json`, in the learner's own

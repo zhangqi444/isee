@@ -6,7 +6,7 @@ shadows the Google Sheets question banks, keeps progress in the browser, and —
 once the learner authorizes it — mirrors that progress to a JSON file in a folder
 it creates in her own Google Drive.
 
-Live at https://qizhang.top/isee/ (GitHub Pages, custom domain).
+Live at https://learning.sheilazhang.org/ (GitHub Pages, custom domain).
 
 ## Layout
 
