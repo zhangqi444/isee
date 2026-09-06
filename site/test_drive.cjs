@@ -68,6 +68,9 @@ let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : ' 
   await pg.evaluate(() => sessionStorage.removeItem('gisFail'));
   await pg.click('[data-testid=signin-google]');
   await pg.waitForSelector('[data-testid=today]', { timeout: 8000 });
+  // The gate opens on the token, before the first sync lands; wait for it, or the
+  // merge below writes over anything this test puts in localStorage meanwhile.
+  await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });
   check('signing in again returns her to the app with no consent screen',
     !(await pg.evaluate(() => window.__gisCalls)).slice(1).includes('consent'));
   check('and her work is still there', (await pg.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('isee.v1')).results).length)) > 10);

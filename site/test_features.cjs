@@ -235,7 +235,7 @@ async function runThrough(pg, pick, max = 60) {
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=ck-custom]');
   check('custom item persists, ticked', /Tutor session Thursday/.test(await body(pg)) && (await pg.$eval('[data-testid=ck-custom] span', (e) => e.className.includes('line-through'))));
   await pg.click('text=This month');
-  await pg.waitForSelector('text=Parent to-dos');
+  await pg.waitForSelector('[role=tab][data-state=active]:has-text("This month")');
   check('month checklist has parent to-dos + plan weeks', /Parent to-dos/.test(await body(pg)) && /Plan weeks/.test(await body(pg)));
   await pg.click('[data-testid=ck-item][data-done="0"] >> nth=-1 >> button >> nth=0').catch(() => {});
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('text=plan tasks done');
