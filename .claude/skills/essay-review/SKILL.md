@@ -10,7 +10,11 @@ is written **to her**, and the parent reads it with her.
 
 ## 1. Find the essay
 
-Use the Google Drive connector.
+Use the Google Drive connector. It must be connected to the **same Google
+account she signs in to the site with** (the test user in `site/oauth.json`);
+`progress.json` lives in that account's Drive and no other. If `search_files`
+for `progress.json` finds nothing, say which account the connector sees (the
+`owner` of any file it returns) and stop; do not review from memory.
 
 - **Site essays**: search `title = 'progress.json'`, download it, and read
   `essays[wk]` (`plan`, `draft.opening/middle/ending`, `time`, `feedback`, `rubric`,

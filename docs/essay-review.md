@@ -70,6 +70,12 @@ never overwritten.
 - Opening the card marks it read (`reviewsSeen`, synced), so the dot goes away on
   every device. A review is never deleted by the app.
 
+## One account
+
+`progress.json` is in the Drive of whichever Google account she signs in to the
+site with (the OAuth client's test user, see `site/oauth.json`). The Drive
+connector Claude reads must be that same account, or the file is invisible to it.
+
 ## Running a review with Claude
 
 The repo skill `.claude/skills/essay-review/SKILL.md` walks a session through it.
