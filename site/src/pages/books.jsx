@@ -55,8 +55,9 @@ function BookRow({ b, open, onToggle }) {
           <span className="text-muted-foreground text-xs">
             {b.author || "—"}
             {done ? (b.finishedAt ? ` · finished ${fmtDate(b.finishedAt)}` : " · finished before the log started") : ""}
-            {!done && pct != null ? ` · page ${b.page} of ${b.pages}` : ""}
+            {!done && pct != null ? ` · page ${b.page} of ${b.pages}` : !done && b.page ? ` · page ${b.page}` : ""}
             {!done && pct == null && (b.sessions || []).length ? ` · read on ${(b.sessions || []).length} day${(b.sessions || []).length === 1 ? "" : "s"}` : ""}
+            {b.note ? ` · ${b.note}` : ""}
           </span>
         </div>
         {done ? <Stars value={b.rating || 0} onPick={(n) => rateBook(b.id, n)} /> : null}

@@ -11,13 +11,15 @@ const newId = () => Date.now().toString(36) + Math.floor(Math.random() * 1e4).to
 export const dayOf = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 const today = () => dayOf()
 
-/** One-time: put the books she has actually read on the shelf. Never overwrites. */
+/** Put the starter books (the ones she has actually read or is reading) on the shelf.
+ *  Runs on every load and after every merge: a starter added to the content later still
+ *  arrives, but a book already on the shelf, or one she took off it, is never touched. */
 export function seedBooks() {
-  if (Store.s.booksSeeded || !D.books) return 0
+  if (!D.books) return 0
   const add = {}
   for (const b of D.books.starter || []) if (!rows()[b.id]) add[b.id] = { ...b, sessions: [], words: [], seeded: true }
   if (Object.keys(add).length) Store.setMany("books", add)
-  Store.setPref("booksSeeded", true)
+  if (!Store.s.booksSeeded) Store.setPref("booksSeeded", true)
   return Object.keys(add).length
 }
 

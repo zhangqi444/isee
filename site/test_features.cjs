@@ -331,7 +331,17 @@ async function runThrough(pg, pick, max = 60) {
   console.log('== reading log');
   await pg.evaluate(() => { location.hash = '#/books'; }); await pg.waitForSelector('[data-testid=book]');
   const bk = await body(pg);
-  check('her two books are on the shelf', /Little Women/.test(bk) && /Charlie and the Chocolate Factory/.test(bk));
+  check('her three books are on the shelf', /Little Women/.test(bk) && /Charlie and the Chocolate Factory/.test(bk) && /Harry Potter and the Sorcerer's Stone/.test(bk));
+  check('Harry Potter starts where she is, page 77, chapter 5', (await pg.$eval('[data-testid=book][data-id=harry-potter-1]', (e) => e.dataset.status)) === 'reading' && /page 77/.test(bk) && /chapter 5/.test(bk));
+  // a starter book added to the content later still lands on a shelf that was seeded before it existed
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); delete s.books['harry-potter-1']; s.books['little-women'].removed = false; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book][data-id=harry-potter-1]');
+  check('seeding is additive after the first time', true);
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.books['harry-potter-1'].removed = true; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book]');
+  check('but a book she took off the shelf stays off', (await pg.$('[data-testid=book][data-id=harry-potter-1]')) === null);
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); delete s.books['harry-potter-1'].removed; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book][data-id=harry-potter-1]');
   check('Little Women is the one she is reading', (await pg.$eval('[data-testid=book][data-id=little-women]', (e) => e.dataset.status)) === 'reading');
   check('Charlie is finished', (await pg.$eval('[data-testid=book][data-id=charlie]', (e) => e.dataset.status)) === 'finished');
   check('suggested next reads offered', (await pg.$$('[data-testid=suggestion]')).length >= 8 && /inference/.test(bk));
@@ -364,9 +374,9 @@ async function runThrough(pg, pick, max = 60) {
   check('adding her own book lives with the suggestions, not on the shelf', (await pg.$('[data-testid=book-own] [data-testid=book-title]')) !== null && (await pg.$eval('[data-testid=book-add]', (b) => b.disabled)));
   await pg.click('[data-testid=suggestion] >> nth=0 >> button');
   await pg.waitForTimeout(200);
-  check('a suggestion joins the shelf', (await pg.$$('[data-testid=book]')).length === 3);
+  check('a suggestion joins the shelf', (await pg.$$('[data-testid=book]')).length === 4);
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book]');
-  check('the shelf survives a reload', (await pg.$$('[data-testid=book]')).length === 3 && /garret/.test(await body(pg)) === false || true);
+  check('the shelf survives a reload', (await pg.$$('[data-testid=book]')).length === 4);
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=reading-card]');
   check('dashboard reading card shows the current book', /Little Women/.test(await pg.textContent('[data-testid=reading-card]')));
 
