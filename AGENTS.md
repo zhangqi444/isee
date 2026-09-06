@@ -69,7 +69,8 @@ The app is a static page that keeps the learner's data **in her own Google Drive
 - **Storage**: one file, `progress.json`, in a folder the app creates
   ("Sheila ISEE Practice"). The app can only see files it created.
 - **Order of truth**: localStorage is written first and synchronously; Drive is a
-  mirror pushed on a 1.2 s debounce. The app is fully usable signed out.
+  mirror pushed on a 1.2 s debounce. The Pages build is gated behind sign-in (below);
+  the offline artifact build has no Drive and runs on localStorage alone.
 - **Merge** (`Store.merge`): per key, last write wins by `at`; on a tie the richer
   copy is kept. Learning records union their attempt histories. Merging must never
   be able to delete an answer.
@@ -87,9 +88,10 @@ The app is a static page that keeps the learner's data **in her own Google Drive
 **Sign-in follows `zhangqi444/volunteer` (`js/drive.js`).** Ported in full:
 `ensureToken()` silently refreshes a stale token before every API call, so the
 hourly expiry never reaches the user; `api()` retries once on a 401;
-`hasGrantedAllScopes` catches an unticked Drive permission at the source; a
-`pagehide` keepalive write saves an edit still inside the debounce; and `dirty`
-state plus an `online` listener retries a save that failed.
+`hasGrantedAllScopes` catches an unticked Drive permission at the source; the page
+going hidden flushes an edit still inside the debounce (through the normal
+read-merge-write, never a blind write); and `dirty` state plus an `online`
+listener retries a save that failed.
 
 **The site is gated** (`src/pages/signin.jsx`, same shape as volunteer's auth
 screen): nothing renders until Google says who this is. `App` checks

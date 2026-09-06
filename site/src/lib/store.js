@@ -215,8 +215,6 @@ export const Store = {
     this.setDriveOptIn(false); this.setStatus("local")
     if (t && window.google && google.accounts && google.accounts.oauth2) { try { google.accounts.oauth2.revoke(t) } catch { /* ignore */ } }
   },
-  /** She chose "not now" on the welcome dialog; do not ask again unprompted. */
-  dismissSignIn() { this.setPref("signInAsked", true) },
   valid() { return this.token && Date.now() < this.tokenExp },
   /** Every Drive call goes through here: fresh token first, one retry on a 401. */
   api(url, opts = {}, retry = true) {

@@ -77,7 +77,7 @@ artifact is offline-complete and the PWA has nothing to wait for.
 4. `Store.applySeed(bundle.seed)` — idempotent migration of the Sheets results.
 5. `backfill()` — creates learning records for anything answered before the engine existed. Idempotent; only ever adds.
 6. `seedBooks()`, `syncBadges()`; the same three run again after every Drive merge (`Store.afterMerge`).
-7. Render `<App/>`. Then, on the Pages build only, `Store.resume()` silently refreshes a stored Drive token. The Google popup is never opened without a click.
+7. Render `<App/>`. On the Pages build the app is **gated**: until `Store.signedIn()` is true it renders the sign-in page (`pages/signin.jsx`), or a splash while `Store.resume()` silently refreshes a stored token. A returning visit therefore never sees the gate unless the silent refresh needs a click. The Google popup is never opened without one. The artifact build has no Drive and is never gated.
 
 ## 5. State
 
@@ -100,7 +100,7 @@ schedule a Drive push.
 | `books` | book id | Shelf status, pages, reading sessions by day, words looked up. |
 | `reviews` | review id | Essay reviews written outside the app (see §8). |
 | `reviewsSeen` | review id | Which reviews she has opened. |
-| prefs | — | `testDate`, `testFormat`, `pacing`, `theme`, `signInAsked`, Drive session facts. |
+| prefs | — | `testDate`, `testFormat`, `pacing`, `theme`, Drive session facts. |
 
 **Nothing derived is stored.** Accuracy, mastery, the review queue, pacing,
 readiness, streaks, points and badge progress are all functions over these
@@ -108,7 +108,11 @@ slices and the bundle.
 
 ## 6. Google Drive sync
 
-The app is fully usable signed out. Drive is a mirror, not a gate.
+On the Pages build nothing renders until Google has said who this is (the
+sign-in page is the door, in the same shape as the owner's other apps); after
+that Drive is a mirror of localStorage, and losing auth mid-session never throws
+her out of a half-finished set. Only a fresh load gates. The artifact build has
+no Drive at all.
 
 - **Scope** `drive.file` + `openid email profile` (non-sensitive, so the OAuth
   consent screen stays in Testing with the owner as test user). The app can only

@@ -145,8 +145,12 @@ minutes), `default` only for "This week" and "New".
 
 ## 7. Interaction rules
 
-- **Never a popup without a click.** Google sign-in only from a button. The
-  welcome dialog is an invitation with a real "Not now" that is remembered.
+- **One door, then no more asking.** The site opens on a sign-in page that says
+  in three lines where her work lives and what the site can see, with one Google
+  button. A returning visit is signed back in silently behind a splash; only when
+  that needs a click does she see the door again, and then it says "Welcome
+  back". Losing auth mid-session never interrupts a set: the header chip says
+  Reconnect and she keeps working. Never a popup without a click.
 - **Autosave, visibly.** Text fields save on a short debounce and on blur; the
   header shows "Saved to Drive" or "Saved on this device". No Save buttons on
   forms, only on actions that mean something (submit a set, finish a book).
