@@ -79,7 +79,8 @@ The app is a static page that keeps the learner's data **in her own Google Drive
   and covering it in `test_drive.cjs`.
 - **Every push reads first**: `flush` runs `pull` (GET, merge, PATCH), so a change
   another device or an outside reviewer put in `progress.json` is merged, never
-  overwritten. The `pagehide` keepalive write is the one blind PATCH.
+  overwritten. There is no blind write: the page going hidden flushes at once,
+  and an edit that still misses the window is pushed, merged, on the next open.
 - **Popups**: never call `requestAccessToken` without a click behind it; browsers
   block it. First grant uses `prompt: "consent"`, later ones `prompt: ""`.
 

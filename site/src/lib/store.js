@@ -364,17 +364,12 @@ export const Store = {
 if (typeof window !== "undefined") {
   // Come back online with something unsaved: try again.
   addEventListener("online", () => { if (Store.dirty) Store.flush() })
-  // Closing the tab inside the debounce window used to lose the last answer.
-  addEventListener("pagehide", () => {
-    if (!Store.dirty || !Store.fileId || !Store.valid()) return
-    try {
-      fetch(`https://www.googleapis.com/upload/drive/v3/files/${Store.fileId}?uploadType=media`, {
-        method: "PATCH", keepalive: true,
-        headers: { Authorization: "Bearer " + Store.token, "Content-Type": "application/json" },
-        body: Store.body(),
-      })
-    } catch { /* best effort */ }
-  })
+  // Switching app or closing the tab inside the debounce window used to fire a blind
+  // keepalive PATCH — the one write that skipped the read-and-merge, so it could
+  // overwrite a review or another device's work. Now the page going hidden runs the
+  // ordinary flush at once (the page is still alive at that point, on iPad too), and
+  // anything that still misses the window is pushed, merged, on the next open.
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && Store.dirty) Store.flush() })
 }
 
 /** Re-render on any store change. Returns the store itself. */

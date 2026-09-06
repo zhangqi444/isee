@@ -12,6 +12,18 @@ const srv = http.createServer((req, res) => {
 const exe = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined;
 let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : '  FAIL ') + n + (x ? '  ' + x : '')); if (!ok) failures++; };
 const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
+/** Answer every question in the open runner with choice `pick`. After each Next it waits for the
+ *  runner to actually move on (the counter changes or the score card appears) instead of sleeping,
+ *  which is what made the old 30 ms loops stall on a loaded machine. */
+async function runThrough(pg, pick, max = 60) {
+  for (let k = 0; k < max; k++) {
+    if (!(await pg.$('[data-testid=question]'))) break;
+    const before = await pg.textContent('[data-testid=counter]');
+    await pg.click(`[data-testid=choice] >> nth=${pick}`);
+    await pg.click('[data-testid=next]');
+    await pg.waitForFunction((b) => { const c = document.querySelector('[data-testid=counter]'); return !c || c.textContent !== b || !!document.querySelector('[data-testid=score]'); }, before, { timeout: 10000 });
+  }
+}
 
 (async () => {
   await new Promise((r) => srv.listen(8143, r));
@@ -251,7 +263,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('pacing mode shows a soft timer against the budget', /\/ 60/.test(await pg.textContent('[data-testid=soft-timer]')));
   await pg.click('[data-testid=pacing-toggle]'); await pg.waitForTimeout(100);
   check('pacing mode toggles off', (await pg.$('[data-testid=soft-timer]')) === null);
-  for (let k = 0; k < 40; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(40); }
+  await runThrough(pg, 0);
   await pg.waitForSelector('[data-testid=score]');
   check('per-question pacing summary after a set', (await pg.$('[data-testid=pace-summary]')) !== null && /real-test budget 60 s/.test(await body(pg)));
   const missTags = await pg.$$('[data-testid=cause-tags]');
@@ -269,7 +281,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   const dueVR = +(await pg.textContent('[data-testid=due-vr]').catch(() => '0'));
   check('VR has due items (words rated shaky + misses)', dueVR >= 1, dueVR + ' due');
   await pg.click('[data-testid=start-review-vr]'); await pg.waitForSelector('[data-testid=choice]');
-  for (let k = 0; k < 60; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await runThrough(pg, 1);
   await pg.waitForSelector('[data-testid=score]');
   const afterRv = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const recs = Object.values(s.items).filter((r) => (r.hist || []).some((h) => h.ctx === 'review')); return { n: recs.length, stepped: recs.filter((r) => r.step >= 1).length, reset: recs.filter((r) => r.step === 0 && r.due).length }; });
   check('review answers recorded: right ones step forward, wrong ones reset', afterRv.n >= 1 && afterRv.stepped + afterRv.reset === afterRv.n, JSON.stringify(afterRv));
@@ -280,7 +292,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('mixed set previews all four subjects', /Verbal · \d/.test(await body(pg)) && /Reading · \d/.test(await body(pg)));
   await pg.click('[data-testid=mixed-start]'); await pg.waitForSelector('[data-testid=choice]');
   check('mixed runner titled', /Mixed set · all subjects/.test(await body(pg)) && /1 \/ 12/.test(await body(pg)));
-  for (let k = 0; k < 14; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=2'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await runThrough(pg, 2, 14);
   await pg.waitForSelector('[data-testid=score]');
   check('finishing a mixed set announces the badge it earned', (await pg.$('[data-testid=badges-won]')) !== null && /Shuffled/.test(await pg.textContent('[data-testid=badges-won]')));
   await pg.evaluate(() => { location.hash = '#/mixed'; }); await pg.waitForSelector('text=Mixed sets so far');
@@ -292,7 +304,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('word quiz is 20 synonym questions', /1 \/ 20/.test(await body(pg)) && /most nearly means/.test(await pg.textContent('[data-testid=question]')));
   const choicesN = (await pg.$$('[data-testid=choice]')).length;
   check('four distinct choices per word', choicesN === 4);
-  for (let k = 0; k < 22; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(25); }
+  await runThrough(pg, 1, 22);
   await pg.waitForSelector('[data-testid=score]');
   const wordRecs = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return Object.keys(s.items).filter((k) => k.startsWith('w:') && s.items[k].hist.some((h) => h.ctx === 'vocab')).length; });
   check('word answers recorded on the word records', wordRecs === 20, wordRecs + ' words');

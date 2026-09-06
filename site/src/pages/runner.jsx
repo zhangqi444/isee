@@ -283,7 +283,7 @@ export function Runner({ items, title, setId, custom, ctx, exitPath, exitLabel, 
               </TooltipTrigger>
               <TooltipContent>Shows a soft timer against the real test's {budget} seconds a question. Nothing auto-advances.</TooltipContent>
             </Tooltip>
-            <span className="tabular-nums">{i + 1} / {total}</span>
+            <span className="tabular-nums" data-testid="counter">{i + 1} / {total}</span>
           </span>
         </div>
         <Progress value={(i / total) * 100} className="h-1.5" aria-label="Progress through the set" />

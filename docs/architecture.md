@@ -120,8 +120,10 @@ The app is fully usable signed out. Drive is a mirror, not a gate.
 - **Write path**: every writer calls `schedulePush()` → 1.2 s debounce →
   `flush()` → `pull()` → `GET progress.json` → `merge(remote)` → `PATCH` the
   union. Reading before writing is what lets another device, or a reviewer
-  writing straight into the file, never be overwritten. A `pagehide` keepalive
-  PATCH covers an edit still inside the debounce; it is the one blind write.
+  writing straight into the file, never be overwritten. The page going hidden
+  (app switch, tab close) runs the same flush at once; there is no blind write.
+  An edit that still misses the window is pushed, merged, on the next open,
+  because `afterAuth` always pulls and pushes.
 - **Merge** (`Store.merge`): keyed slices are last-write-wins per key by `at`,
   with the richer copy kept on a tie; learning records take the newer schedule
   and **union** the attempt histories. Merging can never delete an answer.

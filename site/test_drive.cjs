@@ -137,6 +137,16 @@ const FAKE_GIS = `
   const pushed = remoteBody();
   check('a local save merges the remote copy first, so a review it never saw is kept', pushed.reviews['essay:W3:2026-09-06'] && pushed.reviews['essay:W2:2026-09-05'] && pushed.essays.W2.time.plan === 5, drive.calls.slice(callsBefore).join(' , '));
   check('and the review is now on this device too', await pg.evaluate(() => !!JSON.parse(localStorage.getItem('isee.v1')).reviews['essay:W3:2026-09-06']));
+  // Switching away from the tab inside the debounce: the save goes out at once, through the
+  // same read-then-write path, never as a blind PATCH.
+  { const remote = remoteBody(); remote.reviews['essay:W4:2026-09-07'] = mkReview('W4', '2026-09-07'); drive.body = JSON.stringify(remote); }
+  const hideFrom = drive.calls.length;
+  await pg.fill('[data-testid=essay-time-draft]', '18');
+  await pg.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true }); document.dispatchEvent(new Event('visibilitychange', { bubbles: true })); });
+  await pg.waitForTimeout(400);
+  const hideCalls = drive.calls.slice(hideFrom).map((c) => c.split(' ')[0]);
+  check('hiding the page flushes at once, reading before writing', hideCalls.join(',') === 'GET,PATCH' && remoteBody().reviews['essay:W4:2026-09-07'] && remoteBody().essays.W2.time.draft === 18, hideCalls.join(','));
+  await pg.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true }); });
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=today]');
 
   // disconnect clears everything
