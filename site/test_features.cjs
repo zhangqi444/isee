@@ -13,6 +13,18 @@ const srv = http.createServer((req, res) => {
 const exe = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome') ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined;
 let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : '  FAIL ') + n + (x ? '  ' + x : '')); if (!ok) failures++; };
 const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
+/** Answer every question in the open runner with choice `pick`. After each Next it waits for the
+ *  runner to actually move on (the counter changes or the score card appears) instead of sleeping,
+ *  which is what made the old 30 ms loops stall on a loaded machine. */
+async function runThrough(pg, pick, max = 60) {
+  for (let k = 0; k < max; k++) {
+    if (!(await pg.$('[data-testid=question]'))) break;
+    const before = await pg.textContent('[data-testid=counter]');
+    await pg.click(`[data-testid=choice] >> nth=${pick}`);
+    await pg.click('[data-testid=next]');
+    await pg.waitForFunction((b) => { const c = document.querySelector('[data-testid=counter]'); return !c || c.textContent !== b || !!document.querySelector('[data-testid=score]'); }, before, { timeout: 10000 });
+  }
+}
 
 (async () => {
   await new Promise((r) => srv.listen(8143, r));
@@ -81,6 +93,28 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   const completeBadge = /Complete/.test(await pg.textContent('[data-slot=card-action]'));
   await pg.click('text=Plan · 5'); await pg.waitForSelector('#W2-plan-focus');
   check('essay draft + completion persist', completeBadge && (await pg.$eval('#W2-plan-focus', (t) => t.value)).includes('listening'));
+  // time log: typed by hand next to each phase timer, totalled in the header, kept
+  const logMinutes = async (phase, tab, m) => { await pg.click(`text=${tab}`); await pg.click(`[data-testid=timer-log-${phase}]`); await pg.fill(`[data-testid=essay-time-${phase}]`, m); await pg.press(`[data-testid=essay-time-${phase}]`, 'Enter'); };
+  await logMinutes('plan', 'Plan · 5', '6');
+  await logMinutes('draft', 'Draft · 20', '19');
+  await logMinutes('revise', 'Revise · 5', '4');
+  await pg.waitForTimeout(200);
+  check('time log totals the three phases against the 30-minute target', /29 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')) && /4 min/.test(await pg.textContent('[data-testid=essay-time-revise-logged]')));
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=essay-time-total]');
+  await pg.click('text=Draft · 20'); await pg.waitForSelector('[data-testid=essay-time-draft-logged]');
+  check('time log persists', /19 min/.test(await pg.textContent('[data-testid=essay-time-draft-logged]')) && /29 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  await pg.click('text=Plan · 5'); await pg.click('[data-testid=timer-start-plan]');
+  await pg.waitForTimeout(700); await pg.click('[data-testid=timer-stop-plan]');
+  await pg.waitForTimeout(200);
+  check('stopping a phase timer writes its minutes into the log', /1 min/.test(await pg.textContent('[data-testid=essay-time-plan-logged]')) && /24 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  // the first site version kept a free-text "time at draft stop"; it still counts
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.essays.W3 = { meta: { minutes: '18 min' }, at: new Date().toISOString() }; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/essay/W3'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=essay-time-total]');
+  await pg.click('text=Draft · 20'); await pg.waitForSelector('[data-testid=essay-time-draft-logged]');
+  check('the old free-text draft time still counts as draft minutes', /18 min/.test(await pg.textContent('[data-testid=essay-time-draft-logged]')) && /18 of 30 min/.test(await pg.textContent('[data-testid=essay-time-total]')));
+  await pg.evaluate(() => { location.hash = '#/essay'; }); await pg.waitForSelector('[data-testid=essay-time-W2]');
+  check('the week list shows the minutes logged', /24 min logged/.test(await pg.textContent('[data-testid=essay-time-W2]')) && /18 min logged/.test(await pg.textContent('[data-testid=essay-time-W3]')));
+  await pg.click('[data-testid=essay-open-W2]'); await pg.waitForSelector('[data-testid=essay-prompt]');
   await pg.click('text=Guide');
   check('guide shows the eight lessons', /Read the prompt precisely/.test(await body(pg)) && /Revise, then edit/.test(await body(pg)));
 
@@ -140,6 +174,33 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.click('[data-testid=mock-corrections]');
   await pg.waitForSelector('[data-testid=choice]');
   check('corrections drill opens as a runner', /Corrections/.test(await body(pg)));
+
+  console.log('== essay review');
+  // a review made outside the app arrives as a link: #/import/<base64url JSON>
+  const review = { target: { kind: 'essay', wk: 'W2' }, at: '2026-09-05T18:00:00Z', reviewer: 'Claude, asked by Dad', source: 'her progress file in Google Drive', summary: 'You changed your mind on the page, and the reader can see why.', strengths: ['The seed experiment is a real, specific detail.'], suggestions: ['Say what you said to your friend when you gave up the volcano.'], next: 'Add one sentence of dialogue.', rubric: { Specificity: 3, Structure: 2, Bogus: 9 } };
+  const payload = Buffer.from(JSON.stringify(review)).toString('base64url');
+  await pg.evaluate((p) => { location.hash = '#/import/' + p; }, payload);
+  await pg.waitForSelector('[data-testid=import-preview]');
+  check('an import link previews the review before adding it', /Essay · W2/.test(await body(pg)) && /Claude, asked by Dad/.test(await body(pg)));
+  await pg.click('[data-testid=import-add]');
+  await pg.waitForSelector('[data-testid=essay-review]');
+  const rvText = await pg.textContent('[data-testid=essay-review]');
+  check('adding it opens the essay with the review under the prompt',/#\/essay\/W2$/.test(await pg.evaluate(() => location.hash)) && /seed experiment is a real/.test(rvText) && /For next week/.test(rvText) && /Google Drive/.test(rvText));
+  check('rubric chips use the content rubric and drop unknown dimensions', /Specificity · 3/.test(await pg.textContent('[data-testid=review-rubric]')) && !/Bogus/.test(rvText));
+  check('the review is stored with her progress and marked read', await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const r = s.reviews['essay:W2:2026-09-05']; return !!r && r.target.wk === 'W2' && r.v === 1 && !!s.reviewsSeen['essay:W2:2026-09-05']; }));
+  await pg.evaluate(() => { location.hash = '#/essay'; }); await pg.waitForSelector('[data-testid=essay-reviewed-W2]');
+  check('the week card says Reviewed, with no dot once read', (await pg.$eval('[data-testid=essay-reviewed-W2]', (e) => e.dataset.unread)) === '0');
+  // a second review lands from Drive while she is away: a dot in the sidebar, a job on Today
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.reviews['essay:W3:2026-09-06'] = { id: 'essay:W3:2026-09-06', v: 1, target: { kind: 'essay', wk: 'W3' }, at: '2026-09-06T18:00:00Z', reviewer: 'Mum', summary: 'A brave start.', strengths: [], suggestions: [], next: '' }; localStorage.setItem('isee.v1', JSON.stringify(s)); location.hash = '#/'; });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
+  check('an unread review is a dot in the sidebar and a job on Today', (await pg.$('[data-testid=reviews-new]')) !== null && /Essay · W3 · read the review/.test(await pg.textContent('[data-testid=today-jobs]')));
+  // the paste box, for a phone that cannot open the long link
+  await pg.evaluate(() => { location.hash = '#/import'; }); await pg.waitForSelector('[data-testid=import-text]');
+  await pg.fill('[data-testid=import-text]', 'not a review'); await pg.click('[data-testid=import-paste-add]');
+  check('a bad paste is refused in plain words', /does not look like a review/.test(await body(pg)));
+  await pg.fill('[data-testid=import-text]', JSON.stringify({ target: { kind: 'mock', form: 'DGN' }, summary: 'You fixed the board and told the story straight.', reviewer: 'Dad' }));
+  await pg.click('[data-testid=import-paste-add]'); await pg.waitForSelector('[data-testid=essay-review]');
+  check('a pasted review of the mock essay opens on that essay', /#\/mock\/DGN\/ESSAY$/.test(await pg.evaluate(() => location.hash)) && /fixed the board/.test(await pg.textContent('[data-testid=essay-review]')));
 
   console.log('== calendar');
   await pg.evaluate(() => { location.hash = '#/calendar'; });
@@ -204,7 +265,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('pacing mode shows a soft timer against the budget', /\/ 60/.test(await pg.textContent('[data-testid=soft-timer]')));
   await pg.click('[data-testid=pacing-toggle]'); await pg.waitForTimeout(100);
   check('pacing mode toggles off', (await pg.$('[data-testid=soft-timer]')) === null);
-  for (let k = 0; k < 40; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=0'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(40); }
+  await runThrough(pg, 0);
   await pg.waitForSelector('[data-testid=score]');
   check('per-question pacing summary after a set', (await pg.$('[data-testid=pace-summary]')) !== null && /real-test budget 60 s/.test(await body(pg)));
   const missTags = await pg.$$('[data-testid=cause-tags]');
@@ -222,7 +283,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   const dueVR = +(await pg.textContent('[data-testid=due-vr]').catch(() => '0'));
   check('VR has due items (words rated shaky + misses)', dueVR >= 1, dueVR + ' due');
   await pg.click('[data-testid=start-review-vr]'); await pg.waitForSelector('[data-testid=choice]');
-  for (let k = 0; k < 60; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await runThrough(pg, 1);
   await pg.waitForSelector('[data-testid=score]');
   const afterRv = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const recs = Object.values(s.items).filter((r) => (r.hist || []).some((h) => h.ctx === 'review')); return { n: recs.length, stepped: recs.filter((r) => r.step >= 1).length, reset: recs.filter((r) => r.step === 0 && r.due).length }; });
   check('review answers recorded: right ones step forward, wrong ones reset', afterRv.n >= 1 && afterRv.stepped + afterRv.reset === afterRv.n, JSON.stringify(afterRv));
@@ -233,7 +294,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('mixed set previews all four subjects', /Verbal · \d/.test(await body(pg)) && /Reading · \d/.test(await body(pg)));
   await pg.click('[data-testid=mixed-start]'); await pg.waitForSelector('[data-testid=choice]');
   check('mixed runner titled', /Mixed set · all subjects/.test(await body(pg)) && /1 \/ 12/.test(await body(pg)));
-  for (let k = 0; k < 14; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=2'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(30); }
+  await runThrough(pg, 2, 14);
   await pg.waitForSelector('[data-testid=score]');
   check('finishing a mixed set announces the badge it earned', (await pg.$('[data-testid=badges-won]')) !== null && /Shuffled/.test(await pg.textContent('[data-testid=badges-won]')));
   await pg.evaluate(() => { location.hash = '#/mixed'; }); await pg.waitForSelector('text=Mixed sets so far');
@@ -245,7 +306,7 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   check('word quiz is 20 synonym questions', /1 \/ 20/.test(await body(pg)) && /most nearly means/.test(await pg.textContent('[data-testid=question]')));
   const choicesN = (await pg.$$('[data-testid=choice]')).length;
   check('four distinct choices per word', choicesN === 4);
-  for (let k = 0; k < 22; k++) { const q = await pg.$('[data-testid=question]'); if (!q) break; await pg.click('[data-testid=choice] >> nth=1'); await pg.click('[data-testid=next]'); await pg.waitForTimeout(25); }
+  await runThrough(pg, 1, 22);
   await pg.waitForSelector('[data-testid=score]');
   const wordRecs = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); return Object.keys(s.items).filter((k) => k.startsWith('w:') && s.items[k].hist.some((h) => h.ctx === 'vocab')).length; });
   check('word answers recorded on the word records', wordRecs === 20, wordRecs + ' words');
@@ -272,7 +333,17 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   console.log('== reading log');
   await pg.evaluate(() => { location.hash = '#/books'; }); await pg.waitForSelector('[data-testid=book]');
   const bk = await body(pg);
-  check('her two books are on the shelf', /Little Women/.test(bk) && /Charlie and the Chocolate Factory/.test(bk));
+  check('her three books are on the shelf', /Little Women/.test(bk) && /Charlie and the Chocolate Factory/.test(bk) && /Harry Potter and the Sorcerer's Stone/.test(bk));
+  check('Harry Potter starts where she is, page 77, chapter 5', (await pg.$eval('[data-testid=book][data-id=harry-potter-1]', (e) => e.dataset.status)) === 'reading' && /page 77/.test(bk) && /chapter 5/.test(bk));
+  // a starter book added to the content later still lands on a shelf that was seeded before it existed
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); delete s.books['harry-potter-1']; s.books['little-women'].removed = false; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book][data-id=harry-potter-1]');
+  check('seeding is additive after the first time', true);
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); s.books['harry-potter-1'].removed = true; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book]');
+  check('but a book she took off the shelf stays off', (await pg.$('[data-testid=book][data-id=harry-potter-1]')) === null);
+  await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); delete s.books['harry-potter-1'].removed; localStorage.setItem('isee.v1', JSON.stringify(s)); });
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book][data-id=harry-potter-1]');
   check('Little Women is the one she is reading', (await pg.$eval('[data-testid=book][data-id=little-women]', (e) => e.dataset.status)) === 'reading');
   check('Charlie is finished', (await pg.$eval('[data-testid=book][data-id=charlie]', (e) => e.dataset.status)) === 'finished');
   check('suggested next reads offered', (await pg.$$('[data-testid=suggestion]')).length >= 8 && /inference/.test(bk));
@@ -290,11 +361,24 @@ const body = async (pg) => (await pg.textContent('body')).replace(/\s+/g, ' ');
   await pg.fill('[data-testid=book][data-id=little-women] >> [data-testid=page-now]', '120');
   await pg.waitForTimeout(200);
   check('page numbers give a progress bar', /page 120 of 449/.test(await body(pg)));
+  // a day she forgot to tap: log it after the fact, and it counts on that day, not today
+  const yday = await pg.evaluate(() => { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; });
+  await pg.fill('[data-testid=book][data-id=little-women] >> [data-testid=log-date]', yday);
+  await pg.fill('[data-testid=book][data-id=little-women] >> [data-testid=log-page]', '90');
+  await pg.click('[data-testid=book][data-id=little-women] >> [data-testid=log-add]');
+  await pg.waitForTimeout(200);
+  const back = await pg.evaluate((y) => { const s = JSON.parse(localStorage.getItem('isee.v1')); const b = s.books['little-women']; const ses = b.sessions.find((x) => x.on === y); return { n: b.sessions.length, on: ses && ses.on, at: ses && ses.at.slice(0, 10), page: b.page, order: b.sessions.map((x) => x.on) }; }, yday);
+  check('a back-dated reading day is stored on that day and does not move the page back', back.n === 2 && back.on === yday && back.page === 120 && back.order[0] === yday && /2 reading days/.test(await body(pg)), JSON.stringify(back));
+  check('the date picker cannot go into the future', await pg.$eval('[data-testid=book][data-id=little-women] >> [data-testid=log-date]', (i) => { const d = new Date(); return i.max === `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }));
+  await pg.click('[data-testid=book][data-id=little-women] >> [data-testid=sessions] >> button >> nth=-1');
+  await pg.waitForTimeout(150);
+  check('tapping a logged day takes it back', await pg.evaluate((y) => !JSON.parse(localStorage.getItem('isee.v1')).books['little-women'].sessions.some((x) => x.on === y), yday));
+  check('adding her own book lives with the suggestions, not on the shelf', (await pg.$('[data-testid=book-own] [data-testid=book-title]')) !== null && (await pg.$eval('[data-testid=book-add]', (b) => b.disabled)));
   await pg.click('[data-testid=suggestion] >> nth=0 >> button');
   await pg.waitForTimeout(200);
-  check('a suggestion joins the shelf', (await pg.$$('[data-testid=book]')).length === 3);
+  check('a suggestion joins the shelf', (await pg.$$('[data-testid=book]')).length === 4);
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=book]');
-  check('the shelf survives a reload', (await pg.$$('[data-testid=book]')).length === 3 && /garret/.test(await body(pg)) === false || true);
+  check('the shelf survives a reload', (await pg.$$('[data-testid=book]')).length === 4);
   await pg.evaluate(() => { location.hash = '#/'; }); await pg.waitForSelector('[data-testid=reading-card]');
   check('dashboard reading card shows the current book', /Little Women/.test(await pg.textContent('[data-testid=reading-card]')));
 

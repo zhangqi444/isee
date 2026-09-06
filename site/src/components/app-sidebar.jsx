@@ -7,6 +7,7 @@ import { recentBadges } from "@/lib/rewards"
 import { currentBook, finishedBooks } from "@/lib/books"
 import { nextUp, weekLeft } from "@/pages/checklist"
 import { essayStatus } from "@/pages/essay"
+import { unseenReviews } from "@/lib/reviews"
 import { go } from "@/lib/router"
 import { useStore } from "@/lib/store"
 import {
@@ -41,6 +42,7 @@ export function AppSidebar({ route, ...props }) {
   const week = weekLeft()
   const next = nextUp()
   const essayDone = D.weeks.filter((w) => essayStatus(w.w) === "complete").length
+  const newReviews = unseenReviews().length
   const top = route[0] || ""
   const activeSub = top === "s" || top === "run" ? route[1] : top === "precision" ? "vr" : null
 
@@ -159,7 +161,10 @@ export function AppSidebar({ route, ...props }) {
                   <PenLine />
                   <span>Essay</span>
                 </SidebarMenuButton>
-                <SidebarMenuBadge className="text-muted-foreground">{essayDone}/{D.weeks.length}</SidebarMenuBadge>
+                <SidebarMenuBadge className="text-muted-foreground gap-1.5">
+                  {newReviews ? <span className="bg-primary size-2 rounded-full" title={`${newReviews} review${newReviews === 1 ? "" : "s"} to read`} data-testid="reviews-new" /> : null}
+                  {essayDone}/{D.weeks.length}
+                </SidebarMenuBadge>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip={currentBook() ? "Reading · " + currentBook().title : "Reading"} isActive={top === "books"} onClick={() => nav("/books")}>

@@ -13,6 +13,8 @@ import { RadioGroup } from "@/components/ui/radio-group"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { ActionBar, CauseTags, Choice, Passage, Runner } from "@/pages/runner"
+import { reviewsFor } from "@/lib/reviews"
+import { ReviewCard } from "@/components/review-card"
 import { STANINE, mockBand, mockNextSteps, recordMockForm } from "@/lib/engine"
 
 /* ---------- state helpers ---------- */
@@ -484,6 +486,7 @@ export function MockEssay({ form }) {
           </CardHeader>
           <CardContent className="text-[15px] leading-7 whitespace-pre-wrap">{er.text}</CardContent>
         </Card>
+        {reviewsFor({ kind: "mock", form }).map((r) => <ReviewCard key={r.id} r={r} changedAt={er.submittedAt} />)}
         <ActionBar>
           <Button variant="outline" onClick={() => go("/mock/" + form)}>Overview</Button>
           <span className="flex-1" />

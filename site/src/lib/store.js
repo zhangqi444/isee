@@ -33,7 +33,7 @@ export const Store = {
   init() {
     this.s = lsLoad()
     this.s.results = this.s.results || {}
-    for (const k of ["precision", "essays", "mocks", "checklists", "items", "mixed", "badges", "rewards", "books"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
+    for (const k of ["precision", "essays", "mocks", "checklists", "items", "mixed", "badges", "rewards", "books", "reviews", "reviewsSeen"]) if (!this.s[k] || typeof this.s[k] !== "object") this.s[k] = {}
     // The first (vanilla) site stored `at` as Date.now(); everything since uses ISO strings.
     for (const k of Object.keys(this.s.results)) {
       const r = this.s.results[k]
@@ -262,8 +262,12 @@ export const Store = {
       .then((r) => r.json())
       .then((d) => { this.fileId = d.files && d.files[0] ? d.files[0].id : null; return this.fileId })
   },
+  /** Read the remote copy, merge it in, write the union back. Every save goes through
+   *  here (not straight to push), so a review someone added to progress.json from
+   *  outside, or work another device saved meanwhile, is never overwritten. */
   pull() {
-    return this.findFile().then((id) => {
+    const found = this.fileId ? Promise.resolve(this.fileId) : this.findFile()
+    return found.then((id) => {
       if (!id) return this.push()                       // nothing remote yet -> seed it from local
       return this.api(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`)
         .then((r) => r.json())
@@ -272,8 +276,9 @@ export const Store = {
   },
   merge(remote) {
     if (!remote || !remote.results) return
-    // keyed slices: last-write-wins per key by `at`
-    for (const slice of ["precision", "essays", "mocks", "checklists", "mixed", "badges", "rewards", "books"]) {
+    // keyed slices: last-write-wins per key by `at`. `reviews` are written outside the
+    // app (see lib/reviews.js), so a remote copy this device has never seen must land.
+    for (const slice of ["precision", "essays", "mocks", "checklists", "mixed", "badges", "rewards", "books", "reviews", "reviewsSeen"]) {
       const rs = remote[slice] || {}, ls = this.s[slice]
       for (const k of Object.keys(rs)) {
         if (!rs[k] || typeof rs[k] !== "object") continue
@@ -325,7 +330,7 @@ export const Store = {
     this.setStatus("syncing")
     // No folder yet means the session lapsed before it was set up: take the whole
     // path (token, folder, pull, push) so a save can still land.
-    const run = this.folderId ? this.push() : this.ensureToken().then(() => this.ensureFolder()).then(() => this.pull())
+    const run = this.folderId ? this.pull() : this.ensureToken().then(() => this.ensureFolder()).then(() => this.pull())
     return run
       .then(() => { this.dirty = false; this.lastSync = new Date(); this.setStatus("live") })
       .catch((e) => {
@@ -337,11 +342,12 @@ export const Store = {
       })
       .finally(() => { this.flushing = false })
   },
-  /** The Drive payload. Schema 4: bump it, and update init/merge/push, when a slice is added. */
+  /** The Drive payload. Schema 5: bump it, and update init/merge/push, when a slice is added. */
   body() {
-    return JSON.stringify({ schema: 4, savedAt: new Date().toISOString(), results: this.s.results,
+    return JSON.stringify({ schema: 5, savedAt: new Date().toISOString(), results: this.s.results,
       precision: this.s.precision, essays: this.s.essays, mocks: this.s.mocks, checklists: this.s.checklists, items: this.s.items, mixed: this.s.mixed,
       badges: this.s.badges, rewards: this.s.rewards, books: this.s.books, booksSeeded: !!this.s.booksSeeded,
+      reviews: this.s.reviews, reviewsSeen: this.s.reviewsSeen,
       testDate: this.s.testDate || null, testFormat: this.s.testFormat || null, pacing: !!this.s.pacing })
   },
   push() {
@@ -363,17 +369,12 @@ export const Store = {
 if (typeof window !== "undefined") {
   // Come back online with something unsaved: try again.
   addEventListener("online", () => { if (Store.dirty) Store.flush() })
-  // Closing the tab inside the debounce window used to lose the last answer.
-  addEventListener("pagehide", () => {
-    if (!Store.dirty || !Store.fileId || !Store.valid()) return
-    try {
-      fetch(`https://www.googleapis.com/upload/drive/v3/files/${Store.fileId}?uploadType=media`, {
-        method: "PATCH", keepalive: true,
-        headers: { Authorization: "Bearer " + Store.token, "Content-Type": "application/json" },
-        body: Store.body(),
-      })
-    } catch { /* best effort */ }
-  })
+  // Switching app or closing the tab inside the debounce window used to fire a blind
+  // keepalive PATCH — the one write that skipped the read-and-merge, so it could
+  // overwrite a review or another device's work. Now the page going hidden runs the
+  // ordinary flush at once (the page is still alive at that point, on iPad too), and
+  // anything that still misses the window is pushed, merged, on the next open.
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && Store.dirty) Store.flush() })
 }
 
 /** Re-render on any store change. Returns the store itself. */

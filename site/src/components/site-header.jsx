@@ -63,6 +63,9 @@ function crumbs(route) {
     out.push({ label: "Checklist", path: "/checklist" })
     if (a === "month" && b) out.push({ label: b, path: `/checklist/month/${b}` })
     else if (a) out.push({ label: a, path: `/checklist/${a}` })
+  } else if (top === "import") {
+    out.push({ label: "Essay", path: "/essay" })
+    out.push({ label: "Add a review", path: "/import" })
   }
   return out
 }
