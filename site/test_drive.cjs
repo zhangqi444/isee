@@ -132,7 +132,7 @@ const FAKE_GIS = `
   check('a review added to progress.json outside the app shows on the essay', /changed your mind on the page \(W2\)/.test(await pg.textContent('[data-testid=essay-review]')));
   { const remote = remoteBody(); remote.reviews['essay:W3:2026-09-06'] = mkReview('W3', '2026-09-06'); drive.body = JSON.stringify(remote); }
   const callsBefore = drive.calls.length;
-  await pg.fill('[data-testid=essay-time-plan]', '5');       // any local save
+  await pg.click('[data-testid=timer-log-plan]'); await pg.fill('[data-testid=essay-time-plan]', '5'); await pg.press('[data-testid=essay-time-plan]', 'Enter');   // any local save
   await pg.waitForTimeout(1800);
   const pushed = remoteBody();
   check('a local save merges the remote copy first, so a review it never saw is kept', pushed.reviews['essay:W3:2026-09-06'] && pushed.reviews['essay:W2:2026-09-05'] && pushed.essays.W2.time.plan === 5, drive.calls.slice(callsBefore).join(' , '));
@@ -141,7 +141,7 @@ const FAKE_GIS = `
   // same read-then-write path, never as a blind PATCH.
   { const remote = remoteBody(); remote.reviews['essay:W4:2026-09-07'] = mkReview('W4', '2026-09-07'); drive.body = JSON.stringify(remote); }
   const hideFrom = drive.calls.length;
-  await pg.fill('[data-testid=essay-time-draft]', '18');
+  await pg.click('text=Draft · 20'); await pg.click('[data-testid=timer-log-draft]'); await pg.fill('[data-testid=essay-time-draft]', '18'); await pg.press('[data-testid=essay-time-draft]', 'Enter');
   await pg.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true }); document.dispatchEvent(new Event('visibilitychange', { bubbles: true })); });
   await pg.waitForTimeout(400);
   const hideCalls = drive.calls.slice(hideFrom).map((c) => c.split(' ')[0]);

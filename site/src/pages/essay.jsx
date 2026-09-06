@@ -52,45 +52,14 @@ export function setEssayTime(wk, phase, minutes) {
   Store.setSlice("essays", wk, (cur) => ({ ...cur, time: { ...(cur.time || {}), [phase]: toMinutes(minutes) } }))
 }
 
-/** One phase's minutes, typed by hand. Saves on every keystroke; the numbers are tiny. */
-function MinutesInput({ wk, phase, label, target }) {
-  const stored = essayTime(wk)[phase]
-  const [v, setV] = React.useState(stored == null ? "" : String(stored))
-  React.useEffect(() => { setV(stored == null ? "" : String(stored)) }, [stored])
-  return (
-    <div className="flex flex-col gap-1">
-      <Label htmlFor={`${wk}-time-${phase}`} className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">{label} <span className="font-normal normal-case">· target {target}</span></Label>
-      <div className="flex items-center gap-1.5">
-        <Input id={`${wk}-time-${phase}`} type="number" inputMode="numeric" min={0} max={240} step={1} value={v} placeholder={String(target)}
-          onChange={(e) => { const val = e.target.value; setV(val); setEssayTime(wk, phase, val) }}
-          className="w-20 tabular-nums" data-testid={`essay-time-${phase}`} />
-        <span className="text-muted-foreground text-sm">min</span>
-      </div>
-    </div>
-  )
-}
-
-/** Where she writes down how long each phase really took — by hand, or from the phase timer's
- *  Stop button. Works just as well for an essay written on paper at the kitchen table. */
-function TimeLog({ wk }) {
+/** The minutes logged for the week, as one badge in the header. */
+function TimeBadge({ wk }) {
   const t = essayTime(wk)
-  const over = t.total != null && t.total > TARGET_MINUTES
+  if (t.total == null) return null
   return (
-    <Card className="gap-3 py-5" data-testid="essay-time-log">
-      <CardHeader className="px-5">
-        <CardTitle className="flex items-center gap-2 text-base"><Clock className="size-4" /> Time log</CardTitle>
-        <CardDescription>How long each phase really took, in minutes. Type it in, or press Stop on a phase timer and it lands here.</CardDescription>
-        <CardAction>
-          <Badge variant={t.total == null ? "outline" : over ? "warning" : "secondary"} className="tabular-nums" data-testid="essay-time-total">
-            {t.total == null ? "not logged" : `${t.total} of ${TARGET_MINUTES} min`}
-          </Badge>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-wrap items-end gap-4 px-5">
-        {PHASES.map(([k, label, target]) => <MinutesInput key={k} wk={wk} phase={k} label={label} target={target} />)}
-        {over ? <span className="text-muted-foreground pb-2 text-xs">Over thirty minutes is fine while practising; the real test stops the clock.</span> : null}
-      </CardContent>
-    </Card>
+    <Badge variant={t.total > TARGET_MINUTES ? "warning" : "secondary"} className="tabular-nums" title={PHASES.map(([k, label]) => `${label} ${t[k] == null ? "—" : t[k] + " min"}`).join(" · ")} data-testid="essay-time-total">
+      <Clock /> {t.total} of {TARGET_MINUTES} min
+    </Badge>
   )
 }
 
@@ -114,28 +83,53 @@ function Field({ wk, group, name, label, placeholder, rows = 3, multiline = true
   )
 }
 
-/** Simple count-down for one phase; runs off the clock so a background tab keeps it honest.
- *  Stop writes the minutes actually used into the week's time log; Reset throws them away. */
-function PhaseTimer({ minutes, label, onStop }) {
+/* On a narrow card the timer chip drops under the phase title instead of squeezing it. */
+const PHASE_SPAN = "@max-sm/card-header:col-span-2"
+const PHASE_ACTION = "@max-sm/card-header:col-span-2 @max-sm/card-header:col-start-1 @max-sm/card-header:row-start-3 @max-sm/card-header:row-span-1 @max-sm/card-header:justify-self-start @max-sm/card-header:mt-1"
+
+/** One phase's clock and its time log, in one chip. Start runs a count-down off the wall
+ *  clock (a background tab keeps it honest) and Stop writes the minutes used; Log lets her
+ *  type the minutes instead, for an essay written on paper or timed by someone else. */
+function PhaseTimer({ wk, phase, label, minutes }) {
+  const logged = essayTime(wk)[phase]
   const [startedAt, setStarted] = React.useState(null)
+  const [editing, setEditing] = React.useState(false)
+  const [val, setVal] = React.useState("")
   const [now, setNow] = React.useState(Date.now())
   React.useEffect(() => { if (!startedAt) return; setNow(Date.now()); const id = setInterval(() => setNow(Date.now()), 500); return () => clearInterval(id) }, [startedAt])
   const elapsed = startedAt ? Math.max(0, now - startedAt) : 0
   const left = Math.max(0, minutes * 60000 - elapsed)
   const mm = Math.floor(left / 60000), ss = Math.floor((left % 60000) / 1000)
   const over = startedAt && left === 0
-  function stop() { onStop(Math.max(1, Math.round(elapsed / 60000))); setStarted(null) }
+  function stop() { setEssayTime(wk, phase, Math.max(1, Math.round(elapsed / 60000))); setStarted(null) }
+  function edit() { setVal(logged == null ? "" : String(logged)); setEditing(true) }
+  function save() { if (!editing) return; setEssayTime(wk, phase, val); setEditing(false) }
   return (
-    <div className={cn("flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm", over && "border-destructive text-destructive")}>
+    <div className={cn("flex flex-wrap items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-sm", over && "border-destructive text-destructive")} data-testid={`phase-${phase}`}>
       <span className="text-muted-foreground text-xs">{label}</span>
-      <span className="font-mono font-semibold tabular-nums">{mm}:{String(ss).padStart(2, "0")}</span>
+      {startedAt || editing || logged == null ? (
+        <span className="font-mono font-semibold tabular-nums">{mm}:{String(ss).padStart(2, "0")}</span>
+      ) : (
+        <span className="font-semibold tabular-nums" data-testid={`essay-time-${phase}-logged`}>{logged} min</span>
+      )}
       {startedAt ? (
         <>
-          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={stop} title="Stop and log the time used" data-testid={`timer-stop-${label.toLowerCase()}`}><Square /> Stop</Button>
-          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setStarted(null)} title="Reset without logging"><RotateCcw /></Button>
+          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={stop} title="Stop and log the time used" data-testid={`timer-stop-${phase}`}><Square /> Stop</Button>
+          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setStarted(null)} title="Reset without logging" aria-label="Reset"><RotateCcw /></Button>
+        </>
+      ) : editing ? (
+        <>
+          <Input type="number" inputMode="numeric" min={0} max={240} step={1} value={val} autoFocus placeholder={String(minutes)}
+            onChange={(e) => setVal(e.target.value)} onBlur={save}
+            onKeyDown={(e) => { if (e.key === "Enter") save(); if (e.key === "Escape") setEditing(false) }}
+            className="h-7 w-16 px-2 tabular-nums" aria-label={`${label} minutes`} data-testid={`essay-time-${phase}`} />
+          <span className="text-muted-foreground text-xs">min</span>
         </>
       ) : (
-        <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setStarted(Date.now())} data-testid={`timer-start-${label.toLowerCase()}`}><Play /> Start</Button>
+        <>
+          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setStarted(Date.now())} data-testid={`timer-start-${phase}`}><Play /> Start</Button>
+          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={edit} title="Type the minutes it took" aria-label={`Log ${label} minutes`} data-testid={`timer-log-${phase}`}><PenLine /> {logged == null ? "Log" : ""}</Button>
+        </>
       )}
     </div>
   )
@@ -236,6 +230,7 @@ export function EssayWeek({ wk }) {
           <CardDescription>Week focus: {e.focus}</CardDescription>
           <CardAction className="flex flex-col items-end gap-1">
             {status === "complete" ? <Badge variant="success"><CheckCircle2 /> Complete</Badge> : <Badge variant="secondary" className="tabular-nums">{draftWords} words</Badge>}
+            <TimeBadge wk={wk} />
             {reviews.length ? <Badge variant="outline"><MessageSquareText /> {reviews.length === 1 ? "Reviewed" : `${reviews.length} reviews`}</Badge> : null}
           </CardAction>
         </CardHeader>
@@ -245,8 +240,6 @@ export function EssayWeek({ wk }) {
       {/* A review sits above the phases, whatever tab she is on: someone wrote it for her,
           and it may arrive from Drive after the page is already open. */}
       {reviews.map((r) => <ReviewCard key={r.id} r={r} changedAt={st.at} />)}
-
-      <TimeLog wk={wk} />
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="w-full">
@@ -259,9 +252,9 @@ export function EssayWeek({ wk }) {
         <TabsContent value="plan">
           <Card className="gap-4">
             <CardHeader>
-              <CardTitle>Phase 1 — Plan</CardTitle>
-              <CardDescription>Target: 5 minutes. Read the prompt precisely, generate options, choose one focus.</CardDescription>
-              <CardAction><PhaseTimer minutes={5} label="Plan" onStop={(m) => setEssayTime(wk, "plan", m)} /></CardAction>
+              <CardTitle className={PHASE_SPAN}>Phase 1 — Plan</CardTitle>
+              <CardDescription className={PHASE_SPAN}>Target: 5 minutes. Read the prompt precisely, generate options, choose one focus.</CardDescription>
+              <CardAction className={PHASE_ACTION}><PhaseTimer wk={wk} phase="plan" label="Plan" minutes={5} /></CardAction>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               {planFields.map(([name, label, ph]) => <Field key={name} wk={wk} group="plan" name={name} label={label} placeholder={ph} rows={2} />)}
@@ -279,9 +272,9 @@ export function EssayWeek({ wk }) {
         <TabsContent value="draft">
           <Card className="gap-4">
             <CardHeader>
-              <CardTitle>Phase 2 — First draft</CardTitle>
-              <CardDescription>Target: 20 minutes. Keep this draft as it is when time ends; revise separately.</CardDescription>
-              <CardAction><PhaseTimer minutes={20} label="Draft" onStop={(m) => setEssayTime(wk, "draft", m)} /></CardAction>
+              <CardTitle className={PHASE_SPAN}>Phase 2 — First draft</CardTitle>
+              <CardDescription className={PHASE_SPAN}>Target: 20 minutes. Keep this draft as it is when time ends; revise separately.</CardDescription>
+              <CardAction className={PHASE_ACTION}><PhaseTimer wk={wk} phase="draft" label="Draft" minutes={20} /></CardAction>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <Field wk={wk} group="draft" name="opening" label="Opening and focus" placeholder="Answer the prompt and set up the experience or claim…" rows={5} />
@@ -297,9 +290,9 @@ export function EssayWeek({ wk }) {
           <div className="flex flex-col gap-4">
             <Card className="gap-4">
               <CardHeader>
-                <CardTitle>Phase 3 — Feedback and revision</CardTitle>
-                <CardDescription>Target: 5 minutes. Self-check first; an adult or peer can add to it.</CardDescription>
-                <CardAction><PhaseTimer minutes={5} label="Revise" onStop={(m) => setEssayTime(wk, "revise", m)} /></CardAction>
+                <CardTitle className={PHASE_SPAN}>Phase 3 — Feedback and revision</CardTitle>
+                <CardDescription className={PHASE_SPAN}>Target: 5 minutes. Self-check first; an adult or peer can add to it.</CardDescription>
+                <CardAction className={PHASE_ACTION}><PhaseTimer wk={wk} phase="revise" label="Revise" minutes={5} /></CardAction>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 {e.feedback_checks.map((check) => {
