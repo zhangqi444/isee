@@ -1,12 +1,12 @@
 {
-  "name": "sheila-isee-practice",
+  "name": "sheila-learning-site",
   "private": true,
   "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:artifact": "ISEE_TARGET=artifact vite build && node scripts/artifact.mjs",
+    "build:artifact": "LEARNING_TARGET=artifact vite build && node scripts/artifact.mjs",
     "preview": "vite preview",
     "test": "node test_e2e.cjs && node test_drive.cjs && node test_features.cjs && node test_artifact.cjs"
   },

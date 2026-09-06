@@ -10,7 +10,7 @@ grade 6, autumn 2027 admissions cycle). Two halves:
 1. **Google Sheets workbooks** in a Drive folder — the original plan: one workbook
    per subject (VR, QR, MA, RC), plus Essay, Hub, Dashboard and Mock Exams.
    Authored and maintained with Apps Script (`build58.gs`, `RUN_ME.md`).
-2. **The practice website** — `site/`, deployed to <https://qizhang.top/isee/>.
+2. **The practice website** — `site/`, deployed to <https://qizhang.top/learning/>.
    This is where the work happens now. The Sheets are the archive.
 
 Her Week-1 answers were migrated from the Sheets into the site and must never be
@@ -46,7 +46,7 @@ docs/                     architecture.md (how it is built), design.md (why it l
 
 | Layer | Choice | Why |
 |---|---|---|
-| Build | **Vite 8**, `base: './'` | static output, works under `/isee/` and inside a single file |
+| Build | **Vite 8**, `base: './'` | static output, works under `/learning/` and inside a single file |
 | UI | **React 19** + **Tailwind v4** + **shadcn/ui** | components live in `src/components/ui/`, owned by the repo and editable |
 | Icons / charts | **lucide-react**, **recharts 3** | |
 | Font | the device's own UI stack (`ui-sans-serif, system-ui, …`) | no webfont request; the PWA and the artifact are self-contained |

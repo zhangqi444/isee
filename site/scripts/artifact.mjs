@@ -17,7 +17,7 @@ const body = src.match(/<body>([\s\S]*)<\/body>/)[1].trim()
 // singlefile inlines the app as <script type="module"> in <head>; the data script sits at the top of <body>.
 const app = (head.match(/<script type="module"[^>]*>[\s\S]*?<\/script>/g) || []).join("\n")
 
-if (!title || !styles || !app || !/window\.__ISEE__/.test(body)) throw new Error("artifact build looks incomplete")
+if (!title || !styles || !app || !/window\.__LEARNING__/.test(body)) throw new Error("artifact build looks incomplete")
 if (/<script[^>]+src=/.test(src) || /<link[^>]+href="\.\//.test(src)) throw new Error("artifact still references external assets")
 
 const out = [title, links, styles, body, app].join("\n") + "\n"

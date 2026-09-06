@@ -51,6 +51,6 @@ function fail(msg) {
     "<h2 style='margin:0 0 8px'>Questions could not load</h2><p style='margin:0;opacity:.7'>" + msg + "</p></div>"
 }
 
-if (window.__ISEE__) boot(window.__ISEE__)
+if (window.__LEARNING__) boot(window.__LEARNING__)
 else fetch("content/bundle.json").then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json() }).then(boot)
   .catch((e) => fail("content/bundle.json did not load (" + e.message + ")."))

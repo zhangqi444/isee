@@ -1,4 +1,4 @@
-/* End-to-end check of the built site, served under a GitHub Pages-style subpath (/isee/).
+/* End-to-end check of the built site, served under a GitHub Pages-style subpath (/learning/).
  * Run:  npm run build && node test_e2e.cjs
  * The sandbox cannot reach Google Fonts or accounts.google.com; those requests are
  * aborted so the page behaves as it would offline. */
@@ -9,8 +9,8 @@ const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 const srv = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
-  if (!p.startsWith('/isee')) { res.writeHead(404); return res.end(); }
-  p = p.slice(5) || '/'; if (p === '/') p = '/index.html';
+  if (!p.startsWith('/learning')) { res.writeHead(404); return res.end(); }
+  p = p.slice('/learning'.length) || '/'; if (p === '/') p = '/index.html';
   const f = path.join(DIST, p);
   if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'content-type': MIME[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
@@ -32,7 +32,7 @@ function check(name, ok, extra) { console.log((ok ? '  ok   ' : '  FAIL ') + nam
     pg.on('console', (m) => { if (m.type() === 'error' && !/gsi|accounts\.google|fonts\.g|favicon|net::ERR_FAILED/.test(m.text())) errs.push('CONSOLE ' + m.text()); });
     // A result saved by the very first site version (numeric `at`) must not break rendering.
     await pg.addInitScript(() => { if (!localStorage.getItem('isee.v1')) localStorage.setItem('isee.v1', JSON.stringify({ results: { 'rc:W5:0': { n: 12, right: 3, at: 1788395637217, wrong: [] } } })); });
-    await pg.goto('http://localhost:8140/isee/', { waitUntil: 'networkidle' });
+    await pg.goto('http://localhost:8140/learning/', { waitUntil: 'networkidle' });
     await signIn(pg);   // the site is gated: get through the door first
 
     // Dashboard renders from the migrated Week-1 seed (plus the one legacy set above)

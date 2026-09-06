@@ -8,7 +8,7 @@ repo, read [AGENTS.md](../AGENTS.md).
 ## 1. The shape in one paragraph
 
 A **static single-page app** (React 19, Vite 8, Tailwind v4, shadcn/ui) served
-from GitHub Pages at `https://qizhang.top/isee/`. All teaching content is
+from GitHub Pages at `https://qizhang.top/learning/`. All teaching content is
 compiled from JSON in `content/` into one file, `site/content/bundle.json`, that
 the app fetches at boot. All learner data is one plain object kept in
 `localStorage` and mirrored to one file, `progress.json`, in the learner's own
@@ -54,15 +54,15 @@ flowchart LR
 ## 3. Build targets
 
 `site/vite.config.js` produces two builds from the same source, selected by
-`ISEE_TARGET`:
+`LEARNING_TARGET`:
 
 | Target | Command | Output | Differences |
 |---|---|---|---|
 | **Pages** | `npm run build` | `site/dist/` | `bundle.json` fetched at runtime; Drive sync on (`window.__ENABLE_DRIVE__`, client id injected); Google Identity Services script loaded; PWA manifest and service worker registered. |
-| **Artifact** | `npm run build:artifact` | `../artifact.html` | One self-contained HTML file: bundle inlined as `window.__ISEE__`, no Drive (the artifact origin is not an OAuth origin), no external requests, honours the host's `data-theme`. |
+| **Artifact** | `npm run build:artifact` | `../artifact.html` | One self-contained HTML file: bundle inlined as `window.__LEARNING__`, no Drive (the artifact origin is not an OAuth origin), no external requests, honours the host's `data-theme`. |
 
 `base: './'` keeps every asset URL relative, which is what lets the same build
-work under the `/isee/` subpath, from a file, and inside an artifact viewer.
+work under the `/learning/` subpath, from a file, and inside an artifact viewer.
 
 The font is the device's own UI stack. Nothing is fetched from a font CDN, so the
 artifact is offline-complete and the PWA has nothing to wait for.
@@ -71,7 +71,7 @@ artifact is offline-complete and the PWA has nothing to wait for.
 
 `site/src/main.jsx`:
 
-1. Load the bundle (`window.__ISEE__` if inlined, else `fetch("content/bundle.json")`), hand it to `content.js` (`setBundle`). A failed fetch renders a plain error, not a blank page.
+1. Load the bundle (`window.__LEARNING__` if inlined, else `fetch("content/bundle.json")`), hand it to `content.js` (`setBundle`). A failed fetch renders a plain error, not a blank page.
 2. `Store.init()` reads `localStorage["isee.v1"]`, creates any missing slices, and normalises legacy shapes (numeric `at`, missing `wrong[]`).
 3. Apply the theme: saved choice, else the host's `data-theme`, else the OS.
 4. `Store.applySeed(bundle.seed)` — idempotent migration of the Sheets results.

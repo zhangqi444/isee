@@ -1,6 +1,6 @@
 /**
  * Sheila ISEE Mock Exams — apply reviewed fixes.
- * Source of truth: github.com/zhangqi444/isee @ mock-workbook/manifest_slim.json
+ * Source of truth: github.com/zhangqi444/learning @ mock-workbook/manifest_slim.json
  *
  * SRC_MODE 'github' is preferred once the branch is pushed (single source of truth).
  * SRC_MODE 'drive'  reads the same JSON uploaded beside the workbook (works today).
@@ -9,7 +9,7 @@
  */
 var SRC_MODE = 'drive';
 var DRIVE_FILE_IDS = ['<PART_A_ID>', '<PART_B_ID>'];
-var GITHUB_RAW = 'https://raw.githubusercontent.com/zhangqi444/isee/fix/mock-review-2026-08-30/mock-workbook/manifest_slim.json';
+var GITHUB_RAW = 'https://raw.githubusercontent.com/zhangqi444/learning/fix/mock-review-2026-08-30/mock-workbook/manifest_slim.json';
 
 var FORMS = ['DIAGNOSTIC', 'MOCK 1', 'MOCK 2', 'MOCK 3'];
 

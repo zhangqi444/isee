@@ -6,20 +6,20 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.dirname(new URL(import.meta.url).pathname)
-const ARTIFACT = process.env.ISEE_TARGET === 'artifact'
+const ARTIFACT = process.env.LEARNING_TARGET === 'artifact'
 const oauth = JSON.parse(fs.readFileSync(path.join(ROOT, 'oauth.json'), 'utf8'))
 
 /** Wires the question bank and the Drive/OAuth config into each build target.
  *  GitHub Pages: bundle.json fetched at runtime, Drive sync on, service worker on.
  *  Artifact:     bundle.json inlined, no Drive (the artifact origin is not an OAuth origin). */
-function iseeTarget() {
+function learningTarget() {
   return {
-    name: 'isee-target',
+    name: 'learning-target',
     transformIndexHtml(html) {
       const tags = []
       if (ARTIFACT) {
         const data = fs.readFileSync(path.join(ROOT, 'content/bundle.json'), 'utf8')
-        tags.push({ tag: 'script', children: 'window.__ISEE__=' + data + ';', injectTo: 'body-prepend' })
+        tags.push({ tag: 'script', children: 'window.__LEARNING__=' + data + ';', injectTo: 'body-prepend' })
       } else {
         tags.push({
           tag: 'script',
@@ -50,7 +50,7 @@ export default defineConfig({
   base: './',
   publicDir: ARTIFACT ? false : 'public',
   resolve: { alias: { '@': path.join(ROOT, 'src') } },
-  plugins: [react(), tailwindcss(), iseeTarget(), ...(ARTIFACT ? [viteSingleFile({ removeViteModuleLoader: true })] : [])],
+  plugins: [react(), tailwindcss(), learningTarget(), ...(ARTIFACT ? [viteSingleFile({ removeViteModuleLoader: true })] : [])],
   build: {
     outDir: ARTIFACT ? 'dist-artifact' : 'dist',
     emptyOutDir: true,

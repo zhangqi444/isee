@@ -13,7 +13,7 @@ So a review enters through the app and is synced by the app:
 
 1. The reviewer produces a **review** (the JSON below).
 2. It is handed to the site as an **import link**,
-   `https://qizhang.top/isee/#/import/<payload>`, where the payload is the JSON,
+   `https://qizhang.top/learning/#/import/<payload>`, where the payload is the JSON,
    UTF-8, base64url-encoded without padding. `tools/essay_review_link.py` makes it.
    On a device where the long link is awkward there is a paste box at `#/import`.
 3. Whoever opens the link sees a preview and presses **Add to Sheila's progress**.

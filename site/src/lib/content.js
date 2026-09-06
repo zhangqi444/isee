@@ -1,4 +1,4 @@
-/* Question-bank helpers. `D` is the bundle (window.__ISEE__ or content/bundle.json). */
+/* Question-bank helpers. `D` is the bundle (window.__LEARNING__ or content/bundle.json). */
 import { Store, ts } from "./store"
 
 export const SUBJ = {

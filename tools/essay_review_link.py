@@ -6,13 +6,13 @@
 
 The review format is docs/essay-review.md. This checks the review against
 content/essay.json (week ids, rubric dimensions) so a typo cannot reach her, then
-base64url-encodes it into  https://qizhang.top/isee/#/import/<payload>.
+base64url-encodes it into  https://qizhang.top/learning/#/import/<payload>.
 """
 import base64, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = "https://qizhang.top/isee/"
+SITE = "https://qizhang.top/learning/"
 
 
 def load_content():

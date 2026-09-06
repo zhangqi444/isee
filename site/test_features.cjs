@@ -1,12 +1,12 @@
-/* Essay, precision review, mock exams and calendar — against dist/ under /isee/. */
+/* Essay, precision review, mock exams and calendar — against dist/ under /learning/. */
 const { chromium } = require('playwright');
 const { stubGoogle, signIn } = require('./test_google.cjs');
 const http = require('http'), fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 const srv = http.createServer((req, res) => {
-  let p = decodeURIComponent(req.url.split('?')[0]); if (!p.startsWith('/isee')) { res.writeHead(404); return res.end(); }
-  p = p.slice(5) || '/'; if (p === '/') p = '/index.html';
+  let p = decodeURIComponent(req.url.split('?')[0]); if (!p.startsWith('/learning')) { res.writeHead(404); return res.end(); }
+  p = p.slice('/learning'.length) || '/'; if (p === '/') p = '/index.html';
   const f = path.join(DIST, p); if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'content-type': MIME[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
 });
@@ -34,7 +34,7 @@ async function runThrough(pg, pick, max = 60) {
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', (e) => errs.push('PAGEERR ' + e.message));
   pg.on('dialog', (d) => d.accept());
-  await pg.goto('http://localhost:8143/isee/', { waitUntil: 'networkidle' });
+  await pg.goto('http://localhost:8143/learning/', { waitUntil: 'networkidle' });
   await signIn(pg);   // the site is gated: get through the door first
 
   console.log('== sidebar + dashboard');
