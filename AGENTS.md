@@ -37,7 +37,9 @@ site/
   test_*.cjs               four Playwright suites — see Testing
   oauth.json               the Google OAuth client's public facts (no secrets)
 .github/workflows/pages.yml  build + deploy to GitHub Pages
-docs/                     review notes; the living record is the claude.ai "ISEE" project
+docs/                     architecture.md (how it is built), design.md (why it looks and
+                          behaves as it does), essay-review.md, review notes; the living
+                          record is the claude.ai "ISEE" project
 ```
 
 ## Tech stack
