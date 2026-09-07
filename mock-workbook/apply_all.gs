@@ -4,7 +4,7 @@
  * STANDALONE script: run it once, authorize once, and it patches every
  * workbook by ID. Nothing needs to be pasted into each spreadsheet.
  *
- * Source of truth: github.com/zhangqi444/isee @ mock-workbook/
+ * Source of truth: github.com/zhangqi444/learning @ mock-workbook/
  * Idempotent — re-running writes nothing that already matches.
  *
  * WHAT IT DOES
@@ -21,7 +21,7 @@
 // 'drive'  : drag bundle_1/2/3.json into the ISEE Drive folder, paste their IDs below.
 var SRC_MODE = 'github';
 
-var GITHUB_BASE = 'https://raw.githubusercontent.com/zhangqi444/isee/fix/mock-review-2026-08-30/mock-workbook/';
+var GITHUB_BASE = 'https://raw.githubusercontent.com/zhangqi444/learning/fix/mock-review-2026-08-30/mock-workbook/';
 var BUNDLE_FILES = ['bundle_1.json', 'bundle_2.json', 'bundle_3.json'];
 var BUNDLE_FILE_IDS = ['<BUNDLE_1_ID>', '<BUNDLE_2_ID>', '<BUNDLE_3_ID>'];
 

@@ -54,15 +54,15 @@ flowchart LR
 ## 3. Build targets
 
 `site/vite.config.js` produces two builds from the same source, selected by
-`ISEE_TARGET`:
+`LEARNING_TARGET`:
 
 | Target | Command | Output | Differences |
 |---|---|---|---|
 | **Pages** | `npm run build` | `site/dist/` | `bundle.json` fetched at runtime; Drive sync on (`window.__ENABLE_DRIVE__`, client id injected); Google Identity Services script loaded; PWA manifest and service worker registered. |
-| **Artifact** | `npm run build:artifact` | `../artifact.html` | One self-contained HTML file: bundle inlined as `window.__ISEE__`, no Drive (the artifact origin is not an OAuth origin), no external requests, honours the host's `data-theme`. |
+| **Artifact** | `npm run build:artifact` | `../artifact.html` | One self-contained HTML file: bundle inlined as `window.__LEARNING__`, no Drive (the artifact origin is not an OAuth origin), no external requests, honours the host's `data-theme`. |
 
 `base: './'` keeps every asset URL relative, which is what lets the same build
-work under the `/isee/` subpath, from a file, and inside an artifact viewer.
+work under the `/learning/` subpath, from a file, and inside an artifact viewer.
 
 The font is the device's own UI stack. Nothing is fetched from a font CDN, so the
 artifact is offline-complete and the PWA has nothing to wait for.
@@ -71,13 +71,13 @@ artifact is offline-complete and the PWA has nothing to wait for.
 
 `site/src/main.jsx`:
 
-1. Load the bundle (`window.__ISEE__` if inlined, else `fetch("content/bundle.json")`), hand it to `content.js` (`setBundle`). A failed fetch renders a plain error, not a blank page.
+1. Load the bundle (`window.__LEARNING__` if inlined, else `fetch("content/bundle.json")`), hand it to `content.js` (`setBundle`). A failed fetch renders a plain error, not a blank page.
 2. `Store.init()` reads `localStorage["isee.v1"]`, creates any missing slices, and normalises legacy shapes (numeric `at`, missing `wrong[]`).
 3. Apply the theme: saved choice, else the host's `data-theme`, else the OS.
 4. `Store.applySeed(bundle.seed)` — idempotent migration of the Sheets results.
 5. `backfill()` — creates learning records for anything answered before the engine existed. Idempotent; only ever adds.
 6. `seedBooks()`, `syncBadges()`; the same three run again after every Drive merge (`Store.afterMerge`).
-7. Render `<App/>`. Then, on the Pages build only, `Store.resume()` silently refreshes a stored Drive token. The Google popup is never opened without a click.
+7. Render `<App/>`. On the Pages build the app is **gated**: until `Store.signedIn()` is true it renders the sign-in page (`pages/signin.jsx`), or a splash while `Store.resume()` silently refreshes a stored token. A returning visit therefore never sees the gate unless the silent refresh needs a click. The Google popup is never opened without one. The artifact build has no Drive and is never gated.
 
 ## 5. State
 
@@ -100,7 +100,7 @@ schedule a Drive push.
 | `books` | book id | Shelf status, pages, reading sessions by day, words looked up. |
 | `reviews` | review id | Essay reviews written outside the app (see §8). |
 | `reviewsSeen` | review id | Which reviews she has opened. |
-| prefs | — | `testDate`, `testFormat`, `pacing`, `theme`, `signInAsked`, Drive session facts. |
+| prefs | — | `testDate`, `testFormat`, `pacing`, `theme`, Drive session facts. |
 
 **Nothing derived is stored.** Accuracy, mastery, the review queue, pacing,
 readiness, streaks, points and badge progress are all functions over these
@@ -108,7 +108,11 @@ slices and the bundle.
 
 ## 6. Google Drive sync
 
-The app is fully usable signed out. Drive is a mirror, not a gate.
+On the Pages build nothing renders until Google has said who this is (the
+sign-in page is the door, in the same shape as the owner's other apps); after
+that Drive is a mirror of localStorage, and losing auth mid-session never throws
+her out of a half-finished set. Only a fresh load gates. The artifact build has
+no Drive at all.
 
 - **Scope** `drive.file` + `openid email profile` (non-sensitive, so the OAuth
   consent screen stays in Testing with the owner as test user). The app can only

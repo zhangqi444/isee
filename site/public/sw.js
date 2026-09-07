@@ -1,7 +1,7 @@
 /* Offline shell: the app files are content-hashed, so cache on first fetch
  * and serve from cache afterwards; index.html and the question bank are
  * refreshed network-first so a new deploy shows up on the next visit. */
-var CACHE = 'isee-shadcn-v1';
+var CACHE = 'learning-v1';
 var PRECACHE = ['./', 'index.html', 'content/bundle.json', 'manifest.webmanifest', 'favicon.svg'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(PRECACHE); }).then(function () { return self.skipWaiting(); }));

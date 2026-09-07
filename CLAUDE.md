@@ -23,7 +23,13 @@ never delete the check.
 
 ## Committing
 
-- Commit on the owner's clone; **never `git push`** — that is theirs.
+- **Work on `main`.** One person owns this repo and reviews the change as it is
+  made, so a feature branch and a merge back are pure ceremony. Commit to `main`
+  and, in a remote session, push it. Branch only when the owner asks for one.
+  (A remote session may be *started* on a `claude/…` branch; fast-forward `main`
+  to it and carry on there.)
+- On the owner's own clone, commit and leave the push to them.
+- A push to `main` deploys the site, so the checks above are not optional.
 - Commit messages: what changed and *why it was wrong before*, in prose. No
   bullet-point changelogs of file names.
 - Trailers:

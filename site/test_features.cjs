@@ -1,12 +1,12 @@
-/* Essay, precision review, mock exams and calendar — against dist/ under /isee/. */
+/* Essay, precision review, mock exams and calendar — against dist/ under /learning/. */
 const { chromium } = require('playwright');
 const { stubGoogle, signIn } = require('./test_google.cjs');
 const http = require('http'), fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, 'dist');
 const MIME = { '.html': 'text/html', '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 const srv = http.createServer((req, res) => {
-  let p = decodeURIComponent(req.url.split('?')[0]); if (!p.startsWith('/isee')) { res.writeHead(404); return res.end(); }
-  p = p.slice(5) || '/'; if (p === '/') p = '/index.html';
+  let p = decodeURIComponent(req.url.split('?')[0]); if (!p.startsWith('/learning')) { res.writeHead(404); return res.end(); }
+  p = p.slice('/learning'.length) || '/'; if (p === '/') p = '/index.html';
   const f = path.join(DIST, p); if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'content-type': MIME[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
 });
@@ -34,7 +34,7 @@ async function runThrough(pg, pick, max = 60) {
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', (e) => errs.push('PAGEERR ' + e.message));
   pg.on('dialog', (d) => d.accept());
-  await pg.goto('http://localhost:8143/isee/', { waitUntil: 'networkidle' });
+  await pg.goto('http://localhost:8143/learning/', { waitUntil: 'networkidle' });
   await signIn(pg);   // the site is gated: get through the door first
 
   console.log('== sidebar + dashboard');
@@ -351,7 +351,10 @@ async function runThrough(pg, pick, max = 60) {
   await pg.waitForSelector('[data-testid=log-little-women]:has-text("Read today")');
   check('a reading day is logged with one tap', /1 reading day/.test(await body(pg)));
   const readPts = await pg.evaluate(() => { const s = JSON.parse(localStorage.getItem('isee.v1')); const b = s.books['little-women']; return { n: (b.sessions || []).length, on: (b.sessions || [])[0] && (b.sessions || [])[0].on } });
-  check('the session is stored against today', readPts.n === 1 && readPts.on === new Date().toISOString().slice(0, 10), JSON.stringify(readPts));
+  // Her reading day is the local calendar day (lib/books.js dayOf), not the UTC one, or an
+  // evening tap west of Greenwich would be filed under tomorrow.
+  const localDay = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  check('the session is stored against today', readPts.n === 1 && readPts.on === localDay(), JSON.stringify(readPts));
   await pg.click('[data-testid=book][data-id=little-women] >> [data-testid=word-add]');
   await pg.fill('[data-testid=book][data-id=little-women] >> [data-testid=word-add]', 'garret');
   await pg.press('[data-testid=book][data-id=little-women] >> [data-testid=word-add]', 'Enter');

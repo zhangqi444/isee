@@ -3,7 +3,7 @@
  * only see files it created, inside the folder it created). */
 import { useSyncExternalStore } from "react"
 
-const KEY = "isee.v1"
+const KEY = "isee.v1"          // the project was renamed "learning"; this key stays, her data lives under it
 const FOLDER = "Sheila ISEE Practice"
 const FILE = "progress.json"
 const CLIENT_ID = (typeof window !== "undefined" && window.__OAUTH_CLIENT_ID__) || ""
@@ -215,8 +215,6 @@ export const Store = {
     this.setDriveOptIn(false); this.setStatus("local")
     if (t && window.google && google.accounts && google.accounts.oauth2) { try { google.accounts.oauth2.revoke(t) } catch { /* ignore */ } }
   },
-  /** She chose "not now" on the welcome dialog; do not ask again unprompted. */
-  dismissSignIn() { this.setPref("signInAsked", true) },
   valid() { return this.token && Date.now() < this.tokenExp },
   /** Every Drive call goes through here: fresh token first, one retry on a 401. */
   api(url, opts = {}, retry = true) {
@@ -358,7 +356,7 @@ export const Store = {
         { method: "PATCH", headers: { "Content-Type": "application/json" }, body })
     }
     const meta = { name: FILE, mimeType: "application/json", parents: [this.folderId] }
-    const boundary = "iseebnd" + Date.now()
+    const boundary = "learningbnd" + Date.now()
     const multipart = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`
     return this.api("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id",
       { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${boundary}` }, body: multipart })
