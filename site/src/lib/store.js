@@ -44,7 +44,7 @@ export const Store = {
     }
     // Resume a Drive session that is still inside its one-hour token window.
     const d = this.s.drive
-    if (d && d.token) { this.token = d.token; this.tokenExp = d.exp || 0; this.email = d.email || null; this.name = d.name || null; this.picture = d.picture || null }
+    if (d && d.token) { this.token = d.token; this.tokenExp = d.exp || 0; this.email = d.email || null; this.name = d.name || null; this.picture = d.picture || null; this.folderId = d.folderId || null }
     else if (this.s.driveOptIn && DRIVE_ENABLED) this.status = "expired"
     return this.s
   },
@@ -204,9 +204,12 @@ export const Store = {
       })
   },
   saveSession() {
-    this.s.drive = { token: this.token, exp: this.tokenExp, email: this.email, name: this.name, picture: this.picture }
+    this.s.drive = { token: this.token, exp: this.tokenExp, email: this.email, name: this.name, picture: this.picture, folderId: this.folderId }
     lsSave(this.s)
   },
+  /** Where her progress actually lives, as a link anyone can open. Null until the
+   *  first sync has resolved the folder (or restored it from the saved session). */
+  driveUrl() { return this.folderId ? `https://drive.google.com/drive/folders/${this.folderId}` : null },
   signOut() {
     const t = this.token
     this.token = null; this.tokenExp = 0; this.folderId = null; this.fileId = null
@@ -247,11 +250,13 @@ export const Store = {
     return this.api(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.files && d.files.length) { this.folderId = d.files[0].id; return }
+        // Saved with the session so the "Open the Drive folder" link is there on the
+        // next load, before the first sync has had time to resolve the id again.
+        if (d.files && d.files.length) { this.folderId = d.files[0].id; this.saveSession(); return }
         return this.api("https://www.googleapis.com/drive/v3/files", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: FOLDER, mimeType: "application/vnd.google-apps.folder" }),
-        }).then((r) => r.json()).then((f) => { this.folderId = f.id })
+        }).then((r) => r.json()).then((f) => { this.folderId = f.id; this.saveSession() })
       })
   },
   findFile() {

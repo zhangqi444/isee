@@ -34,6 +34,12 @@ let failures = 0; const check = (n, ok, x) => { console.log((ok ? '  ok   ' : ' 
   check('signing in opens the app', true);
   check('folder + progress.json created', drive.folder === 'folder1' && drive.file === 'file1' && /"results"/.test(drive.body));
   check('email shown in sidebar', /qi@example\.com/.test(await pg.textContent('[data-slot=sidebar-footer]')));
+  // the profile menu links straight to the folder the app made, so her progress is findable
+  await pg.click('[data-slot=sidebar-footer] [data-slot=dropdown-menu-trigger]');
+  await pg.waitForSelector('[data-testid=drive-folder-link]');
+  check('profile menu links to the Drive folder', (await pg.$eval('[data-testid=drive-folder-link]', (a) => a.href)) === 'https://drive.google.com/drive/folders/folder1');
+  check('the folder id is kept with the session, so the link survives a reload', (await pg.evaluate(() => JSON.parse(localStorage.getItem('isee.v1')).drive.folderId)) === 'folder1');
+  await pg.keyboard.press('Escape');
 
   await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=today]');
   await pg.waitForSelector('button:has-text("Saved to Drive")', { timeout: 8000 });

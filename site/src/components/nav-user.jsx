@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Cloud, CloudOff, HardDrive, LogOut, MonitorSmartphone, Moon, MoreVertical, RefreshCw, Sun } from "lucide-react"
+import { Cloud, CloudOff, FolderOpen, HardDrive, LogOut, MonitorSmartphone, Moon, MoreVertical, RefreshCw, Sun } from "lucide-react"
 
 import { DRIVE_ENABLED, useStore } from "@/lib/store"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -35,6 +35,7 @@ export function NavUser() {
   const sub = live && store.email && store.name ? store.email : STATUS_LABEL[status]
   const initial = name.slice(0, 1).toUpperCase()
   const theme = store.s.theme || "system"
+  const driveUrl = live ? store.driveUrl() : null
 
   return (
     <SidebarMenu>
@@ -79,6 +80,13 @@ export function NavUser() {
                     <DropdownMenuItem onSelect={() => { store.setStatus("syncing"); store.pull().then(() => { store.lastSync = new Date(); store.setStatus("live") }).catch(() => store.setStatus("error")) }}>
                       <RefreshCw /> Sync now
                     </DropdownMenuItem>
+                    {driveUrl ? (
+                      <DropdownMenuItem asChild>
+                        <a href={driveUrl} target="_blank" rel="noreferrer" data-testid="drive-folder-link">
+                          <FolderOpen /> Open the Drive folder
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
                     <DropdownMenuItem onSelect={() => store.signOut()}>
                       <LogOut /> Disconnect Drive
                     </DropdownMenuItem>
