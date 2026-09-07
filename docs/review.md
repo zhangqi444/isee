@@ -1,8 +1,10 @@
-# Essay reviews — how feedback gets from a reviewer to Sheila
+# Reviews — how feedback gets from a reviewer to Sheila
 
-A parent asks Claude (or writes one themselves) to review one of Sheila's essays.
-The review is saved with her progress in Google Drive and shows on the site,
-on the essay it is about. This is the contract for that.
+A parent asks Claude (or writes one themselves) to review something: one essay,
+or a whole plan **week** or **month**. The review is saved with her progress in
+Google Drive and shows on the site, on the thing it is about. A week or month
+review can also carry **follow-up actions** that land on a named week's
+checklist. This is the contract for all of it.
 
 ## Why the review goes in through the site
 
@@ -14,7 +16,7 @@ So a review enters through the app and is synced by the app:
 1. The reviewer produces a **review** (the JSON below).
 2. It is handed to the site as an **import link**,
    `https://learning.sheilazhang.org/#/import/<payload>`, where the payload is the JSON,
-   UTF-8, base64url-encoded without padding. `tools/essay_review_link.py` makes it.
+   UTF-8, base64url-encoded without padding. `tools/review_link.py` makes it.
    On a device where the long link is awkward there is a paste box at `#/import`.
 3. Whoever opens the link sees a preview and presses **Add to Sheila's progress**.
    The review lands in `Store.s.reviews[id]`, is saved locally, and is pushed to
@@ -50,13 +52,14 @@ never overwritten.
 | Field | Rule |
 |---|---|
 | `id` | Unique. `essay:<wk>:<date>` or `mock:<form>:<date>`. A second review of the same essay on a later day is a new id; both are kept. |
-| `target` | `{kind:"essay", wk:"W1"…"W8"}` or `{kind:"mock", form:"DGN"|"M01"|"M02"|"M03"}`. Unknown targets are dropped on import. |
+| `target` | One of `{kind:"essay", wk}`, `{kind:"week", wk}` (wk = `W1`…`W8`), `{kind:"mock", form}` (`DGN`/`M01`/`M02`/`M03`), `{kind:"month", m:"YYYY-MM"}`. Unknown targets are dropped on import. |
 | `at` | When it was written. Merge key: for the same id the newer `at` wins. |
 | `reviewer` | Who. Name the person who asked as well as the tool: "Claude, asked by Dad". |
 | `source` | Optional. Where the reviewer read the essay, in words. Shown on the card. |
 | `draftAt` | Optional. When the reviewed draft was last changed. If the essay changes after this, the card says the review is of an older draft. |
 | `summary`, `strengths[]`, `suggestions[]`, `next` | Written **to Sheila**, for a ten-year-old: short sentences, her own words quoted back, concrete actions. At least one strength; at most three suggestions. |
-| `rubric` | Optional, 1–4 per dimension, names exactly as in `content/essay.json` (`Idea generation`, `Structure`, `Specificity`, `Clarity`, `Grammar`, `Completion time`). Unknown names are dropped. |
+| `rubric` | Essay reviews only. Optional, 1–4 per dimension, names exactly as in `content/essay.json` (`Idea generation`, `Structure`, `Specificity`, `Clarity`, `Grammar`, `Completion time`). Unknown names are dropped. |
+| `actions` | Follow-ups, at most eight: `{text, wk, path?}`. Each lands as a row on that week's checklist, ticked by hand. `wk` must be a plan week; on a week review it defaults to that week. They are **not** plan tasks, so they never move the week's own progress percentage. |
 
 `v` is the review format version (1). Anything else is ignored.
 
@@ -65,6 +68,10 @@ never overwritten.
 - The essay week page shows the review card under the prompt, above the phase
   tabs, so it is there whichever tab she is on and even if it arrives from Drive
   while the page is open. A mock essay shows it under the submitted text.
+- A **week** review shows at the top of `/checklist/<wk>`; a **month** review at
+  the top of `/checklist/month/<m>`. Their follow-ups appear as `Follow-up` rows
+  on the week each names, and any still un-ticked in the current week are listed
+  on the dashboard's Today card.
 - The essay list card gets a **Reviewed** badge; unread reviews carry a dot there,
   on the sidebar's Essay row, and as the first job on the dashboard's Today card.
 - Opening the card marks it read (`reviewsSeen`, synced), so the dot goes away on
@@ -78,11 +85,13 @@ connector Claude reads must be that same account, or the file is invisible to it
 
 ## Running a review with Claude
 
-The repo skill `.claude/skills/essay-review/SKILL.md` walks a session through it.
+Two repo skills: `.claude/skills/essay-review/` for one essay,
+`.claude/skills/progress-digest/` for a week or a month (the one the scheduled
+Routines run).
 In short: find the essay (in `progress.json` under `essays[wk]` / `mocks[form].essay`,
 or in the **Sheila ISEE Essay** workbook for weeks done on paper or in Sheets), read
 the week's prompt, focus and rubric from `content/essay.json`, write the review to
-her, run `tools/essay_review_link.py` to check it and make the link, save the Doc
+her, run `tools/review_link.py` to check it and make the link, save the Doc
 copy to the Drive folder, and hand the link to the parent to open.
 
 ## Storage and sync

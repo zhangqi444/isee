@@ -2,13 +2,17 @@ import * as React from "react"
 import { CheckCircle2, MessageSquareText, Sparkles } from "lucide-react"
 
 import { D, fmtDate } from "@/lib/content"
-import { isSeen, markSeen } from "@/lib/reviews"
+import { isSeen, markSeen, reviewTargetLabel } from "@/lib/reviews"
+import { go } from "@/lib/router"
+import { Button } from "@/components/ui/button"
 import { ts } from "@/lib/store"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-/** One review of one essay, written to her. `changedAt` is when the essay last
- *  changed, so a review of an older draft says so instead of looking wrong. */
+const TITLE = { essay: "What a reader noticed", mock: "What a reader noticed", week: "How the week went", month: "How the month went" }
+
+/** One review — of an essay, or of a whole week or month — written to her. `changedAt`
+ *  is when the work last changed, so a review of an older draft says so. */
 export function ReviewCard({ r, changedAt }) {
   // "New" stays for this visit; the dot elsewhere goes as soon as she has opened it.
   const [fresh] = React.useState(() => !isSeen(r.id))
@@ -18,8 +22,8 @@ export function ReviewCard({ r, changedAt }) {
   return (
     <Card className="border-primary/30 gap-4" data-testid="essay-review" data-id={r.id}>
       <CardHeader>
-        <CardDescription className="flex items-center gap-2"><MessageSquareText className="size-4" /> Review · {r.reviewer} · {fmtDate(r.at)}</CardDescription>
-        <CardTitle className="text-lg">What a reader noticed</CardTitle>
+        <CardDescription className="flex items-center gap-2"><MessageSquareText className="size-4" /> {reviewTargetLabel(r)} · {r.reviewer} · {fmtDate(r.at)}</CardDescription>
+        <CardTitle className="text-lg">{TITLE[r.target.kind] || "What a reader noticed"}</CardTitle>
         {r.source ? <CardDescription>Read from {r.source}{r.words ? ` · ${r.words} words` : ""}</CardDescription> : r.words ? <CardDescription>{r.words} words</CardDescription> : null}
         {fresh ? <CardAction><Badge>New</Badge></CardAction> : null}
       </CardHeader>
@@ -42,6 +46,20 @@ export function ReviewCard({ r, changedAt }) {
           </div>
         ) : null}
         {r.next ? <div className="bg-accent text-accent-foreground flex items-start gap-2 rounded-md px-3 py-2 text-sm"><Sparkles className="mt-0.5 size-4 shrink-0" /> <span><span className="font-medium">For next week:</span> {r.next}</span></div> : null}
+        {(r.actions || []).length ? (
+          <div className="flex flex-col gap-1.5" data-testid="review-actions">
+            <div className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">On the checklist</div>
+            <ul className="divide-y rounded-md border">
+              {r.actions.map((a, i) => (
+                <li key={i} className="flex flex-wrap items-center gap-2 px-3 py-2 text-sm">
+                  <Badge variant="outline" className="shrink-0">{a.wk}</Badge>
+                  <span className="min-w-0 flex-1">{a.text}</span>
+                  {a.path ? <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => go(a.path)}>Open</Button> : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
         {r.rubric ? (
           <div className="flex flex-wrap gap-1.5" data-testid="review-rubric">
             {dims.filter((d) => r.rubric[d.name]).map((d) => {

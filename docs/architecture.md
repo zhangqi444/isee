@@ -46,7 +46,7 @@ flowchart LR
 | `site/test_*.cjs` | Four Playwright suites run against the built `dist/`. |
 | `site/public/` | `sw.js` (service worker), `manifest.webmanifest`, favicon. |
 | `site/oauth.json` | The Google OAuth client's public facts. No secrets anywhere in the repo. |
-| `tools/` | Content validation and audit scripts, and `essay_review_link.py`. |
+| `tools/` | Content validation and audit scripts, and `review_link.py`. |
 | `docs/` | This file, design.md, the essay-review contract, review notes, and the original spec in `superpowers/specs/`. |
 | `.claude/skills/` | Repo skills for Claude Code sessions (currently `essay-review`). |
 | `build58.gs`, `RUN_ME.md` | The Apps Script that built the Google Sheets workbooks. Archive. |
@@ -198,7 +198,7 @@ A parent asks Claude to review an essay. Because the site holds only
 enters through the site as an **import link** (`#/import/<base64url JSON>`) or
 the paste box, lands in `reviews`, and syncs like everything else. A Google Doc
 copy is kept in the family's Drive folder. The contract, the review shape and
-the workflow are in [essay-review.md](essay-review.md); the repo skill
+the workflow are in [review.md](review.md); the repo skill
 `.claude/skills/essay-review/` runs it.
 
 ## 9. Content pipeline

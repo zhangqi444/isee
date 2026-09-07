@@ -5,7 +5,7 @@ description: Review one of Sheila's ISEE practice essays from Google Drive and h
 
 # Review one of Sheila's essays
 
-The contract is `docs/essay-review.md`. Read it first. Sheila is ten; the review
+The contract is `docs/review.md`. Read it first. Sheila is ten; the review
 is written **to her**, and the parent reads it with her.
 
 ## 1. Find the essay
@@ -38,7 +38,7 @@ the first thing to say, kindly.
 
 ## 3. Write the review
 
-Produce the JSON in `docs/essay-review.md`, with:
+Produce the JSON in `docs/review.md`, with:
 
 - `summary`: two or three sentences on the whole piece, warm and honest.
 - `strengths`: at least one, each quoting something she actually wrote.
@@ -57,8 +57,8 @@ Nothing that makes a bad session feel like failure. No grades, no comparisons.
 ## 4. Check it, link it, save it
 
 ```bash
-python3 tools/essay_review_link.py review.json          # validates, prints the import link
-python3 tools/essay_review_link.py review.json --doc    # the text for the Drive copy
+python3 tools/review_link.py review.json          # validates, prints the import link
+python3 tools/review_link.py review.json --doc    # the text for the Drive copy
 ```
 
 Save the `--doc` text as a Google Doc named

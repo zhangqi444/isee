@@ -14,7 +14,7 @@ import { Store, useStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { upcoming } from "@/pages/calendar"
 import { essayStatus } from "@/pages/essay"
-import { WeekChecklistCard, nextUp, weekLeft } from "@/pages/checklist"
+import { WeekChecklistCard, followUpsLeft, nextUp, weekLeft } from "@/pages/checklist"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -52,6 +52,8 @@ export function TodayCard() {
     label: `${x.tag} · ${x.short || x.label}`, sub: x.sub || "", path: x.path,
   }))
   if (book && !readToday()) jobs.push({ id: "read", icon: BookMarked, label: `Reading · ${book.title}`, sub: "reading days count too", path: "/books" })
+  // follow-ups a digest asked for this week, until she ticks them off
+  for (const f of followUpsLeft(cur)) jobs.push({ id: f.id, icon: Sparkles, label: `Follow-up · ${f.text}`, sub: `from ${f.from}`, path: f.path || `/checklist/${cur}` })
   // a review she has not read yet is quick, and someone wrote it for her: it goes first
   for (const r of unseenReviews().reverse()) jobs.unshift({ id: "review:" + r.id, icon: MessageSquareText, label: `${reviewTargetLabel(r)} · read the review`, sub: `from ${r.reviewer}`, path: reviewPath(r) })
 

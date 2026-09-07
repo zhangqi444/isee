@@ -202,6 +202,34 @@ async function runThrough(pg, pick, max = 60) {
   await pg.click('[data-testid=import-paste-add]'); await pg.waitForSelector('[data-testid=essay-review]');
   check('a pasted review of the mock essay opens on that essay', /#\/mock\/DGN\/ESSAY$/.test(await pg.evaluate(() => location.hash)) && /fixed the board/.test(await pg.textContent('[data-testid=essay-review]')));
 
+  // a weekly digest: same import path, lands on the checklist, its follow-ups become items
+  const digest = { target: { kind: 'week', wk: 'W2' }, at: '2026-09-13T18:00:00Z', reviewer: 'Claude, asked by Dad', summary: 'A strong week — the review pile went to zero.', strengths: ['You cleared every due question.'], suggestions: ['Read the RC question twice before the choices.'], next: 'One mixed set early in the week.', actions: [{ text: 'Redo the W1 verbal set that still has misses', wk: 'W3', path: '/run/vr/W1/1' }, { text: 'Ask about "subordinate"', wk: 'W2' }] };
+  await pg.evaluate((p) => { location.hash = '#/import/' + p; }, Buffer.from(JSON.stringify(digest)).toString('base64url'));
+  await pg.waitForSelector('[data-testid=import-add]');
+  await pg.click('[data-testid=import-add]');
+  await pg.waitForSelector('[data-testid=essay-review]');
+  check('a week digest opens on that week\'s checklist', /#\/checklist\/W2$/.test(await pg.evaluate(() => location.hash)) && /How the week went/.test(await pg.textContent('[data-testid=essay-review]')));
+  check('the digest lists its follow-ups with the week each belongs to', /W3/.test(await pg.textContent('[data-testid=review-actions]')) && /Redo the W1 verbal set/.test(await pg.textContent('[data-testid=review-actions]')));
+  const wkBody = await body(pg);
+  check('a follow-up for this week becomes a checklist row', /Follow-up/.test(wkBody) && /Ask about "subordinate"/.test(wkBody));
+  await pg.evaluate(() => { location.hash = '#/checklist/W3'; }); await pg.waitForSelector('[data-testid=ck-item]');
+  check('a follow-up aimed at a later week lands in that week', /Redo the W1 verbal set/.test(await body(pg)));
+  // ticking one sticks, and it is not counted as plan progress
+  const beforePct = await pg.textContent('[data-slot=card-action]');
+  await pg.click('[data-testid=ck-item][data-done="0"] >> nth=-1 >> button >> nth=0');
+  await pg.waitForTimeout(250);
+  check('plan progress ignores follow-ups', (await pg.textContent('[data-slot=card-action]')) === beforePct, beforePct);
+  await pg.reload({ waitUntil: 'networkidle' }); await pg.waitForSelector('[data-testid=ck-item]');
+  check('a ticked follow-up stays ticked', (await pg.$$eval('[data-testid=ck-item][data-done="1"]', (n) => n.length)) >= 1);
+  // a monthly digest can point work at any week
+  const monthly = { target: { kind: 'month', m: '2026-09' }, at: '2026-09-30T18:00:00Z', reviewer: 'Mum', summary: 'September in one page.', strengths: ['Eight reading days.'], suggestions: [], actions: [{ text: 'Book the October mock slot', wk: 'W4' }] };
+  await pg.evaluate((p) => { location.hash = '#/import/' + p; }, Buffer.from(JSON.stringify(monthly)).toString('base64url'));
+  await pg.waitForSelector('[data-testid=import-add]'); await pg.click('[data-testid=import-add]');
+  await pg.waitForSelector('[data-testid=essay-review]');
+  check('a month digest opens on that month', /#\/checklist\/month\/2026-09$/.test(await pg.evaluate(() => location.hash)) && /How the month went/.test(await pg.textContent('[data-testid=essay-review]')));
+  await pg.evaluate(() => { location.hash = '#/checklist/W4'; }); await pg.waitForSelector('[data-testid=ck-item]');
+  check('a month digest can put an item in a named week', /Book the October mock slot/.test(await body(pg)));
+
   console.log('== calendar');
   await pg.evaluate(() => { location.hash = '#/calendar'; });
   await pg.waitForSelector('[data-testid=test-date]');

@@ -38,7 +38,7 @@ site/
   oauth.json               the Google OAuth client's public facts (no secrets)
 .github/workflows/pages.yml  build + deploy to GitHub Pages
 docs/                     architecture.md (how it is built), design.md (why it looks and
-                          behaves as it does), essay-review.md, review notes; the living
+                          behaves as it does), review.md, review notes; the living
                           record is the claude.ai "ISEE" project
 ```
 
@@ -107,13 +107,17 @@ Because the app is gated, every browser suite has to sign in first:
 `test_google.cjs` holds the shared GIS stub, the in-memory Drive and a `signIn()`
 helper. `sessionStorage.gisFail` makes the next token request fail.
 
-## Essay reviews
+## Reviews and digests
 
-A parent asks Claude to review an essay; the review reaches the site as an import
-link (`#/import/<payload>`), is stored in `reviews`, synced to Drive, and shown on
-the essay. A Google Doc copy goes in the Drive folder. Contract:
-[docs/essay-review.md](docs/essay-review.md); workflow: `.claude/skills/essay-review/`.
-Reviews are written to Sheila, never grade-like, and never deleted by the app.
+A parent asks Claude to review an essay, or to sum up a plan week or month. The
+review reaches the site as an import link (`#/import/<payload>`), is stored in
+`reviews`, synced to Drive, and shown on the thing it is about. A week or month
+review can carry follow-up `actions` that become rows on a named week's
+checklist. A Google Doc copy goes in the Drive folder. Contract:
+[docs/review.md](docs/review.md); workflows: `.claude/skills/essay-review/` for
+one essay, `.claude/skills/progress-digest/` for a week or month — the latter is
+what the scheduled Routines run. Reviews are written to Sheila, never grade-like,
+and never deleted by the app.
 
 ## Data model
 

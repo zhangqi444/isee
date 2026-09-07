@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 
-/** #/import/<payload> — a review link made outside the app (docs/essay-review.md).
+/** #/import/<payload> — a review link made outside the app (docs/review.md).
  *  With no payload it is a paste box, for a phone that cannot open the long link. */
 export function Import({ payload }) {
   const store = useStore()

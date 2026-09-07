@@ -3,6 +3,8 @@ import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, ListChec
 
 import { D, ORDER, SUBJ, currentWeek, setId, setsFor, weekLabel } from "@/lib/content"
 import { mockNextSteps, rec, reviewQueue } from "@/lib/engine"
+import { actionsForWeek, reviewsFor } from "@/lib/reviews"
+import { ReviewCard } from "@/components/review-card"
 import { mixedThisWeek } from "@/pages/mixed"
 import { go } from "@/lib/router"
 import { Store, useStore } from "@/lib/store"
@@ -67,11 +69,19 @@ export function weekItems(wk) {
     const fin = (Store.s.mocks[m.id] || {}).finishedAt
     if (fin) { const f = fin.slice(0, 10); if (f >= addDays(a, -7) && f <= b) mockNextSteps(m.id).filter((x) => x.kind !== "tag").forEach((x, i) => items.push({ id: `next:${m.id}:${i}`, group: "Mock follow-up", tag: "Mock", label: x.text, sub: `from ${m.name}`, done: null, path: x.path, auto: false })) }
   }
+  // Follow-ups a weekly or monthly digest asked for. Not `auto`, so they never move the
+  // plan's own progress — they are extra work someone chose, ticked by hand.
+  for (const x of actionsForWeek(wk)) items.push({ id: x.id, group: "Follow-up", tag: "Follow-up", label: x.text, sub: `from ${x.from}`, done: null, path: x.path, auto: false })
   for (const e of allEvents()) {
     if (e.kind === "week" || e.kind === "mock" || e.kind === "season") continue
     if (e.date >= a && e.date <= b) items.push({ id: `ev:${e.id}`, group: "Calendar", tag: "Date", label: `${fmt(e.date)} · ${e.title}`, sub: e.detail || "", done: null, path: e.path || "/calendar", auto: false })
   }
   return items
+}
+/** Follow-ups for this week she has not ticked yet — for the dashboard. */
+export function followUpsLeft(wk) {
+  const st = listState(wk)
+  return actionsForWeek(wk).filter((x) => !st.checked[x.id])
 }
 
 /** How much of this week is still outstanding. */
@@ -314,6 +324,7 @@ export function Checklist({ wk: wkParam, month: monthParam }) {
         </TabsList>
 
         <TabsContent value="week" className="flex flex-col gap-4">
+          {reviewsFor({ kind: "week", wk }).map((r) => <ReviewCard key={r.id} r={r} />)}
           <Card className="gap-3 py-5">
             <CardHeader className="px-5">
               <div className="flex items-center gap-2 print:hidden">
@@ -332,6 +343,7 @@ export function Checklist({ wk: wkParam, month: monthParam }) {
         </TabsContent>
 
         <TabsContent value="month" className="flex flex-col gap-4">
+          {reviewsFor({ kind: "month", m: month }).map((r) => <ReviewCard key={r.id} r={r} />)}
           <Card className="gap-3 py-5">
             <CardHeader className="px-5">
               <div className="flex items-center gap-2 print:hidden">
